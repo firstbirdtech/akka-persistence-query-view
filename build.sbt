@@ -2,38 +2,48 @@ import Dependencies._
 import com.typesafe.sbt.GitPlugin.autoImport._
 import com.typesafe.sbt.{GitBranchPrompt, GitVersioning}
 import com.typesafe.sbt.git._
+import de.heikoseeberger.sbtheader.license.Apache2_0
+import sbtrelease.ReleaseStateTransformations._
+import Release._
+
+val VersionRegex = "v([0-9]+.[0-9]+.[0-9]+)-?(.*)?".r
 
 lazy val `akka-persistence-query-view` = (project in file("."))
-  .enablePlugins(GitVersioning, GitBranchPrompt)
+  .enablePlugins(GitVersioning, GitBranchPrompt, BuildInfoPlugin)
   .settings(
-    organization := "com.github.filosganga",
+    organization := "com.ovoenergy",
+    organizationHomepage := Some(url("https://www.ovoenergy.com/")),
+    description := "An Akka PersistenceView replacement",
     name := "akka-persistence-query-view",
+    homepage := Some(url("https://github.com/ovotech/akka-persistence-query-view")),
     startYear := Some(2016),
-
-    version := "1.0-SNAPSHOT",
-
+    licenses := Seq(("Apache License, Version 2.0", url("http://www.apache.org/licenses/LICENSE-2.0"))),
+    developers := List(
+      Developer(
+        "filippo.deluca@ovoenergy.com",
+        "Filippo De Luca",
+        "filippo.deluca@ovoenergy.com",
+        url("https://filippodeluca.com")
+      )
+    ),
+    scmInfo := Some(
+      ScmInfo(
+        url("https://github.com/ovotech/akka-persistence-query-view"),
+        "git@github.com:ovotech/akka-persistence-query-view.git"
+      )
+    ),
     git.remoteRepo := "origin",
     git.runner := ConsoleGitRunner,
-    git.baseVersion := "1.0",
+    git.baseVersion := "0.1.0",
     git.useGitDescribe := true,
-
-    licenses := Seq(
-      ("Apache License, Version 2.0", url("http://www.apache.org/licenses/LICENSE-2.0.txt"))
-    ),
-
-    scalaVersion := "2.11.8",
-
-    resolvers ++= Seq(
-      Resolver.mavenLocal,
-      Resolver.typesafeRepo("releases")
-    ),
-
+    scalaVersion := "2.12.0",
+    crossScalaVersions := Seq("2.11.8"),
+    resolvers ++= Seq(Resolver.mavenLocal, Resolver.typesafeRepo("releases")),
     libraryDependencies ++= Seq(
       typesafe.config,
       slf4j.api,
       // -- Akka
       akka.actor,
-      akka.slf4j,
       akka.stream,
       akka.persistence,
       akka.persistenceQuery,
@@ -42,6 +52,34 @@ lazy val `akka-persistence-query-view` = (project in file("."))
       scalaCheck % Test,
       scalaMock.scalaTestSupport % Test,
       akka.streamTestKit % Test,
-      logback.classic % Test
-    )
+      akka.slf4j % Test,
+      logback.classic % Test,
+      LevelDb.levelDb % Test
+    ),
+    headers := Map(
+      "java" -> Apache2_0("2016", "OVO Energy"),
+      "proto" -> Apache2_0("2016", "OVO Energy", "//"),
+      "scala" -> Apache2_0("2016", "OVO Energy"),
+      "conf" -> Apache2_0("2016", "OVO Energy", "#")
+    ),
+    releaseProcess := Seq[ReleaseStep](
+      checkSnapshotDependencies,
+      inquireVersions,
+      runClean,
+      runTest,
+      setReleaseVersionWithoutFile,
+      tagRelease,
+      publishArtifacts,
+      setNextVersionWithoutFile //,
+//      pushChanges
+    ),
+    publishTo := {
+      val nexus = "https://my.artifact.repo.net/"
+      if (isSnapshot.value)
+        Some(Resolver.mavenLocal)
+      else
+        Some(Resolver.mavenLocal)
+      // Some("releases" at nexus + "service/local/staging/deploy/maven2")
+    },
+    credentials += Credentials(Path.userHome / ".ivy2" / ".credentials")
   )

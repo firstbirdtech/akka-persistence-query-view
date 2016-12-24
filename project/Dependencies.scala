@@ -3,12 +3,12 @@ import sbt._
 object Dependencies {
 
   object typesafe {
-    val config = "com.typesafe" % "config" % "1.3.0"
+    val config = "com.typesafe" % "config" % "1.3.1"
   }
 
   object slf4j {
 
-    private val version = "1.7.12"
+    private val version = "1.7.22"
 
     val api = "org.slf4j" % "slf4j-api" % version
     val log4jOverSlf4j = "org.slf4j" % "log4j-over-slf4j" % version
@@ -16,14 +16,14 @@ object Dependencies {
   }
 
   object log4j {
-    private val version = "2.5"
+    private val version = "2.7"
 
     val log4jToSlf4j = "org.apache.logging.log4j" % "log4j-to-slf4j" % version
   }
 
   object logback {
 
-    private val version = "1.1.3"
+    private val version = "1.1.8"
 
     val core = "ch.qos.logback" % "logback-core" % version
     val classic = "ch.qos.logback" % "logback-classic" % version
@@ -49,14 +49,21 @@ object Dependencies {
     val streamTestKit = "com.typesafe.akka" %% "akka-stream-testkit" % version
   }
 
-  val scalaTest = "org.scalatest" %% "scalatest" % "2.2.6"
-  val scalaCheck = "org.scalacheck" %% "scalacheck" % "1.12.5"
+  val scalaTest = "org.scalatest" %% "scalatest" % "3.0.1"
+  val scalaCheck = "org.scalacheck" %% "scalacheck" % "1.13.4"
 
   object scalaMock {
 
-    private val version = "3.2"
+    private val version = "3.4.2"
 
     val scalaTestSupport = "org.scalamock" %% "scalamock-scalatest-support" % version
+  }
+
+  object LevelDb {
+
+    val levelDb = "org.iq80.leveldb" % "leveldb" % "0.9"
+    val leveldbJni = "org.fusesource.leveldbjni" % "leveldbjni-all" % "1.8"
+
   }
 
 }

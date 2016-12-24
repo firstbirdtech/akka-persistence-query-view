@@ -1,0 +1,21 @@
+syntax = "proto2";
+
+package akka.contrib.persistence.query;
+
+option optimize_for = SPEED;
+
+message QueryViewSnapshot {
+    message SequenceNrEntry {
+        optional string persistenceId = 1;
+        optional int64 sequenceNr = 2;
+    }
+    repeated SequenceNrEntry sequenceNrs = 1;
+    optional Payload maxOffset = 2;
+    optional Payload data = 3;
+}
+
+message Payload  {
+    optional bytes enclosedMessage = 1;
+    optional int32 serializerId = 2;
+    optional string messageManifest = 4;
+}
