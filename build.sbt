@@ -65,21 +65,15 @@ lazy val `akka-persistence-query-view` = (project in file("."))
     releaseProcess := Seq[ReleaseStep](
       checkSnapshotDependencies,
       inquireVersions,
+      releaseStepCommand(scalafmt),
       runClean,
       runTest,
       setReleaseVersionWithoutFile,
       tagRelease,
       publishArtifacts,
-      setNextVersionWithoutFile //,
-//      pushChanges
+      setNextVersionWithoutFile,
+      pushChanges
     ),
-    publishTo := {
-      val nexus = "https://my.artifact.repo.net/"
-      if (isSnapshot.value)
-        Some(Resolver.mavenLocal)
-      else
-        Some(Resolver.mavenLocal)
-      // Some("releases" at nexus + "service/local/staging/deploy/maven2")
-    },
-    credentials += Credentials(Path.userHome / ".ivy2" / ".credentials")
+    bintrayOrganization := Some("ovotech"),
+    bintrayRepository := "maven"
   )
