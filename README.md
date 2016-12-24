@@ -11,9 +11,64 @@ During the `Live` events the view will consume live events from the journal and 
 
 When the view is in `WaitingForSnapshot` or `Recovering` it will not reply to any messages, but will stash them waiting to switch to the `Live` state where these message will be processed.
 
+## Adding the dependency
+
+Add a dependency to your `build.sbt`:
+
+```
+resolvers += Resolver.bintrayRepo("ovotech", "maven")
+libraryDependencies += "com.ovoenergy" %% "akka-persistence-query-view" % "<version>"
+```
+
 ## How to implement
+The first step is to define a `Querysupport` trait for your `ReadJournal` plugin. The LevelDb one is included:
+````scala
+trait LevelDbQuerySupport extends QuerySupport { this: QueryView =>
+
+  override type Queries = LeveldbReadJournal
+  override def firstOffset: Offset = Offset.sequence(1L)
+  override val queries: LeveldbReadJournal =
+    PersistenceQuery(context.system).readJournalFor[LeveldbReadJournal](LeveldbReadJournal.Identifier)
+}
+````
+
 It is up to the implementor defining the queries used during the `Recovering` and `Live` states. Generally they will be the same query, with the difference that the recovery one is a finite stream while the live one is infinite. 
+Your `Queryview` implemention has to mix in one `QuerySupport` trait as well:
 
-The `WaitingForSnapshot` and `Recovering` states are protected by a timeout, if the view will not be able to recuild its status within this timeout, it will switch to the `Live` state or crash. This behavior is controlled by the `recovery-timeout-strategy` (TODO) option.
+```scala
+class PersonsQueryView extends QueryView with LevelDbQuerySupport {
 
+  override val snapshotterId: String = "people"
 
+  private var people: Set[Person] = Set.empty
+
+  override def recoveringStream(): Source[AnyRef, _] =
+    queries.currentEventsByTag("person", lastOffset)
+
+  override def liveStream(): Source[AnyRef, _] =
+    queries.eventsByTag("person", lastOffset)
+
+  override def receive: Receive = {
+
+    case PersonAdded(person) =>
+      people = people + person
+
+    case PersonRemoved(person) =>
+      people = people - person
+
+  }
+}
+```
+
+The `WaitingForSnapshot` and `Recovering` states are protected by a timeout, if the view will not be able to rebuild its status within this timeout, it will switch to the `Live` state or crash. This behavior is controlled by the `recovery-timeout-strategy` (TODO) option.
+
+The `QueryView` has an out-of-the-box support for snapshot. It is the same as the deprecated `PersistentView`, in the previous exaple to save a snapshot of the current people:
+
+```scala
+saveSnapshot(people)
+```
+
+Under the hood it will store also the last consumed offset and the last sequence number for each persisstence id already consumed.
+
+## Future developments
+ * Implement Back-Pressure consuming the journaled events.

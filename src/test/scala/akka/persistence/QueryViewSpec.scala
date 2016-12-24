@@ -1,6 +1,7 @@
 package akka.persistence
 
 import akka.actor.{ActorRef, Props, Status, Terminated}
+import akka.contrib.persistence.query.{LevelDbQuerySupport, QuerySupport}
 import akka.persistence.journal.Tagged
 import akka.persistence.query.Offset
 import akka.stream.scaladsl.Source
@@ -219,20 +220,17 @@ class QueryViewSpec extends UnitSpec with ConfigFixture with AkkaFixture with Ak
 
   class TagQueryViewContext(tag: String) extends QueryViewContext {
 
-    override protected def createUnderTest(): ActorRef = {
+    override protected def createUnderTest(): ActorRef =
       system.actorOf(Props(new TagQueryView(tag)), "underTest")
-    }
   }
 
   class PersistenceIdQueryViewContext(persistenceId: String) extends QueryViewContext {
 
-    override protected def createUnderTest(): ActorRef = {
+    override protected def createUnderTest(): ActorRef =
       system.actorOf(Props(new PersistenceIdQueryView(persistenceId)), "underTest")
-    }
   }
 
 }
-
 
 class PersistenceIdQueryView(persistenceId: String) extends TestQueryView {
 
@@ -243,7 +241,6 @@ class PersistenceIdQueryView(persistenceId: String) extends TestQueryView {
     queries.eventsByPersistenceId(persistenceId, nextSequenceNr(persistenceId))
 
 }
-
 
 class TagQueryView(tag: String) extends TestQueryView {
 
@@ -261,19 +258,13 @@ object TestQueryView {
   val SnapshotSaved = "SnapshotSaved"
 }
 
-abstract class TestQueryView extends QueryView {
+abstract class TestQueryView extends QueryView with LevelDbQuerySupport {
   import TestQueryView._
-
-  override type Queries = LeveldbReadJournal
-
-  override lazy val firstOffset: Offset = Offset.sequence(1L)
-
-  override val queries: LeveldbReadJournal =
-    PersistenceQuery(context.system).readJournalFor[LeveldbReadJournal](LeveldbReadJournal.Identifier)
 
   private var messages: Vector[String] = Vector.empty
 
   private var waitForSnapshot = Option.empty[ActorRef]
+
   /**
     * It is the persistenceId linked to this view. It should be unique.
     */
@@ -286,11 +277,11 @@ abstract class TestQueryView extends QueryView {
       waitForSnapshot = Some(sender())
 
     case SaveSnapshotSuccess(_) =>
-      waitForSnapshot.foreach( _ ! SnapshotSaved)
+      waitForSnapshot.foreach(_ ! SnapshotSaved)
       waitForSnapshot = None
 
     case SaveSnapshotFailure(_, error) =>
-      waitForSnapshot.foreach( _ ! Status.Failure(error))
+      waitForSnapshot.foreach(_ ! Status.Failure(error))
       waitForSnapshot = None
 
     case SnapshotOffer(_, snapshot: Vector[String]) =>

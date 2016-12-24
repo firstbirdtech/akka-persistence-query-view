@@ -16,8 +16,9 @@
 
 package akka.contrib.persistence.query
 
-import akka.persistence.query.Offset
-
+import akka.persistence.QueryView
+import akka.persistence.query.{Offset, PersistenceQuery}
+import akka.persistence.query.journal.leveldb.scaladsl.LeveldbReadJournal
 
 trait QuerySupport {
 
@@ -26,4 +27,12 @@ trait QuerySupport {
   def queries: Queries
 
   def firstOffset: Offset
+}
+
+trait LevelDbQuerySupport extends QuerySupport { this: QueryView =>
+
+  override type Queries = LeveldbReadJournal
+  override def firstOffset: Offset = Offset.sequence(1L)
+  override val queries: LeveldbReadJournal =
+    PersistenceQuery(context.system).readJournalFor[LeveldbReadJournal](LeveldbReadJournal.Identifier)
 }
