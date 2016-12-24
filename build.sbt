@@ -13,7 +13,7 @@ lazy val `akka-persistence-query-view` = (project in file("."))
   .settings(
     organization := "com.ovoenergy",
     organizationHomepage := Some(url("https://www.ovoenergy.com/")),
-    description := "An Akka PersistenceView replacement",
+    description := "An Akka PersistentView replacement",
     name := "akka-persistence-query-view",
     homepage := Some(url("https://github.com/ovotech/akka-persistence-query-view")),
     startYear := Some(2016),
