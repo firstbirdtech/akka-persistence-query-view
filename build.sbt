@@ -6,8 +6,6 @@ import de.heikoseeberger.sbtheader.license.Apache2_0
 import sbtrelease.ReleaseStateTransformations._
 import Release._
 
-val VersionRegex = "v([0-9]+.[0-9]+.[0-9]+)-?(.*)?".r
-
 lazy val `akka-persistence-query-view` = (project in file("."))
   .enablePlugins(GitVersioning, GitBranchPrompt, BuildInfoPlugin)
   .settings(
