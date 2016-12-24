@@ -34,6 +34,12 @@ object QueryView {
 
   val DefaultLoadSnapshotTimeout: Duration = 5.seconds
 
+  private case object StartRecovery
+
+  private case object StartLive
+
+  private case object EventReplayed
+
   private case class LoadSnapshotFailed(cause: Throwable)
 
   private case object RecoveryCompleted
@@ -231,20 +237,25 @@ abstract class QueryView
 
   private def live(behaviour: Receive, msg: Any) =
     msg match {
+      case StartLive =>
+        sender() ! EventReplayed
+
       case EventEnvelope2(offset, persistenceId, sequenceNr, event) ⇒
         _lastOffset = offset
         sequenceNrByPersistenceId = sequenceNrByPersistenceId + (persistenceId -> (sequenceNr + 1))
         _noOfEventsSinceLastSnapshot = _noOfEventsSinceLastSnapshot + 1
         super.aroundReceive(behaviour, event)
+        sender() ! EventReplayed
 
       case EventEnvelope(offset, persistenceId, sequenceNr, event) ⇒
         _lastOffset = Sequence(offset)
         sequenceNrByPersistenceId = sequenceNrByPersistenceId + (persistenceId -> (sequenceNr + 1))
         _noOfEventsSinceLastSnapshot = _noOfEventsSinceLastSnapshot + 1
         super.aroundReceive(behaviour, event)
+        sender() ! EventReplayed
 
       case LiveStreamFailed(ex) ⇒
-        log.error(ex, s"Live stream failed, it is afatal error")
+        log.error(ex, s"Live stream failed, it is a fatal error")
         // We have to crash the actor
         throw ex
 
@@ -263,17 +274,22 @@ abstract class QueryView
 
   private def recovering(behaviour: Receive, msg: Any) =
     msg match {
+      case StartRecovery =>
+        sender() ! EventReplayed
+
       case EventEnvelope(offset, persistenceId, sequenceNr, event) ⇒
         _lastOffset = Sequence(offset)
         sequenceNrByPersistenceId = sequenceNrByPersistenceId + (persistenceId -> (sequenceNr + 1))
         _noOfEventsSinceLastSnapshot = _noOfEventsSinceLastSnapshot + 1
         super.aroundReceive(behaviour, event)
+        sender() ! EventReplayed
 
       case EventEnvelope2(offset, persistenceId, sequenceNr, event) ⇒
         _lastOffset = offset
         sequenceNrByPersistenceId = sequenceNrByPersistenceId + (persistenceId -> (sequenceNr + 1))
         _noOfEventsSinceLastSnapshot = _noOfEventsSinceLastSnapshot + 1
         super.aroundReceive(behaviour, event)
+        sender() ! EventReplayed
 
       case QueryView.RecoveryCompleted ⇒
         startLive()
@@ -283,11 +299,13 @@ abstract class QueryView
         // We have to crash the actor
         throw ex
 
-      case SaveSnapshotSuccess(metadata) ⇒
+      case msg @ SaveSnapshotSuccess(metadata) ⇒
         snapshotSaved(metadata)
+        super.aroundReceive(behaviour, msg)
 
-      case SaveSnapshotFailure(metadata, error) ⇒
+      case msg @ SaveSnapshotFailure(metadata, error) ⇒
         snapshotSavingFailed(metadata, error)
+        super.aroundReceive(behaviour, msg)
 
       case _: Any ⇒
         recoveringStash.stash()
@@ -322,10 +340,14 @@ abstract class QueryView
     loadSnapshotTimer.foreach(_.cancel())
     currentState = State.Recovering
 
+    // TODO Pass the sequenceNrByPersistenceId and offset to recoveringStream
     val stream = recoveryTimeout match {
       case t: FiniteDuration ⇒ recoveringStream().completionTimeout(t)
-      case _ ⇒ recoveringStream() // TODO Pass the sequenceNrByPersistenceId and offset
+      case _ ⇒ recoveringStream()
     }
+
+    val recoverySink =
+      Sink.actorRefWithAck(self, StartRecovery, EventReplayed, QueryView.RecoveryCompleted, e => RecoveryFailed(e))
 
     // TODO Use back-pressure
     // runForeach is bad because it does not apply back-pressure. ask is not great either because it will instantiate an
@@ -334,11 +356,8 @@ abstract class QueryView
     stream
       .filterAlreadyReceived(sequenceNrByPersistenceId)
       .concat(Source.single(QueryView.RecoveryCompleted))
-      .runForeach(self ! _)
-      .recover {
-        case NonFatal(ex) ⇒ RecoveryFailed(ex)
-      }
-      .pipeTo(self)
+      .to(recoverySink)
+      .run()
   }
 
   private def startLive(): Unit = {
@@ -348,22 +367,23 @@ abstract class QueryView
     currentState = State.Live
     recoveringStash.unstashAll()
 
+    val liveSink =
+      Sink.actorRefWithAck(
+        self,
+        StartLive,
+        EventReplayed,
+        LiveStreamFailed(new LiveStreamCompletedException),
+        e => LiveStreamFailed(e)
+      )
+
     // TODO Use back-pressure
     // runForeach is bad because it does not apply back-pressure. ask is not great either because it will instantiate an
     // actor for each message.
     // Good solution will be to have an ActorSubscriber or Sink.actorRef
-    val liveResult = liveStream() // TODO Pass the sequenceNrByPersistenceId and offset
+    liveStream() // TODO Pass the sequenceNrByPersistenceId and offset to liveStream
       .filterAlreadyReceived(sequenceNrByPersistenceId)
-      // The liveStream should never complete, it is a guard here.
-      .concat(Source.single(LiveStreamFailed(new LiveStreamCompletedException)))
-      .runForeach(self ! _)
-
-    liveResult
-      .recover {
-        case NonFatal(ex) ⇒
-          LiveStreamFailed(ex)
-      }
-      .pipeTo(self)
+      .to(liveSink)
+      .run()
   }
 
   override def saveSnapshot(snapshot: Any): Unit =

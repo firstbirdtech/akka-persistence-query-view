@@ -221,13 +221,13 @@ class QueryViewSpec extends UnitSpec with ConfigFixture with AkkaFixture with Ak
   class TagQueryViewContext(tag: String) extends QueryViewContext {
 
     override protected def createUnderTest(): ActorRef =
-      system.actorOf(Props(new TagQueryView(tag)), "underTest")
+      system.actorOf(Props(new TagQueryView(tag)))
   }
 
   class PersistenceIdQueryViewContext(persistenceId: String) extends QueryViewContext {
 
     override protected def createUnderTest(): ActorRef =
-      system.actorOf(Props(new PersistenceIdQueryView(persistenceId)), "underTest")
+      system.actorOf(Props(new PersistenceIdQueryView(persistenceId)))
   }
 
 }

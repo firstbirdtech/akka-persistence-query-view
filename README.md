@@ -68,7 +68,7 @@ The `QueryView` has an out-of-the-box support for snapshot. It is the same as th
 saveSnapshot(people)
 ```
 
-Under the hood it will store also the last consumed offset and the last sequence number for each persisstence id already consumed.
+Under the hood it will store also the last consumed offset and the last sequence number for each persistence id already consumed.
 
 ## Future developments
- * Implement Back-Pressure consuming the journaled events.
+ * Add the `recovery-timeout-strategy` option to control what to do when the view does ot recover within a certain amount of time.
