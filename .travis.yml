@@ -1,32 +1,38 @@
 sudo: false
-
 cache:
   directories:
-    - $HOME/.m2/repository
-    - $HOME/.sbt
-    - $HOME/.ivy2
-
-
+  - $HOME/.m2/repository
+  - $HOME/.sbt
+  - $HOME/.ivy2
 language: scala
-
 env:
   global:
   - TEST_TIMEFACTOR=3.0
+  # BINTRAY_PASS
+  - secure: RrImsqdaHxk+Ua7aCYanqhw6XhZuOicPwBYQCrJDHYgb5MbCHrSTq5uk8XD7RwJjAf1nkZDMSNjiOrVqEH+SHgIEOrYT+1xuJqfg4Lmde7HPgK1kCNCOyVnEe+ZXYxeawsnHKXMROSRgqGUjB1wRTug/NgVb2xdyS9srhAuCESNnMXLjjAfc/gUibFtOgrq6otI7h+tFWDri1iq4ztypMkmQRp0zK/oF1n9frsUO0+mH9JAybT78CYHIHaQqXhivziKQpxi9RAeu6+f7+f37pZBQjJ9emZ8n2mLxHf2br7+QDZ4LOWrNDUGpydgsC9fWjEWXdkjQw73YCWN1oUu9X/qZCXh95FyPCsGpyCX+1Ulizs5vkBQnMrmDBLTp3gdIe1rHOPy85dCG0slc21+lM8EBs+eVoi7crOdFxHPHLtgHhOYS94fgFiDUpjVct+auzd/am2hkZfiY14rUQ1KTZxWwBjgiHMX+Edk1F9yuF0Z9du1VmmxdBzOTMtYmXrSAtxmJ9MJv3cD48OC808LhpyPv4A952oTfGjWdZ523FQ5Q/cmrmeQ2uSt/G8uci4jl4FgS9Q0ylAOVwi+y4/fUzb8NXcfm6YKuImp0bIXx9iSCC0BOHQfqriE6VD2MQyUEpqsXS0rElS4QdWnt/htZDYP54ogpZK8g6jG3MzLUahU=
+  # BINTRAY_USER
+  - secure: D8llrT4aJXsFLC7yFt/wjk+Zv5AoHFj8/wWJdrMLzOfhTaAMmu4P9BR8Wl3ALfRyf6CozzIIZBHCORYupKyu2C/wtx59Od/nR1fEeHm/MumEnVyjU7mTmFijpwW5d1DO3m9YZjHCQH0iKzOoAEcwL53grCJ/W6EH75vb9aOP9ckAmKwWBwYoaVsIachAj+AvlLfAoawUelMk2MJiifgiEnS+OOKPb4Ep2WCxLGrnpWhOwc0uPeLKJu/4IZfN5AvmrAQKh1xW0jgtn0FE506/10RQAcYC1/xWFAh/dw3GGhNEU3TUHHonH6SrnfED+i9WCJEF2Nu/oh1eIrSX8Z+BTSOayTOdXjg5lC13dXtnRv/wk8Wu5zC4IgUaIvwfqr9MIr4/EnTnnNco8DOj8al9PlNsZk1zh1BQXTuIgoy6PEoaG0jq0289lk7P41Aop/QdAHVNno/fsmHeLAlEoyNlB1KCD0gmJ37AcnO0mIUXjSZrub+A8DlrQ9X0YGJ93nuycTX+CFXFfYiXKnftLdTwbpfUcyxQ2TymQbh+4TIhcE67kdmxXVfdp6IuZy8cvFgzFNAypZSauZDHFW47DjuHq9aVko4UGhjk620kR5zLbvQ1ZdcEDsnLlhDck3TMMjPtLR4VAlk0Kr6ZS99HGq+vb1Qx/LdlYeIje6O29HaLewQ=
 
 scala:
-  - 2.11.8
-  - 2.12.1
+- 2.11.8
+- 2.12.1
 
 jdk:
-  - oraclejdk8
+- oraclejdk8
 
 deploy:
   provider: script
+  skip_cleanup: true
+  script:
+    - sbt -J-XX:ReservedCodeCacheSize=128m ++$TRAVIS_SCALA_VERSION release with-defaults
+  on:
+    repo: ovotech/akka-persistence-query-view
+
 
 after_success:
-  - "./build/bintray-credentials.sh;"
-  - "[[ $TRAVIS_BRANCH == \"master\" ]] && { sbt publish; };"
+- ./build/bintray-credentials.sh;
+- '[[ $TRAVIS_BRANCH == "master" ]] && { sbt publish; };'
 
 notifications:
   email:
-    - filippo.deluca@ovoenergy.com
+  - filippo.deluca@ovoenergy.com
