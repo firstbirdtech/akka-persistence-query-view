@@ -20,6 +20,13 @@ scala:
 jdk:
   - oraclejdk8
 
+deploy:
+  provider: script
+
+after_success:
+  - "./build/bintray-credentials.sh;"
+  - "[[ $TRAVIS_BRANCH == \"master\" ]] && { sbt publish; };"
+
 notifications:
   email:
     - filippo.deluca@ovoenergy.com
