@@ -9,6 +9,9 @@ cache:
 
 language: scala
 
+env:
+ - TEST_TIMEFACTOR=3.0
+
 matrix:
   include:
   - scala: 2.11.8
