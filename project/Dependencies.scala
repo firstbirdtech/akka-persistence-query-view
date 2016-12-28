@@ -13,6 +13,7 @@ object Dependencies {
     val api = "org.slf4j" % "slf4j-api" % version
     val log4jOverSlf4j = "org.slf4j" % "log4j-over-slf4j" % version
     val jclOverSlf4j = "org.slf4j" % "jcl-over-slf4j" % version
+    val nop = "org.slf4j" % "slf4j-nop" % version
   }
 
   object log4j {
