@@ -13,21 +13,12 @@ env:
   global:
   - TEST_TIMEFACTOR=3.0
 
-matrix:
-  include:
-  - scala: 2.11.8
-    jdk: oraclejdk7
-  - scala: 2.11.8
-    jdk: openjdk7
-  - scala: 2.11.8
-    jdk: oraclejdk8
-  - scala: 2.11.8
-    jdk: openjdk8
-  - scala: 2.12.1
-    jdk: oraclejdk8
-  - scala: 2.12.1
-    jdk: openjdk8
+scala:
+  - 2.11.8
 
+jdk:
+  - oraclejdk8
+  - openjdk8
 
 notifications:
   email:
