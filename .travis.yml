@@ -21,6 +21,7 @@ jdk:
 - oraclejdk8
 
 before_deploy:
+  - git fetch --tags
   # Reattach the commit to named branch (it is needed by the release plugin)
   - git checkout --track origin/${TRAVIS_BRANCH} -b travis-${TRAVIS_BUILD_ID}
 
