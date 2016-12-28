@@ -10,14 +10,21 @@ cache:
 language: scala
 
 scala:
-   - 2.11.9
+   - 2.11.8
    - 2.12.1
 
 jdk:
-  - oraclejdk7
   - oraclejdk8
-  - openjdk7
+  - oraclejdk7
   - openjdk8
+  - openjdk7
+
+matrix:
+  exclude:
+  - scala: 2.12.1
+    jdk: oraclejdk7
+  - scala: 2.12.1
+    jdk: openjdk7
 
 notifications:
   email:
