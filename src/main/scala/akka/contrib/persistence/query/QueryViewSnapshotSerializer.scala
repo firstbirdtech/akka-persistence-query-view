@@ -27,7 +27,6 @@ import akka.serialization.{BaseSerializer, ByteBufferSerializer, SerializationEx
 
 import scala.collection.JavaConverters._
 
-
 class QueryViewSnapshotSerializer(val system: ExtendedActorSystem) extends BaseSerializer with ByteBufferSerializer {
 
   override def includeManifest: Boolean = false
@@ -58,18 +57,18 @@ class QueryViewSnapshotSerializer(val system: ExtendedActorSystem) extends BaseS
   private def fromBinary(in: InputStream): AnyRef =
     deserializeQueryViewSnapshot(in)
 
-
   private def serializeQueryViewSnapshot(snapshot: QueryViewSnapshot[_], out: OutputStream): Unit = {
 
     val builder = QueryViewFormats.QueryViewSnapshot.newBuilder()
-    snapshot.sequenceNrs.foreach { case(persistenceId, sequenceNr) =>
-      builder.addSequenceNrs(QueryViewFormats
-        .QueryViewSnapshot
-        .SequenceNrEntry
-        .newBuilder()
-        .setPersistenceId(persistenceId)
-        .setSequenceNr(sequenceNr)
-        .build())
+    snapshot.sequenceNrs.foreach {
+      case (persistenceId, sequenceNr) =>
+        builder.addSequenceNrs(
+          QueryViewFormats.QueryViewSnapshot.SequenceNrEntry
+            .newBuilder()
+            .setPersistenceId(persistenceId)
+            .setSequenceNr(sequenceNr)
+            .build()
+        )
     }
 
     builder.setMaxOffset(serializePayload(snapshot.maxOffset))
@@ -84,7 +83,7 @@ class QueryViewSnapshotSerializer(val system: ExtendedActorSystem) extends BaseS
 
     var sequenceNrsBuilder = Map.newBuilder[String, Long]
     parsed.getSequenceNrsList.asScala.foreach { entry =>
-      sequenceNrsBuilder = sequenceNrsBuilder += entry.getPersistenceId->entry.getSequenceNr
+      sequenceNrsBuilder = sequenceNrsBuilder += entry.getPersistenceId -> entry.getSequenceNr
     }
 
     val data = deserializePayload(parsed.getData)

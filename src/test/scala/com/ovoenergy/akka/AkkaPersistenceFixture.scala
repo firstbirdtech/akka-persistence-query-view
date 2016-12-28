@@ -36,13 +36,14 @@ object AkkaPersistenceFixture {
         deleteMessages(toSequenceNr)
         waitForDeletion = Some(sender())
 
-      case msg@DeleteMessagesSuccess(toSequenceNr) =>
+      case msg @ DeleteMessagesSuccess(toSequenceNr) =>
         waitForDeletion.foreach(_ ! msg)
         waitForDeletion = None
 
-      case event ⇒ persist(event) { persisted ⇒
-        sender() ! persisted
-      }
+      case event ⇒
+        persist(event) { persisted ⇒
+          sender() ! persisted
+        }
     }
   }
 
@@ -78,14 +79,18 @@ trait AkkaPersistenceFixture extends ConfigFixture with ScalaFutures with Before
     }
   }
 
-  def writeToJournal[T](persistenceId: String, event: T)(implicit tag: ClassTag[T]): T = withJournalWriter(persistenceId) { writer ⇒
-    val written = writer.ask(event)(10.seconds).mapTo[T].futureValue(timeout(scaled(5.seconds)))
-    note(s"Event written $written")
-    written
-  }
+  def writeToJournal[T](persistenceId: String, event: T)(implicit tag: ClassTag[T]): T =
+    withJournalWriter(persistenceId) { writer ⇒
+      val written = writer.ask(event)(10.seconds).mapTo[T].futureValue(timeout(scaled(5.seconds)))
+      note(s"Event written $written")
+      written
+    }
 
   def deleteFromJournal(persistenceId: String, toSequenceNr: Long): Unit = withJournalWriter(persistenceId) { writer ⇒
-    writer.ask(DeleteFromJournal(toSequenceNr))(10.seconds).mapTo[DeleteMessagesSuccess].futureValue(timeout(scaled(5.seconds)))
+    writer
+      .ask(DeleteFromJournal(toSequenceNr))(10.seconds)
+      .mapTo[DeleteMessagesSuccess]
+      .futureValue(timeout(scaled(5.seconds)))
     note(s"Events deleted from $persistenceId up to $toSequenceNr")
   }
 

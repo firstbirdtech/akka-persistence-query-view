@@ -67,11 +67,14 @@ lazy val `akka-persistence-query-view` = (project in file("."))
       runClean,
       runTest,
       setReleaseVersionWithoutFile,
+      releaseStepTask(bintrayEnsureLicenses),
+      releaseStepTask(bintrayEnsureCredentials),
       tagRelease,
       publishArtifacts,
       setNextVersionWithoutFile,
       pushChanges
     ),
     bintrayOrganization := Some("ovotech"),
-    bintrayRepository := "maven"
+    bintrayRepository := "maven",
+    bintrayPackageLabels := Seq("akka", "akka-persistence", "event-sourcing", "cqrs")
   )
