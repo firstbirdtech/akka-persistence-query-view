@@ -20,45 +20,44 @@ class QueryViewSnapshotSerializerSpec extends UnitSpec with AkkaFixture {
     value <- arbitrary[String]
   } yield new NonSerializable(value))
 
-
-  implicit def arbQueryViewSnapshot[T](implicit arbT: Arbitrary[T]): Arbitrary[QueryViewSnapshot[T]] = Arbitrary(for {
-    data <- arbT.arbitrary
-    offset <- Gen.choose(1L, Long.MaxValue).map(Offset.sequence)
-    sequenceNrs <- Gen.mapOf(Gen.zip(Gen.alphaStr, Gen.posNum[Long]))
-  } yield QueryViewSnapshot(data, offset, sequenceNrs))
-
+  implicit def arbQueryViewSnapshot[T](implicit arbT: Arbitrary[T]): Arbitrary[QueryViewSnapshot[T]] =
+    Arbitrary(for {
+      data <- arbT.arbitrary
+      offset <- Gen.choose(1L, Long.MaxValue).map(Offset.sequence)
+      sequenceNrs <- Gen.mapOf(Gen.zip(Gen.alphaStr, Gen.posNum[Long]))
+    } yield QueryViewSnapshot(data, offset, sequenceNrs))
 
   "QueryViewSnapshotSerializer" should {
     "Serialize and deserialize any QueryViewSnapshot" in forAll { testValue: QueryViewSnapshot[String] ⇒
-
       val serialization = SerializationExtension(extendedActorSystem)
 
       val (resolvedSerializer, result) = (for {
         serializer <- serialization.serializerOf(classOf[QueryViewSnapshotSerializer].getName)
         serialized <- serialization.serialize(testValue)
         deserialized <- serialization.deserialize(serialized, serializer.identifier, "")
-      } yield serializer->deserialized).get
+      } yield serializer -> deserialized).get
 
       resolvedSerializer should be(a[QueryViewSnapshotSerializer])
       result should be(testValue)
     }
 
-    "Serialize and deserialize any QueryViewSnapshot using ByteBuffer" in forAll { testValue: QueryViewSnapshot[String] ⇒
+    "Serialize and deserialize any QueryViewSnapshot using ByteBuffer" in forAll {
+      testValue: QueryViewSnapshot[String] ⇒
+        val serialization = SerializationExtension(extendedActorSystem)
 
-      val serialization = SerializationExtension(extendedActorSystem)
+        val (resolvedSerializer, result) = (for {
+          serializer <- serialization.serializerOf(classOf[QueryViewSnapshotSerializer].getName)
+          serialized <- serialization.serialize(testValue)
+          deserialized <- Try(
+            serialization.deserializeByteBuffer(ByteBuffer.wrap(serialized), serializer.identifier, "")
+          )
+        } yield serializer -> deserialized).get
 
-      val (resolvedSerializer, result) = (for {
-        serializer <- serialization.serializerOf(classOf[QueryViewSnapshotSerializer].getName)
-        serialized <- serialization.serialize(testValue)
-        deserialized <- Try(serialization.deserializeByteBuffer(ByteBuffer.wrap(serialized), serializer.identifier, ""))
-      } yield serializer->deserialized).get
-
-      resolvedSerializer should be(a[QueryViewSnapshotSerializer])
-      result should be(testValue)
+        resolvedSerializer should be(a[QueryViewSnapshotSerializer])
+        result should be(testValue)
     }
 
     "fail if the data is not serializable" in forAll { testValue: QueryViewSnapshot[NonSerializable] ⇒
-
       val serialization = SerializationExtension(extendedActorSystem)
 
       (for {

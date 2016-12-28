@@ -4,12 +4,12 @@ import akka.actor.{ActorSystem, ExtendedActorSystem}
 import com.ovoenergy.ConfigFixture
 import org.scalatest.{BeforeAndAfterEach, Suite}
 
-trait AkkaFixture extends BeforeAndAfterEach {
-  self: Suite with ConfigFixture =>
+trait AkkaFixture extends BeforeAndAfterEach { self: Suite with ConfigFixture =>
 
   private var _system: ActorSystem = _
 
-  implicit def system: ActorSystem = Option(_system).getOrElse(throw new IllegalStateException("ActorSystem not yet started"))
+  implicit def system: ActorSystem =
+    Option(_system).getOrElse(throw new IllegalStateException("ActorSystem not yet started"))
   def extendedActorSystem: ExtendedActorSystem = system match {
     case eas: ExtendedActorSystem => eas
     case _ => throw new IllegalStateException("ActorSystem not an instance of ExtendedActorSystem")
