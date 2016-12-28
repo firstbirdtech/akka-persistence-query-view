@@ -15,7 +15,7 @@ lazy val `akka-persistence-query-view` = (project in file("."))
     name := "akka-persistence-query-view",
     homepage := Some(url("https://github.com/ovotech/akka-persistence-query-view")),
     startYear := Some(2016),
-    licenses := Seq(("Apache License, Version 2.0", url("http://www.apache.org/licenses/LICENSE-2.0"))),
+    licenses := Seq(("Apache-2.0", url("http://www.apache.org/licenses/LICENSE-2.0"))),
     developers := List(
       Developer(
         "filippo.deluca@ovoenergy.com",
