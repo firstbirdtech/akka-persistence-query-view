@@ -16,16 +16,29 @@ matrix:
   include:
   - scala: 2.11.8
     jdk: oraclejdk7
+    env:
+     - TEST_TIMEFACTOR=3.0
   - scala: 2.11.8
     jdk: openjdk7
+    env:
+     - TEST_TIMEFACTOR=3.0
   - scala: 2.11.8
     jdk: oraclejdk8
+    env:
+     - TEST_TIMEFACTOR=3.0
   - scala: 2.11.8
     jdk: openjdk8
+    env:
+     - TEST_TIMEFACTOR=3.0
   - scala: 2.12.1
     jdk: oraclejdk8
+    env:
+     - TEST_TIMEFACTOR=3.0
   - scala: 2.12.1
     jdk: openjdk8
+    env:
+     - TEST_TIMEFACTOR=3.0
+
 
 notifications:
   email:
