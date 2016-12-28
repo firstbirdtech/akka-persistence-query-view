@@ -28,11 +28,6 @@ deploy:
   on:
     repo: ovotech/akka-persistence-query-view
 
-
-after_success:
-- ./build/bintray-credentials.sh;
-- '[[ $TRAVIS_BRANCH == "master" ]] && { sbt publish; };'
-
 notifications:
   email:
   - filippo.deluca@ovoenergy.com
