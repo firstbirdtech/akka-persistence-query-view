@@ -1,6 +1,8 @@
 Persistence query view
 ======================
 
+[ ![Download](https://api.bintray.com/packages/ovotech/maven/akka-persistence-query-view/images/download.svg) ](https://bintray.com/ovotech/maven/akka-persistence-query-view/_latestVersion)
+
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/5d8922799fdc44d48764e8f647ba28dc)](https://www.codacy.com/app/me_62/akka-persistence-query-view?utm_source=github.com&utm_medium=referral&utm_content=ovotech/akka-persistence-query-view&utm_campaign=badger)
 
 The `QueryView` is a replacement of the deprecated `PersistentView` in Akka Persistence module.
@@ -23,8 +25,10 @@ resolvers += Resolver.bintrayRepo("ovotech", "maven")
 libraryDependencies += "com.ovoenergy" %% "akka-persistence-query-view" % "<version>"
 ```
 
+See the badge above for the latest version.
+
 ## How to implement
-The first step is to define a `Querysupport` trait for your `ReadJournal` plugin. The LevelDb one is included:
+The first step is to define a `QuerySupport` trait for your `ReadJournal` plugin. The LevelDb one is included:
 ````scala
 trait LevelDbQuerySupport extends QuerySupport { this: QueryView =>
 
