@@ -28,7 +28,7 @@ deploy:
   provider: script
   skip_cleanup: true
   script:
-    - sbt -J-XX:ReservedCodeCacheSize=128m ++$TRAVIS_SCALA_VERSION release with-defaults
+    - sbt -J-XX:ReservedCodeCacheSize=128m ++$TRAVIS_SCALA_VERSION "release with-defaults"
   on:
     repo: ovotech/akka-persistence-query-view
 
