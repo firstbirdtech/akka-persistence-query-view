@@ -25,7 +25,7 @@ libraryDependencies += "com.ovoenergy" %% "akka-persistence-query-view" % "<vers
 
 ## How to implement
 The first step is to define a `Querysupport` trait for your `ReadJournal` plugin. The LevelDb one is included:
-```scala
+```tut:silent
 import akka.contrib.persistence.query.QuerySupport
 import akka.persistence.QueryView
 import akka.persistence.query.{Offset, PersistenceQuery}
@@ -43,7 +43,7 @@ trait LevelDbQuerySupport extends QuerySupport { this: QueryView =>
 It is up to the implementor defining the queries used during the `Recovering` and `Live` states. Generally they will be the same query, with the difference that the recovery one is a finite stream while the live one is infinite. 
 Your `Queryview` implemention has to mix in one `QuerySupport` trait as well:
 
-```scala
+```tut:silent
 import akka.stream.scaladsl.Source
 
 case class Person(name: String, age: Int)
