@@ -16,12 +16,14 @@ dependencies:
     - "~/.sbt"
     - "target/resolution-cache"
     - "project/target/resolution-cache"
+  override:
+    - sbt +test:compile
 
 test:
   pre:
   - echo "concurrentRestrictions in Global += Tags.limit(Tags.Test, 2)" > parallelism.sbt
   override:
-  - sbt test:test
+  - sbt +test:test
   post:
   - mkdir -p $CIRCLE_TEST_REPORTS/junit/
   - find . -type f -regex ".*/target/test-reports/.*xml" -exec cp {} $CIRCLE_TEST_REPORTS/junit/ \;

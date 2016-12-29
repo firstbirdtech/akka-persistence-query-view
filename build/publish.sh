@@ -6,4 +6,4 @@ echo 'Discarding changes'
 git checkout -- .
 
 echo 'Publishing the project'
-sbt publish
+sbt +publish
