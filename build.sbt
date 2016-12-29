@@ -76,5 +76,7 @@ lazy val `akka-persistence-query-view` = (project in file("."))
     ),
     bintrayOrganization := Some("ovotech"),
     bintrayRepository := "maven",
-    bintrayPackageLabels := Seq("akka", "akka-persistence", "event-sourcing", "cqrs")
+    bintrayPackageLabels := Seq("akka", "akka-persistence", "event-sourcing", "cqrs"),
+    tutSettings,
+    tutTargetDirectory := baseDirectory.value
   )
