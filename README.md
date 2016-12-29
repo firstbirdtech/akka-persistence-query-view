@@ -1,6 +1,7 @@
 Persistence query view
 ======================
 
+[![CircleCI Badge](https://circleci.com/gh/ovotech/akka-persistence-query-view.svg?style=shield)](https://circleci.com/gh/ovotech/akka-persistence-query-view)
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/5d8922799fdc44d48764e8f647ba28dc)](https://www.codacy.com/app/me_62/akka-persistence-query-view?utm_source=github.com&utm_medium=referral&utm_content=ovotech/akka-persistence-query-view&utm_campaign=badger)
 
 The `QueryView` is a replacement of the deprecated `PersistentView` in Akka Persistence module.
@@ -79,7 +80,40 @@ The `WaitingForSnapshot` and `Recovering` states are protected by a timeout, if 
 The `QueryView` has an out-of-the-box support for snapshot. It is the same as the deprecated `PersistentView`, in the previous exaple to save a snapshot of the current people:
 
 ```scala
-saveSnapshot(people)
+import akka.stream.scaladsl.Source
+
+case class Person(name: String, age: Int)
+case class PersonAdded(person: Person)
+case class PersonRemoved(person: Person)
+
+class PersonsQueryView extends QueryView with LevelDbQuerySupport {
+
+  override val snapshotterId: String = "people"
+
+  private var people: Set[Person] = Set.empty
+
+  override def recoveringStream(): Source[AnyRef, _] =
+    queries.currentEventsByTag("person", lastOffset)
+
+  override def liveStream(): Source[AnyRef, _] =
+    queries.eventsByTag("person", lastOffset)
+
+  override def receive: Receive = {
+
+    case PersonAdded(person) =>
+      people = people + person
+      if(noOfEventSinceLastSnapshot() > 100) {
+        saveSnapshot(people)
+      }
+
+    case PersonRemoved(person) =>
+      people = people - person
+      if(noOfEventSinceLastSnapshot() > 100) {
+        saveSnapshot(people)
+      }
+
+  }
+}
 ```
 
 Under the hood it will store also the last consumed offset and the last sequence number for each persistence id already consumed.
