@@ -1,12 +1,12 @@
 general:
   artifacts:
-  - "test.log"
+  - "target/test.log"
   - "gc.log"
 
 machine:
   environment:
     JAVA_OPTS: "-XX:+CMSClassUnloadingEnabled -XX:MaxMetaspaceSize=512M -XX:MetaspaceSize=512M -Xms1G -Xmx1G -XX:+PrintGCDetails -XX:+PrintGCTimeStamps -Xloggc:gc.log"
-    TEST_TIMEFACTOR: 3
+    TEST_TIMEFACTOR: 5.0
   java:
     version: oraclejdk8
 
@@ -18,6 +18,8 @@ dependencies:
     - "project/target/resolution-cache"
 
 test:
+  pre:
+  - echo "concurrentRestrictions in Global += Tags.limit(Tags.Test, 2)" > parallelism.sbt
   override:
   - sbt test:test
   post:

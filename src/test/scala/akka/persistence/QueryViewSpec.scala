@@ -20,7 +20,8 @@ class QueryViewSpec extends UnitSpec with ConfigFixture with AkkaFixture with Ak
 
   import TestQueryView._
 
-  private implicit val timeout = Timeout(15.seconds)
+  private implicit val askTimeout = Timeout(15.seconds)
+  override implicit def patienceConfig: PatienceConfig = PatienceConfig(scaled(5.seconds), scaled(50.milliseconds))
 
   "QueryView" when {
     "has a persistenceId based query" when {
@@ -100,7 +101,7 @@ class QueryViewSpec extends UnitSpec with ConfigFixture with AkkaFixture with Ak
 
           val expectedMessages = Seq("test-1-1", "test-1-2", "test-1-3", "test-1-4")
 
-          eventually(timeout(scaled(15.seconds))) {
+          eventually {
             val receivedMessages = underTest.ask(GetMessage).mapTo[Vector[String]].futureValue
             receivedMessages should contain theSameElementsInOrderAs expectedMessages
           }
@@ -120,7 +121,7 @@ class QueryViewSpec extends UnitSpec with ConfigFixture with AkkaFixture with Ak
 
           val expectedMessages = Seq("test-1-1", "test-3-1", "test-1-2")
 
-          eventually(timeout(scaled(5.seconds))) {
+          eventually {
             val receivedMessages = underTest.ask(GetMessage).mapTo[Vector[String]].futureValue
             receivedMessages should contain theSameElementsInOrderAs expectedMessages
           }
@@ -186,7 +187,7 @@ class QueryViewSpec extends UnitSpec with ConfigFixture with AkkaFixture with Ak
 
           val expectedMessages = Seq("test-1-1", "test-2-1", "test-1-3", "test-1-4", "test-2-3")
 
-          eventually(timeout(scaled(15.seconds))) {
+          eventually {
             val receivedMessages = underTest.ask(GetMessage).mapTo[Vector[String]].futureValue
             receivedMessages should contain theSameElementsInOrderAs expectedMessages
           }

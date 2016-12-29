@@ -32,8 +32,8 @@ lazy val `akka-persistence-query-view` = (project in file("."))
     git.runner := ConsoleGitRunner,
     git.baseVersion := "0.1.0",
     git.useGitDescribe := true,
-    scalaVersion := "2.12.0",
-    crossScalaVersions := Seq("2.11.8"),
+    scalaVersion := "2.12.1",
+    crossScalaVersions := Seq(scalaVersion.value, "2.11.8"),
     resolvers ++= Seq(Resolver.mavenLocal, Resolver.typesafeRepo("releases")),
     libraryDependencies ++= Seq(
       typesafe.config,
