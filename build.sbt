@@ -3,8 +3,6 @@ import com.typesafe.sbt.GitPlugin.autoImport._
 import com.typesafe.sbt.{GitBranchPrompt, GitVersioning}
 import com.typesafe.sbt.git._
 import de.heikoseeberger.sbtheader.license.Apache2_0
-import sbtrelease.ReleaseStateTransformations._
-import Release._
 
 lazy val `akka-persistence-query-view` = (project in file("."))
   .enablePlugins(GitVersioning, GitBranchPrompt, BuildInfoPlugin)
@@ -60,23 +58,8 @@ lazy val `akka-persistence-query-view` = (project in file("."))
       "scala" -> Apache2_0("2016", "OVO Energy"),
       "conf" -> Apache2_0("2016", "OVO Energy", "#")
     ),
-    releaseProcess := Seq[ReleaseStep](
-      checkSnapshotDependencies,
-      inquireVersions,
-      releaseStepCommand(scalafmt),
-      runClean,
-      runTest,
-      setReleaseVersionWithoutFile,
-      releaseStepTask(bintrayEnsureLicenses),
-      releaseStepTask(bintrayEnsureCredentials),
-      tagRelease,
-      publishArtifacts,
-      setNextVersionWithoutFile,
-      pushChanges
-    ),
+    tutSettings,
     bintrayOrganization := Some("ovotech"),
     bintrayRepository := "maven",
-    bintrayPackageLabels := Seq("akka", "akka-persistence", "event-sourcing", "cqrs"),
-    tutSettings,
-    tutTargetDirectory := baseDirectory.value
+    bintrayPackageLabels := Seq("akka", "akka-persistence", "event-sourcing", "cqrs")
   )

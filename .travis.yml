@@ -1,10 +1,18 @@
 sudo: false
+
+branches:
+  except:
+    # Don't build tags
+    - /^v[0-9]/
+
 cache:
   directories:
   - $HOME/.m2/repository
   - $HOME/.sbt
   - $HOME/.ivy2
+
 language: scala
+
 env:
   global:
   - TEST_TIMEFACTOR=3.0
@@ -29,7 +37,8 @@ deploy:
   provider: script
   skip_cleanup: true
   script:
-    - sbt -J-XX:ReservedCodeCacheSize=128m ++$TRAVIS_SCALA_VERSION "release with-defaults"
+    - build/tag.sh
+    - build/publish.sh
   on:
     repo: ovotech/akka-persistence-query-view
 
