@@ -18,7 +18,6 @@ package akka.persistence
 
 import akka.actor._
 import akka.contrib.persistence.query.{LiveStreamCompletedException, QuerySupport, QueryViewSnapshot}
-import akka.pattern.pipe
 import akka.persistence.SnapshotProtocol.LoadSnapshotResult
 import akka.persistence.query.{EventEnvelope, EventEnvelope2, Offset, Sequence}
 import akka.stream.ActorMaterializer
@@ -26,7 +25,6 @@ import akka.stream.scaladsl._
 
 import scala.concurrent.TimeoutException
 import scala.concurrent.duration._
-import scala.util.control.NonFatal
 
 object QueryView {
 
@@ -100,6 +98,7 @@ abstract class QueryView
   private[this] var _noOfEventsSinceLastSnapshot: Long = 0L
   private[this] var currentState: State = State.WaitingForSnapshot
   private[this] var loadSnapshotTimer: Option[Cancellable] = None
+  private[this] var savingSnapshot: Boolean = false
 
   private val persistence = Persistence(context.system)
   override private[persistence] val snapshotStore: ActorRef = persistence.snapshotStoreFor(snapshotPluginId)
@@ -349,10 +348,6 @@ abstract class QueryView
     val recoverySink =
       Sink.actorRefWithAck(self, StartRecovery, EventReplayed, QueryView.RecoveryCompleted, e => RecoveryFailed(e))
 
-    // TODO Use back-pressure
-    // runForeach is bad because it does not apply back-pressure. ask is not great either because it will instantiate an
-    // actor for each message.
-    // Good solution will be to have an ActorSubscriber or Sink.actorRef
     stream
       .filterAlreadyReceived(sequenceNrByPersistenceId)
       .concat(Source.single(QueryView.RecoveryCompleted))
@@ -376,26 +371,26 @@ abstract class QueryView
         e => LiveStreamFailed(e)
       )
 
-    // TODO Use back-pressure
-    // runForeach is bad because it does not apply back-pressure. ask is not great either because it will instantiate an
-    // actor for each message.
-    // Good solution will be to have an ActorSubscriber or Sink.actorRef
     liveStream() // TODO Pass the sequenceNrByPersistenceId and offset to liveStream
       .filterAlreadyReceived(sequenceNrByPersistenceId)
       .to(liveSink)
       .run()
   }
 
-  override def saveSnapshot(snapshot: Any): Unit =
+  override def saveSnapshot(snapshot: Any): Unit = if (!savingSnapshot) {
     // Decorate the snapshot
+    savingSnapshot = true
     super.saveSnapshot(QueryViewSnapshot(snapshot, _lastOffset, sequenceNrByPersistenceId))
+  }
 
   private def snapshotSaved(metadata: SnapshotMetadata): Unit = {
     lastSnapshotSequenceNr = metadata.sequenceNr
     _noOfEventsSinceLastSnapshot = 0L
   }
 
-  private def snapshotSavingFailed(metadata: SnapshotMetadata, error: Throwable): Unit =
+  private def snapshotSavingFailed(metadata: SnapshotMetadata, error: Throwable): Unit = {
+    savingSnapshot = false
     log.error(error, s"Error saving snapshot")
+  }
 
 }
