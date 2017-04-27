@@ -21,7 +21,7 @@ import java.nio.ByteBuffer
 
 import akka.actor.ExtendedActorSystem
 import akka.contrib.persistence.query.QueryViewFormats.Payload
-import akka.persistence.query.Offset
+import akka.persistence.query.Sequence
 import akka.protobuf.ByteString
 import akka.serialization.{BaseSerializer, ByteBufferSerializer, SerializationExtension, SerializerWithStringManifest}
 
@@ -64,10 +64,10 @@ class QueryViewSnapshotSerializer(val system: ExtendedActorSystem) extends BaseS
       case (persistenceId, sequenceNr) =>
         builder.addSequenceNrs(
           QueryViewFormats.QueryViewSnapshot.SequenceNrEntry
-            .newBuilder()
-            .setPersistenceId(persistenceId)
-            .setSequenceNr(sequenceNr)
-            .build()
+              .newBuilder()
+              .setPersistenceId(persistenceId)
+              .setSequenceNr(sequenceNr)
+              .build()
         )
     }
 
@@ -87,7 +87,7 @@ class QueryViewSnapshotSerializer(val system: ExtendedActorSystem) extends BaseS
     }
 
     val data = deserializePayload(parsed.getData)
-    val maxOffset = deserializePayload(parsed.getMaxOffset).asInstanceOf[Offset]
+    val maxOffset = deserializePayload(parsed.getMaxOffset).asInstanceOf[Sequence]
 
     QueryViewSnapshot(data, maxOffset, sequenceNrsBuilder.result())
   }

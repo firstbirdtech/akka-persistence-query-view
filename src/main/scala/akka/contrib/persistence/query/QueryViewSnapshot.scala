@@ -16,6 +16,6 @@
 
 package akka.contrib.persistence.query
 
-import akka.persistence.query.Offset
+import akka.persistence.query.Sequence
 
-case class QueryViewSnapshot[T](data: T, maxOffset: Offset, sequenceNrs: Map[String, Long] = Map.empty)
+case class QueryViewSnapshot[T](data: T, maxOffset: Sequence, sequenceNrs: Map[String, Long] = Map.empty)

@@ -2,7 +2,7 @@ package akka.contrib.persistence.query
 
 import java.nio.ByteBuffer
 
-import akka.persistence.query.Offset
+import akka.persistence.query.{Offset, Sequence}
 import akka.serialization.SerializationExtension
 import com.ovoenergy.UnitSpec
 import com.ovoenergy.akka.AkkaFixture
@@ -23,7 +23,7 @@ class QueryViewSnapshotSerializerSpec extends UnitSpec with AkkaFixture {
   implicit def arbQueryViewSnapshot[T](implicit arbT: Arbitrary[T]): Arbitrary[QueryViewSnapshot[T]] =
     Arbitrary(for {
       data <- arbT.arbitrary
-      offset <- Gen.choose(1L, Long.MaxValue).map(Offset.sequence)
+      offset <- Gen.choose(1L, Long.MaxValue).map(Sequence)
       sequenceNrs <- Gen.mapOf(Gen.zip(Gen.alphaStr, Gen.posNum[Long]))
     } yield QueryViewSnapshot(data, offset, sequenceNrs))
 
