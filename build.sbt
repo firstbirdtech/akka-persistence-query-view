@@ -35,6 +35,8 @@ lazy val `akka-persistence-query-view` = (project in file("."))
     scalaVersion := "2.12.1",
     crossScalaVersions := Seq(scalaVersion.value, "2.11.8"),
     resolvers ++= Seq(Resolver.mavenLocal, Resolver.typesafeRepo("releases")),
+    // THe scaladoc is causing issue when generating doc around the snapshot format
+    publishArtifact in (Compile, packageDoc) := false,
     libraryDependencies ++= Seq(
       typesafe.config,
       slf4j.api,
@@ -43,6 +45,7 @@ lazy val `akka-persistence-query-view` = (project in file("."))
       akka.stream,
       akka.persistence,
       akka.persistenceQuery,
+      akka.protobuf,
       // -- Testing --
       scalaTest % Test,
       scalaCheck % Test,

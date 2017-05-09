@@ -32,7 +32,7 @@ object Dependencies {
 
   object akka {
 
-    private val version = "2.4.14"
+    private val version = "2.4.18"
 
     val actor = "com.typesafe.akka" %% "akka-actor" % version
     val remote = "com.typesafe.akka" %% "akka-remote" % version
@@ -43,6 +43,7 @@ object Dependencies {
     val clusterSharding = "com.typesafe.akka" %% "akka-cluster-sharding" % version
     val clusterMetrics = "com.typesafe.akka" %% "akka-cluster-metrics" % version
     val persistence = "com.typesafe.akka" %% "akka-persistence" % version
+    val protobuf = "com.typesafe.akka" %% "akka-protobuf" % version
     val persistenceQuery = "com.typesafe.akka" %% "akka-persistence-query-experimental" % version
     val persistenceTck = "com.typesafe.akka" %% "akka-persistence-tck" % version
     val testKit = "com.typesafe.akka" %% "akka-testkit" % version
