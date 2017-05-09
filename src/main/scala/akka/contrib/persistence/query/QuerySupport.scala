@@ -16,23 +16,24 @@
 
 package akka.contrib.persistence.query
 
-import akka.persistence.QueryView
-import akka.persistence.query.{Offset, PersistenceQuery}
 import akka.persistence.query.journal.leveldb.scaladsl.LeveldbReadJournal
+import akka.persistence.query.{PersistenceQuery, Sequence}
+import akka.persistence.{EventStreamOffsetTyped, QueryView}
 
-trait QuerySupport {
+trait QuerySupport extends EventStreamOffsetTyped {
 
   type Queries
 
   def queries: Queries
 
-  def firstOffset: Offset
+  def firstOffset: OT
 }
 
-trait LevelDbQuerySupport extends QuerySupport { this: QueryView =>
+trait LevelDbQuerySupport extends QuerySupport {
+  this: QueryView =>
 
   override type Queries = LeveldbReadJournal
-  override def firstOffset: Offset = Offset.sequence(1L)
+  override def firstOffset: OT = Sequence(1L)
   override val queries: LeveldbReadJournal =
     PersistenceQuery(context.system).readJournalFor[LeveldbReadJournal](LeveldbReadJournal.Identifier)
 }

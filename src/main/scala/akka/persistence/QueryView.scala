@@ -79,21 +79,32 @@ object QueryView {
 
 }
 
+trait EventStreamOffsetTyped {
+  /**
+    * Type of offset used for position in the event stream
+    */
+  //todo replace with 'OT <: Offset' but not possible as long as EventEnvelope (not EventEnvelope2) is used which is bound to Sequence
+  type OT = Sequence
+}
+
 abstract class QueryView
     extends Actor
-    with Snapshotter
-    with QuerySupport
-    with Stash
-    with StashFactory
-    with ActorLogging {
+        with Snapshotter
+        with EventStreamOffsetTyped
+        with Stash
+        with StashFactory
+        with ActorLogging {
+
 
   import QueryView._
   import context._
 
   // Status variables
 
-  private[this] var _lastOffset: Offset = firstOffset
-  private[this] var sequenceNrByPersistenceId: Map[String, Long] = Map.empty
+  def firstOffset: OT
+
+  private[this] var _lastOffset: OT = firstOffset
+  private[this] var _sequenceNrByPersistenceId: Map[String, Long] = Map.empty
   private[this] var lastSnapshotSequenceNr: Long = 0L
   private[this] var _noOfEventsSinceLastSnapshot: Long = 0L
   private[this] var currentState: State = State.WaitingForSnapshot
@@ -142,7 +153,7 @@ abstract class QueryView
     *
     * It is declared as AnyRef to be able to return [[EventEnvelope]] or [[EventEnvelope2]].
     */
-  def recoveringStream(): Source[AnyRef, _]
+  def recoveringStream(sequenceNrByPersistenceId: Map[String, Long], lastOffset: OT): Source[AnyRef, _]
 
   /**
     * It is the source od EventEnvelope used to receive live events, it MUST be a infinite stream (eg: It should never
@@ -150,7 +161,7 @@ abstract class QueryView
     *
     * It is declared as AnyRef to be able to return [[EventEnvelope]] or [[EventEnvelope2]].
     */
-  def liveStream(): Source[AnyRef, _]
+  def liveStream(sequenceNrByPersistenceId: Map[String, Long], lastOffset: OT): Source[AnyRef, _]
 
   /**
     * It is an hook called before the actor switch to live mode. It is synchronous (it can change the actor status).
@@ -180,12 +191,7 @@ abstract class QueryView
   /**
     * Return the last replayed message offset from the journal.
     */
-  final def lastOffset: Offset = _lastOffset
-
-  /**
-    * Return the next sequence nr to fetch from the journal for the given persistence ID.
-    */
-  final def nextSequenceNr(persistenceId: String): Long = sequenceNrByPersistenceId.getOrElse(persistenceId, 0L)
+  final def lastOffset: OT = _lastOffset
 
   /**
     * Return the number of processed events since last snapshot has been taken.
@@ -239,16 +245,16 @@ abstract class QueryView
       case StartLive =>
         sender() ! EventReplayed
 
-      case EventEnvelope2(offset, persistenceId, sequenceNr, event) ⇒
+      case EventEnvelope2(offset:OT, persistenceId, sequenceNr, event) ⇒
         _lastOffset = offset
-        sequenceNrByPersistenceId = sequenceNrByPersistenceId + (persistenceId -> (sequenceNr + 1))
+        _sequenceNrByPersistenceId = _sequenceNrByPersistenceId + (persistenceId -> (sequenceNr + 1))
         _noOfEventsSinceLastSnapshot = _noOfEventsSinceLastSnapshot + 1
         super.aroundReceive(behaviour, event)
         sender() ! EventReplayed
 
       case EventEnvelope(offset, persistenceId, sequenceNr, event) ⇒
         _lastOffset = Sequence(offset)
-        sequenceNrByPersistenceId = sequenceNrByPersistenceId + (persistenceId -> (sequenceNr + 1))
+        _sequenceNrByPersistenceId = _sequenceNrByPersistenceId + (persistenceId -> (sequenceNr + 1))
         _noOfEventsSinceLastSnapshot = _noOfEventsSinceLastSnapshot + 1
         super.aroundReceive(behaviour, event)
         sender() ! EventReplayed
@@ -258,11 +264,11 @@ abstract class QueryView
         // We have to crash the actor
         throw ex
 
-      case msg @ SaveSnapshotSuccess(metadata) ⇒
+      case msg@SaveSnapshotSuccess(metadata) ⇒
         snapshotSaved(metadata)
         super.aroundReceive(behaviour, msg)
 
-      case msg @ SaveSnapshotFailure(metadata, error) ⇒
+      case msg@SaveSnapshotFailure(metadata, error) ⇒
         snapshotSavingFailed(metadata, error)
         super.aroundReceive(behaviour, msg)
 
@@ -278,14 +284,14 @@ abstract class QueryView
 
       case EventEnvelope(offset, persistenceId, sequenceNr, event) ⇒
         _lastOffset = Sequence(offset)
-        sequenceNrByPersistenceId = sequenceNrByPersistenceId + (persistenceId -> (sequenceNr + 1))
+        _sequenceNrByPersistenceId = _sequenceNrByPersistenceId + (persistenceId -> (sequenceNr + 1))
         _noOfEventsSinceLastSnapshot = _noOfEventsSinceLastSnapshot + 1
         super.aroundReceive(behaviour, event)
         sender() ! EventReplayed
 
-      case EventEnvelope2(offset, persistenceId, sequenceNr, event) ⇒
+      case EventEnvelope2(offset:OT, persistenceId, sequenceNr, event) ⇒
         _lastOffset = offset
-        sequenceNrByPersistenceId = sequenceNrByPersistenceId + (persistenceId -> (sequenceNr + 1))
+        _sequenceNrByPersistenceId = _sequenceNrByPersistenceId + (persistenceId -> (sequenceNr + 1))
         _noOfEventsSinceLastSnapshot = _noOfEventsSinceLastSnapshot + 1
         super.aroundReceive(behaviour, event)
         sender() ! EventReplayed
@@ -298,11 +304,11 @@ abstract class QueryView
         // We have to crash the actor
         throw ex
 
-      case msg @ SaveSnapshotSuccess(metadata) ⇒
+      case msg@SaveSnapshotSuccess(metadata) ⇒
         snapshotSaved(metadata)
         super.aroundReceive(behaviour, msg)
 
-      case msg @ SaveSnapshotFailure(metadata, error) ⇒
+      case msg@SaveSnapshotFailure(metadata, error) ⇒
         snapshotSavingFailed(metadata, error)
         super.aroundReceive(behaviour, msg)
 
@@ -317,7 +323,7 @@ abstract class QueryView
         if (behaviour.isDefinedAt(offer)) {
           super.aroundReceive(behaviour, offer)
           _lastOffset = status.maxOffset
-          sequenceNrByPersistenceId = status.sequenceNrs
+          _sequenceNrByPersistenceId = status.sequenceNrs
           lastSnapshotSequenceNr = metadata.sequenceNr
         }
         startRecovery()
@@ -339,20 +345,19 @@ abstract class QueryView
     loadSnapshotTimer.foreach(_.cancel())
     currentState = State.Recovering
 
-    // TODO Pass the sequenceNrByPersistenceId and offset to recoveringStream
     val stream = recoveryTimeout match {
-      case t: FiniteDuration ⇒ recoveringStream().completionTimeout(t)
-      case _ ⇒ recoveringStream()
+      case t: FiniteDuration ⇒ recoveringStream(_sequenceNrByPersistenceId, lastOffset).completionTimeout(t)
+      case _ ⇒ recoveringStream(_sequenceNrByPersistenceId, lastOffset)
     }
 
     val recoverySink =
       Sink.actorRefWithAck(self, StartRecovery, EventReplayed, QueryView.RecoveryCompleted, e => RecoveryFailed(e))
 
     stream
-      .filterAlreadyReceived(sequenceNrByPersistenceId)
-      .concat(Source.single(QueryView.RecoveryCompleted))
-      .to(recoverySink)
-      .run()
+        .filterAlreadyReceived(_sequenceNrByPersistenceId)
+        .concat(Source.single(QueryView.RecoveryCompleted))
+        .to(recoverySink)
+        .run()
   }
 
   private def startLive(): Unit = {
@@ -371,16 +376,16 @@ abstract class QueryView
         e => LiveStreamFailed(e)
       )
 
-    liveStream() // TODO Pass the sequenceNrByPersistenceId and offset to liveStream
-      .filterAlreadyReceived(sequenceNrByPersistenceId)
-      .to(liveSink)
-      .run()
+    liveStream(_sequenceNrByPersistenceId,lastOffset)
+        .filterAlreadyReceived(_sequenceNrByPersistenceId)
+        .to(liveSink)
+        .run()
   }
 
   override def saveSnapshot(snapshot: Any): Unit = if (!savingSnapshot) {
     // Decorate the snapshot
     savingSnapshot = true
-    super.saveSnapshot(QueryViewSnapshot(snapshot, _lastOffset, sequenceNrByPersistenceId))
+    super.saveSnapshot(QueryViewSnapshot(snapshot, _lastOffset, _sequenceNrByPersistenceId))
   }
 
   private def snapshotSaved(metadata: SnapshotMetadata): Unit = {

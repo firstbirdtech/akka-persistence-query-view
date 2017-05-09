@@ -1,19 +1,15 @@
 package akka.persistence
 
 import akka.actor.{ActorRef, Props, Status, Terminated}
-import akka.contrib.persistence.query.{LevelDbQuerySupport, QuerySupport}
-import akka.persistence.journal.Tagged
-import akka.persistence.query.Offset
-import akka.stream.scaladsl.Source
-import com.ovoenergy.{ConfigFixture, UnitSpec}
-import com.ovoenergy.akka.{AkkaFixture, AkkaPersistenceFixture}
-import akka.persistence.query._
-import akka.persistence.query.journal.leveldb.scaladsl.LeveldbReadJournal
+import akka.contrib.persistence.query.LevelDbQuerySupport
 import akka.pattern._
+import akka.persistence.journal.Tagged
+import akka.stream.scaladsl.Source
 import akka.testkit.TestProbe
 import akka.util.Timeout
+import com.ovoenergy.akka.{AkkaFixture, AkkaPersistenceFixture}
+import com.ovoenergy.{ConfigFixture, UnitSpec}
 
-import scala.collection.mutable
 import scala.concurrent.duration._
 
 class QueryViewSpec extends UnitSpec with ConfigFixture with AkkaFixture with AkkaPersistenceFixture {
@@ -235,22 +231,20 @@ class QueryViewSpec extends UnitSpec with ConfigFixture with AkkaFixture with Ak
 
 class PersistenceIdQueryView(persistenceId: String) extends TestQueryView {
 
-  override def recoveringStream(): Source[AnyRef, _] =
+  override def recoveringStream(sequenceNrByPersistenceId: Map[String, Long], lastOffset: OT): Source[AnyRef, _] =
     queries.currentEventsByPersistenceId(persistenceId)
 
-  override def liveStream(): Source[AnyRef, _] =
-    queries.eventsByPersistenceId(persistenceId, nextSequenceNr(persistenceId))
-
+  override def liveStream(sequenceNrByPersistenceId: Map[String, Long], lastOffset: OT): Source[AnyRef, _] =
+    queries.eventsByPersistenceId(persistenceId, sequenceNrByPersistenceId.getOrElse(persistenceId, 0L))
 }
 
 class TagQueryView(tag: String) extends TestQueryView {
 
-  override def recoveringStream(): Source[AnyRef, _] =
+  override def recoveringStream(sequenceNrByPersistenceId: Map[String, Long], lastOffset: OT): Source[AnyRef, _] =
     queries.currentEventsByTag(tag, lastOffset)
 
-  override def liveStream(): Source[AnyRef, _] =
+  override def liveStream(sequenceNrByPersistenceId: Map[String, Long], lastOffset: OT): Source[AnyRef, _] =
     queries.eventsByTag(tag, lastOffset)
-
 }
 
 object TestQueryView {

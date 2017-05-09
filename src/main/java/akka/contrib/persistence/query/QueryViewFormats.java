@@ -31,12 +31,12 @@ public final class QueryViewFormats {
         /**
          * <code>repeated .akka.contrib.persistence.query.QueryViewSnapshot.SequenceNrEntry sequenceNrs = 1;</code>
          */
-        java.util.List<akka.contrib.persistence.query.QueryViewFormats.QueryViewSnapshot.SequenceNrEntry>
+        java.util.List<QueryViewSnapshot.SequenceNrEntry>
         getSequenceNrsList();
         /**
          * <code>repeated .akka.contrib.persistence.query.QueryViewSnapshot.SequenceNrEntry sequenceNrs = 1;</code>
          */
-        akka.contrib.persistence.query.QueryViewFormats.QueryViewSnapshot.SequenceNrEntry getSequenceNrs(int index);
+        QueryViewSnapshot.SequenceNrEntry getSequenceNrs(int index);
         /**
          * <code>repeated .akka.contrib.persistence.query.QueryViewSnapshot.SequenceNrEntry sequenceNrs = 1;</code>
          */
@@ -44,13 +44,13 @@ public final class QueryViewFormats {
         /**
          * <code>repeated .akka.contrib.persistence.query.QueryViewSnapshot.SequenceNrEntry sequenceNrs = 1;</code>
          */
-        java.util.List<? extends akka.contrib.persistence.query.QueryViewFormats.QueryViewSnapshot.SequenceNrEntryOrBuilder>
+        java.util.List<? extends QueryViewSnapshot.SequenceNrEntryOrBuilder>
         getSequenceNrsOrBuilderList();
         /**
          * <code>repeated .akka.contrib.persistence.query.QueryViewSnapshot.SequenceNrEntry sequenceNrs = 1;</code>
          */
-        akka.contrib.persistence.query.QueryViewFormats.QueryViewSnapshot.SequenceNrEntryOrBuilder getSequenceNrsOrBuilder(
-                int index);
+        QueryViewSnapshot.SequenceNrEntryOrBuilder getSequenceNrsOrBuilder(
+            int index);
 
         /**
          * <code>optional .akka.contrib.persistence.query.Payload maxOffset = 2;</code>
@@ -59,11 +59,11 @@ public final class QueryViewFormats {
         /**
          * <code>optional .akka.contrib.persistence.query.Payload maxOffset = 2;</code>
          */
-        akka.contrib.persistence.query.QueryViewFormats.Payload getMaxOffset();
+        Payload getMaxOffset();
         /**
          * <code>optional .akka.contrib.persistence.query.Payload maxOffset = 2;</code>
          */
-        akka.contrib.persistence.query.QueryViewFormats.PayloadOrBuilder getMaxOffsetOrBuilder();
+        PayloadOrBuilder getMaxOffsetOrBuilder();
 
         /**
          * <code>optional .akka.contrib.persistence.query.Payload data = 3;</code>
@@ -72,11 +72,11 @@ public final class QueryViewFormats {
         /**
          * <code>optional .akka.contrib.persistence.query.Payload data = 3;</code>
          */
-        akka.contrib.persistence.query.QueryViewFormats.Payload getData();
+        Payload getData();
         /**
          * <code>optional .akka.contrib.persistence.query.Payload data = 3;</code>
          */
-        akka.contrib.persistence.query.QueryViewFormats.PayloadOrBuilder getDataOrBuilder();
+        PayloadOrBuilder getDataOrBuilder();
     }
     /**
      * Protobuf type {@code akka.contrib.persistence.query.QueryViewSnapshot}
@@ -102,7 +102,7 @@ public final class QueryViewFormats {
         }
 
         private final akka.protobuf.UnknownFieldSet unknownFields;
-        @java.lang.Override
+        @Override
         public final akka.protobuf.UnknownFieldSet
         getUnknownFields() {
             return this.unknownFields;
@@ -132,18 +132,18 @@ public final class QueryViewFormats {
                         }
                         case 10: {
                             if (!((mutable_bitField0_ & 0x00000001) == 0x00000001)) {
-                                sequenceNrs_ = new java.util.ArrayList<akka.contrib.persistence.query.QueryViewFormats.QueryViewSnapshot.SequenceNrEntry>();
+                                sequenceNrs_ = new java.util.ArrayList<SequenceNrEntry>();
                                 mutable_bitField0_ |= 0x00000001;
                             }
-                            sequenceNrs_.add(input.readMessage(akka.contrib.persistence.query.QueryViewFormats.QueryViewSnapshot.SequenceNrEntry.PARSER, extensionRegistry));
+                            sequenceNrs_.add(input.readMessage(SequenceNrEntry.PARSER, extensionRegistry));
                             break;
                         }
                         case 18: {
-                            akka.contrib.persistence.query.QueryViewFormats.Payload.Builder subBuilder = null;
+                            Payload.Builder subBuilder = null;
                             if (((bitField0_ & 0x00000001) == 0x00000001)) {
                                 subBuilder = maxOffset_.toBuilder();
                             }
-                            maxOffset_ = input.readMessage(akka.contrib.persistence.query.QueryViewFormats.Payload.PARSER, extensionRegistry);
+                            maxOffset_ = input.readMessage(Payload.PARSER, extensionRegistry);
                             if (subBuilder != null) {
                                 subBuilder.mergeFrom(maxOffset_);
                                 maxOffset_ = subBuilder.buildPartial();
@@ -152,11 +152,11 @@ public final class QueryViewFormats {
                             break;
                         }
                         case 26: {
-                            akka.contrib.persistence.query.QueryViewFormats.Payload.Builder subBuilder = null;
+                            Payload.Builder subBuilder = null;
                             if (((bitField0_ & 0x00000002) == 0x00000002)) {
                                 subBuilder = data_.toBuilder();
                             }
-                            data_ = input.readMessage(akka.contrib.persistence.query.QueryViewFormats.Payload.PARSER, extensionRegistry);
+                            data_ = input.readMessage(Payload.PARSER, extensionRegistry);
                             if (subBuilder != null) {
                                 subBuilder.mergeFrom(data_);
                                 data_ = subBuilder.buildPartial();
@@ -181,14 +181,14 @@ public final class QueryViewFormats {
         }
         public static final akka.protobuf.Descriptors.Descriptor
         getDescriptor() {
-            return akka.contrib.persistence.query.QueryViewFormats.internal_static_akka_contrib_persistence_query_QueryViewSnapshot_descriptor;
+            return QueryViewFormats.internal_static_akka_contrib_persistence_query_QueryViewSnapshot_descriptor;
         }
 
-        protected akka.protobuf.GeneratedMessage.FieldAccessorTable
+        protected FieldAccessorTable
         internalGetFieldAccessorTable() {
-            return akka.contrib.persistence.query.QueryViewFormats.internal_static_akka_contrib_persistence_query_QueryViewSnapshot_fieldAccessorTable
+            return QueryViewFormats.internal_static_akka_contrib_persistence_query_QueryViewSnapshot_fieldAccessorTable
                     .ensureFieldAccessorsInitialized(
-                            akka.contrib.persistence.query.QueryViewFormats.QueryViewSnapshot.class, akka.contrib.persistence.query.QueryViewFormats.QueryViewSnapshot.Builder.class);
+                            QueryViewSnapshot.class, Builder.class);
         }
 
         public static akka.protobuf.Parser<QueryViewSnapshot> PARSER =
@@ -201,7 +201,7 @@ public final class QueryViewFormats {
                     }
                 };
 
-        @java.lang.Override
+        @Override
         public akka.protobuf.Parser<QueryViewSnapshot> getParserForType() {
             return PARSER;
         }
@@ -217,7 +217,7 @@ public final class QueryViewFormats {
             /**
              * <code>optional string persistenceId = 1;</code>
              */
-            java.lang.String getPersistenceId();
+            String getPersistenceId();
             /**
              * <code>optional string persistenceId = 1;</code>
              */
@@ -257,7 +257,7 @@ public final class QueryViewFormats {
             }
 
             private final akka.protobuf.UnknownFieldSet unknownFields;
-            @java.lang.Override
+            @Override
             public final akka.protobuf.UnknownFieldSet
             getUnknownFields() {
                 return this.unknownFields;
@@ -310,14 +310,14 @@ public final class QueryViewFormats {
             }
             public static final akka.protobuf.Descriptors.Descriptor
             getDescriptor() {
-                return akka.contrib.persistence.query.QueryViewFormats.internal_static_akka_contrib_persistence_query_QueryViewSnapshot_SequenceNrEntry_descriptor;
+                return QueryViewFormats.internal_static_akka_contrib_persistence_query_QueryViewSnapshot_SequenceNrEntry_descriptor;
             }
 
-            protected akka.protobuf.GeneratedMessage.FieldAccessorTable
+            protected FieldAccessorTable
             internalGetFieldAccessorTable() {
-                return akka.contrib.persistence.query.QueryViewFormats.internal_static_akka_contrib_persistence_query_QueryViewSnapshot_SequenceNrEntry_fieldAccessorTable
+                return QueryViewFormats.internal_static_akka_contrib_persistence_query_QueryViewSnapshot_SequenceNrEntry_fieldAccessorTable
                         .ensureFieldAccessorsInitialized(
-                                akka.contrib.persistence.query.QueryViewFormats.QueryViewSnapshot.SequenceNrEntry.class, akka.contrib.persistence.query.QueryViewFormats.QueryViewSnapshot.SequenceNrEntry.Builder.class);
+                                SequenceNrEntry.class, Builder.class);
             }
 
             public static akka.protobuf.Parser<SequenceNrEntry> PARSER =
@@ -330,14 +330,14 @@ public final class QueryViewFormats {
                         }
                     };
 
-            @java.lang.Override
+            @Override
             public akka.protobuf.Parser<SequenceNrEntry> getParserForType() {
                 return PARSER;
             }
 
             private int bitField0_;
             public static final int PERSISTENCEID_FIELD_NUMBER = 1;
-            private java.lang.Object persistenceId_;
+            private Object persistenceId_;
             /**
              * <code>optional string persistenceId = 1;</code>
              */
@@ -347,14 +347,14 @@ public final class QueryViewFormats {
             /**
              * <code>optional string persistenceId = 1;</code>
              */
-            public java.lang.String getPersistenceId() {
-                java.lang.Object ref = persistenceId_;
-                if (ref instanceof java.lang.String) {
-                    return (java.lang.String) ref;
+            public String getPersistenceId() {
+                Object ref = persistenceId_;
+                if (ref instanceof String) {
+                    return (String) ref;
                 } else {
                     akka.protobuf.ByteString bs =
                             (akka.protobuf.ByteString) ref;
-                    java.lang.String s = bs.toStringUtf8();
+                    String s = bs.toStringUtf8();
                     if (bs.isValidUtf8()) {
                         persistenceId_ = s;
                     }
@@ -366,11 +366,11 @@ public final class QueryViewFormats {
              */
             public akka.protobuf.ByteString
             getPersistenceIdBytes() {
-                java.lang.Object ref = persistenceId_;
-                if (ref instanceof java.lang.String) {
+                Object ref = persistenceId_;
+                if (ref instanceof String) {
                     akka.protobuf.ByteString b =
                             akka.protobuf.ByteString.copyFromUtf8(
-                                    (java.lang.String) ref);
+                                    (String) ref);
                     persistenceId_ = b;
                     return b;
                 } else {
@@ -439,59 +439,59 @@ public final class QueryViewFormats {
             }
 
             private static final long serialVersionUID = 0L;
-            @java.lang.Override
-            protected java.lang.Object writeReplace()
+            @Override
+            protected Object writeReplace()
                     throws java.io.ObjectStreamException {
                 return super.writeReplace();
             }
 
-            public static akka.contrib.persistence.query.QueryViewFormats.QueryViewSnapshot.SequenceNrEntry parseFrom(
+            public static SequenceNrEntry parseFrom(
                     akka.protobuf.ByteString data)
                     throws akka.protobuf.InvalidProtocolBufferException {
                 return PARSER.parseFrom(data);
             }
-            public static akka.contrib.persistence.query.QueryViewFormats.QueryViewSnapshot.SequenceNrEntry parseFrom(
+            public static SequenceNrEntry parseFrom(
                     akka.protobuf.ByteString data,
                     akka.protobuf.ExtensionRegistryLite extensionRegistry)
                     throws akka.protobuf.InvalidProtocolBufferException {
                 return PARSER.parseFrom(data, extensionRegistry);
             }
-            public static akka.contrib.persistence.query.QueryViewFormats.QueryViewSnapshot.SequenceNrEntry parseFrom(byte[] data)
+            public static SequenceNrEntry parseFrom(byte[] data)
                     throws akka.protobuf.InvalidProtocolBufferException {
                 return PARSER.parseFrom(data);
             }
-            public static akka.contrib.persistence.query.QueryViewFormats.QueryViewSnapshot.SequenceNrEntry parseFrom(
+            public static SequenceNrEntry parseFrom(
                     byte[] data,
                     akka.protobuf.ExtensionRegistryLite extensionRegistry)
                     throws akka.protobuf.InvalidProtocolBufferException {
                 return PARSER.parseFrom(data, extensionRegistry);
             }
-            public static akka.contrib.persistence.query.QueryViewFormats.QueryViewSnapshot.SequenceNrEntry parseFrom(java.io.InputStream input)
+            public static SequenceNrEntry parseFrom(java.io.InputStream input)
                     throws java.io.IOException {
                 return PARSER.parseFrom(input);
             }
-            public static akka.contrib.persistence.query.QueryViewFormats.QueryViewSnapshot.SequenceNrEntry parseFrom(
+            public static SequenceNrEntry parseFrom(
                     java.io.InputStream input,
                     akka.protobuf.ExtensionRegistryLite extensionRegistry)
                     throws java.io.IOException {
                 return PARSER.parseFrom(input, extensionRegistry);
             }
-            public static akka.contrib.persistence.query.QueryViewFormats.QueryViewSnapshot.SequenceNrEntry parseDelimitedFrom(java.io.InputStream input)
+            public static SequenceNrEntry parseDelimitedFrom(java.io.InputStream input)
                     throws java.io.IOException {
                 return PARSER.parseDelimitedFrom(input);
             }
-            public static akka.contrib.persistence.query.QueryViewFormats.QueryViewSnapshot.SequenceNrEntry parseDelimitedFrom(
+            public static SequenceNrEntry parseDelimitedFrom(
                     java.io.InputStream input,
                     akka.protobuf.ExtensionRegistryLite extensionRegistry)
                     throws java.io.IOException {
                 return PARSER.parseDelimitedFrom(input, extensionRegistry);
             }
-            public static akka.contrib.persistence.query.QueryViewFormats.QueryViewSnapshot.SequenceNrEntry parseFrom(
+            public static SequenceNrEntry parseFrom(
                     akka.protobuf.CodedInputStream input)
                     throws java.io.IOException {
                 return PARSER.parseFrom(input);
             }
-            public static akka.contrib.persistence.query.QueryViewFormats.QueryViewSnapshot.SequenceNrEntry parseFrom(
+            public static SequenceNrEntry parseFrom(
                     akka.protobuf.CodedInputStream input,
                     akka.protobuf.ExtensionRegistryLite extensionRegistry)
                     throws java.io.IOException {
@@ -500,14 +500,14 @@ public final class QueryViewFormats {
 
             public static Builder newBuilder() { return Builder.create(); }
             public Builder newBuilderForType() { return newBuilder(); }
-            public static Builder newBuilder(akka.contrib.persistence.query.QueryViewFormats.QueryViewSnapshot.SequenceNrEntry prototype) {
+            public static Builder newBuilder(SequenceNrEntry prototype) {
                 return newBuilder().mergeFrom(prototype);
             }
             public Builder toBuilder() { return newBuilder(this); }
 
-            @java.lang.Override
+            @Override
             protected Builder newBuilderForType(
-                    akka.protobuf.GeneratedMessage.BuilderParent parent) {
+                    BuilderParent parent) {
                 Builder builder = new Builder(parent);
                 return builder;
             }
@@ -517,17 +517,17 @@ public final class QueryViewFormats {
             public static final class Builder extends
                     akka.protobuf.GeneratedMessage.Builder<Builder> implements
                     // @@protoc_insertion_point(builder_implements:akka.contrib.persistence.query.QueryViewSnapshot.SequenceNrEntry)
-                    akka.contrib.persistence.query.QueryViewFormats.QueryViewSnapshot.SequenceNrEntryOrBuilder {
+                    SequenceNrEntryOrBuilder {
                 public static final akka.protobuf.Descriptors.Descriptor
                 getDescriptor() {
-                    return akka.contrib.persistence.query.QueryViewFormats.internal_static_akka_contrib_persistence_query_QueryViewSnapshot_SequenceNrEntry_descriptor;
+                    return QueryViewFormats.internal_static_akka_contrib_persistence_query_QueryViewSnapshot_SequenceNrEntry_descriptor;
                 }
 
-                protected akka.protobuf.GeneratedMessage.FieldAccessorTable
+                protected FieldAccessorTable
                 internalGetFieldAccessorTable() {
-                    return akka.contrib.persistence.query.QueryViewFormats.internal_static_akka_contrib_persistence_query_QueryViewSnapshot_SequenceNrEntry_fieldAccessorTable
+                    return QueryViewFormats.internal_static_akka_contrib_persistence_query_QueryViewSnapshot_SequenceNrEntry_fieldAccessorTable
                             .ensureFieldAccessorsInitialized(
-                                    akka.contrib.persistence.query.QueryViewFormats.QueryViewSnapshot.SequenceNrEntry.class, akka.contrib.persistence.query.QueryViewFormats.QueryViewSnapshot.SequenceNrEntry.Builder.class);
+                                    SequenceNrEntry.class, Builder.class);
                 }
 
                 // Construct using akka.contrib.persistence.query.QueryViewFormats.QueryViewSnapshot.SequenceNrEntry.newBuilder()
@@ -536,7 +536,7 @@ public final class QueryViewFormats {
                 }
 
                 private Builder(
-                        akka.protobuf.GeneratedMessage.BuilderParent parent) {
+                        BuilderParent parent) {
                     super(parent);
                     maybeForceBuilderInitialization();
                 }
@@ -563,23 +563,23 @@ public final class QueryViewFormats {
 
                 public akka.protobuf.Descriptors.Descriptor
                 getDescriptorForType() {
-                    return akka.contrib.persistence.query.QueryViewFormats.internal_static_akka_contrib_persistence_query_QueryViewSnapshot_SequenceNrEntry_descriptor;
+                    return QueryViewFormats.internal_static_akka_contrib_persistence_query_QueryViewSnapshot_SequenceNrEntry_descriptor;
                 }
 
-                public akka.contrib.persistence.query.QueryViewFormats.QueryViewSnapshot.SequenceNrEntry getDefaultInstanceForType() {
-                    return akka.contrib.persistence.query.QueryViewFormats.QueryViewSnapshot.SequenceNrEntry.getDefaultInstance();
+                public SequenceNrEntry getDefaultInstanceForType() {
+                    return SequenceNrEntry.getDefaultInstance();
                 }
 
-                public akka.contrib.persistence.query.QueryViewFormats.QueryViewSnapshot.SequenceNrEntry build() {
-                    akka.contrib.persistence.query.QueryViewFormats.QueryViewSnapshot.SequenceNrEntry result = buildPartial();
+                public SequenceNrEntry build() {
+                    SequenceNrEntry result = buildPartial();
                     if (!result.isInitialized()) {
                         throw newUninitializedMessageException(result);
                     }
                     return result;
                 }
 
-                public akka.contrib.persistence.query.QueryViewFormats.QueryViewSnapshot.SequenceNrEntry buildPartial() {
-                    akka.contrib.persistence.query.QueryViewFormats.QueryViewSnapshot.SequenceNrEntry result = new akka.contrib.persistence.query.QueryViewFormats.QueryViewSnapshot.SequenceNrEntry(this);
+                public SequenceNrEntry buildPartial() {
+                    SequenceNrEntry result = new SequenceNrEntry(this);
                     int from_bitField0_ = bitField0_;
                     int to_bitField0_ = 0;
                     if (((from_bitField0_ & 0x00000001) == 0x00000001)) {
@@ -596,16 +596,16 @@ public final class QueryViewFormats {
                 }
 
                 public Builder mergeFrom(akka.protobuf.Message other) {
-                    if (other instanceof akka.contrib.persistence.query.QueryViewFormats.QueryViewSnapshot.SequenceNrEntry) {
-                        return mergeFrom((akka.contrib.persistence.query.QueryViewFormats.QueryViewSnapshot.SequenceNrEntry)other);
+                    if (other instanceof SequenceNrEntry) {
+                        return mergeFrom((SequenceNrEntry)other);
                     } else {
                         super.mergeFrom(other);
                         return this;
                     }
                 }
 
-                public Builder mergeFrom(akka.contrib.persistence.query.QueryViewFormats.QueryViewSnapshot.SequenceNrEntry other) {
-                    if (other == akka.contrib.persistence.query.QueryViewFormats.QueryViewSnapshot.SequenceNrEntry.getDefaultInstance()) return this;
+                public Builder mergeFrom(SequenceNrEntry other) {
+                    if (other == SequenceNrEntry.getDefaultInstance()) return this;
                     if (other.hasPersistenceId()) {
                         bitField0_ |= 0x00000001;
                         persistenceId_ = other.persistenceId_;
@@ -626,11 +626,11 @@ public final class QueryViewFormats {
                         akka.protobuf.CodedInputStream input,
                         akka.protobuf.ExtensionRegistryLite extensionRegistry)
                         throws java.io.IOException {
-                    akka.contrib.persistence.query.QueryViewFormats.QueryViewSnapshot.SequenceNrEntry parsedMessage = null;
+                    SequenceNrEntry parsedMessage = null;
                     try {
                         parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
                     } catch (akka.protobuf.InvalidProtocolBufferException e) {
-                        parsedMessage = (akka.contrib.persistence.query.QueryViewFormats.QueryViewSnapshot.SequenceNrEntry) e.getUnfinishedMessage();
+                        parsedMessage = (SequenceNrEntry) e.getUnfinishedMessage();
                         throw e;
                     } finally {
                         if (parsedMessage != null) {
@@ -641,7 +641,7 @@ public final class QueryViewFormats {
                 }
                 private int bitField0_;
 
-                private java.lang.Object persistenceId_ = "";
+                private Object persistenceId_ = "";
                 /**
                  * <code>optional string persistenceId = 1;</code>
                  */
@@ -651,18 +651,18 @@ public final class QueryViewFormats {
                 /**
                  * <code>optional string persistenceId = 1;</code>
                  */
-                public java.lang.String getPersistenceId() {
-                    java.lang.Object ref = persistenceId_;
-                    if (!(ref instanceof java.lang.String)) {
+                public String getPersistenceId() {
+                    Object ref = persistenceId_;
+                    if (!(ref instanceof String)) {
                         akka.protobuf.ByteString bs =
                                 (akka.protobuf.ByteString) ref;
-                        java.lang.String s = bs.toStringUtf8();
+                        String s = bs.toStringUtf8();
                         if (bs.isValidUtf8()) {
                             persistenceId_ = s;
                         }
                         return s;
                     } else {
-                        return (java.lang.String) ref;
+                        return (String) ref;
                     }
                 }
                 /**
@@ -670,11 +670,11 @@ public final class QueryViewFormats {
                  */
                 public akka.protobuf.ByteString
                 getPersistenceIdBytes() {
-                    java.lang.Object ref = persistenceId_;
+                    Object ref = persistenceId_;
                     if (ref instanceof String) {
                         akka.protobuf.ByteString b =
                                 akka.protobuf.ByteString.copyFromUtf8(
-                                        (java.lang.String) ref);
+                                        (String) ref);
                         persistenceId_ = b;
                         return b;
                     } else {
@@ -685,7 +685,7 @@ public final class QueryViewFormats {
                  * <code>optional string persistenceId = 1;</code>
                  */
                 public Builder setPersistenceId(
-                        java.lang.String value) {
+                        String value) {
                     if (value == null) {
                         throw new NullPointerException();
                     }
@@ -762,17 +762,17 @@ public final class QueryViewFormats {
 
         private int bitField0_;
         public static final int SEQUENCENRS_FIELD_NUMBER = 1;
-        private java.util.List<akka.contrib.persistence.query.QueryViewFormats.QueryViewSnapshot.SequenceNrEntry> sequenceNrs_;
+        private java.util.List<SequenceNrEntry> sequenceNrs_;
         /**
          * <code>repeated .akka.contrib.persistence.query.QueryViewSnapshot.SequenceNrEntry sequenceNrs = 1;</code>
          */
-        public java.util.List<akka.contrib.persistence.query.QueryViewFormats.QueryViewSnapshot.SequenceNrEntry> getSequenceNrsList() {
+        public java.util.List<SequenceNrEntry> getSequenceNrsList() {
             return sequenceNrs_;
         }
         /**
          * <code>repeated .akka.contrib.persistence.query.QueryViewSnapshot.SequenceNrEntry sequenceNrs = 1;</code>
          */
-        public java.util.List<? extends akka.contrib.persistence.query.QueryViewFormats.QueryViewSnapshot.SequenceNrEntryOrBuilder>
+        public java.util.List<? extends SequenceNrEntryOrBuilder>
         getSequenceNrsOrBuilderList() {
             return sequenceNrs_;
         }
@@ -785,19 +785,19 @@ public final class QueryViewFormats {
         /**
          * <code>repeated .akka.contrib.persistence.query.QueryViewSnapshot.SequenceNrEntry sequenceNrs = 1;</code>
          */
-        public akka.contrib.persistence.query.QueryViewFormats.QueryViewSnapshot.SequenceNrEntry getSequenceNrs(int index) {
+        public SequenceNrEntry getSequenceNrs(int index) {
             return sequenceNrs_.get(index);
         }
         /**
          * <code>repeated .akka.contrib.persistence.query.QueryViewSnapshot.SequenceNrEntry sequenceNrs = 1;</code>
          */
-        public akka.contrib.persistence.query.QueryViewFormats.QueryViewSnapshot.SequenceNrEntryOrBuilder getSequenceNrsOrBuilder(
+        public SequenceNrEntryOrBuilder getSequenceNrsOrBuilder(
                 int index) {
             return sequenceNrs_.get(index);
         }
 
         public static final int MAXOFFSET_FIELD_NUMBER = 2;
-        private akka.contrib.persistence.query.QueryViewFormats.Payload maxOffset_;
+        private Payload maxOffset_;
         /**
          * <code>optional .akka.contrib.persistence.query.Payload maxOffset = 2;</code>
          */
@@ -807,18 +807,18 @@ public final class QueryViewFormats {
         /**
          * <code>optional .akka.contrib.persistence.query.Payload maxOffset = 2;</code>
          */
-        public akka.contrib.persistence.query.QueryViewFormats.Payload getMaxOffset() {
+        public Payload getMaxOffset() {
             return maxOffset_;
         }
         /**
          * <code>optional .akka.contrib.persistence.query.Payload maxOffset = 2;</code>
          */
-        public akka.contrib.persistence.query.QueryViewFormats.PayloadOrBuilder getMaxOffsetOrBuilder() {
+        public PayloadOrBuilder getMaxOffsetOrBuilder() {
             return maxOffset_;
         }
 
         public static final int DATA_FIELD_NUMBER = 3;
-        private akka.contrib.persistence.query.QueryViewFormats.Payload data_;
+        private Payload data_;
         /**
          * <code>optional .akka.contrib.persistence.query.Payload data = 3;</code>
          */
@@ -828,20 +828,20 @@ public final class QueryViewFormats {
         /**
          * <code>optional .akka.contrib.persistence.query.Payload data = 3;</code>
          */
-        public akka.contrib.persistence.query.QueryViewFormats.Payload getData() {
+        public Payload getData() {
             return data_;
         }
         /**
          * <code>optional .akka.contrib.persistence.query.Payload data = 3;</code>
          */
-        public akka.contrib.persistence.query.QueryViewFormats.PayloadOrBuilder getDataOrBuilder() {
+        public PayloadOrBuilder getDataOrBuilder() {
             return data_;
         }
 
         private void initFields() {
             sequenceNrs_ = java.util.Collections.emptyList();
-            maxOffset_ = akka.contrib.persistence.query.QueryViewFormats.Payload.getDefaultInstance();
-            data_ = akka.contrib.persistence.query.QueryViewFormats.Payload.getDefaultInstance();
+            maxOffset_ = Payload.getDefaultInstance();
+            data_ = Payload.getDefaultInstance();
         }
         private byte memoizedIsInitialized = -1;
         public final boolean isInitialized() {
@@ -892,59 +892,59 @@ public final class QueryViewFormats {
         }
 
         private static final long serialVersionUID = 0L;
-        @java.lang.Override
-        protected java.lang.Object writeReplace()
+        @Override
+        protected Object writeReplace()
                 throws java.io.ObjectStreamException {
             return super.writeReplace();
         }
 
-        public static akka.contrib.persistence.query.QueryViewFormats.QueryViewSnapshot parseFrom(
+        public static QueryViewSnapshot parseFrom(
                 akka.protobuf.ByteString data)
                 throws akka.protobuf.InvalidProtocolBufferException {
             return PARSER.parseFrom(data);
         }
-        public static akka.contrib.persistence.query.QueryViewFormats.QueryViewSnapshot parseFrom(
+        public static QueryViewSnapshot parseFrom(
                 akka.protobuf.ByteString data,
                 akka.protobuf.ExtensionRegistryLite extensionRegistry)
                 throws akka.protobuf.InvalidProtocolBufferException {
             return PARSER.parseFrom(data, extensionRegistry);
         }
-        public static akka.contrib.persistence.query.QueryViewFormats.QueryViewSnapshot parseFrom(byte[] data)
+        public static QueryViewSnapshot parseFrom(byte[] data)
                 throws akka.protobuf.InvalidProtocolBufferException {
             return PARSER.parseFrom(data);
         }
-        public static akka.contrib.persistence.query.QueryViewFormats.QueryViewSnapshot parseFrom(
+        public static QueryViewSnapshot parseFrom(
                 byte[] data,
                 akka.protobuf.ExtensionRegistryLite extensionRegistry)
                 throws akka.protobuf.InvalidProtocolBufferException {
             return PARSER.parseFrom(data, extensionRegistry);
         }
-        public static akka.contrib.persistence.query.QueryViewFormats.QueryViewSnapshot parseFrom(java.io.InputStream input)
+        public static QueryViewSnapshot parseFrom(java.io.InputStream input)
                 throws java.io.IOException {
             return PARSER.parseFrom(input);
         }
-        public static akka.contrib.persistence.query.QueryViewFormats.QueryViewSnapshot parseFrom(
+        public static QueryViewSnapshot parseFrom(
                 java.io.InputStream input,
                 akka.protobuf.ExtensionRegistryLite extensionRegistry)
                 throws java.io.IOException {
             return PARSER.parseFrom(input, extensionRegistry);
         }
-        public static akka.contrib.persistence.query.QueryViewFormats.QueryViewSnapshot parseDelimitedFrom(java.io.InputStream input)
+        public static QueryViewSnapshot parseDelimitedFrom(java.io.InputStream input)
                 throws java.io.IOException {
             return PARSER.parseDelimitedFrom(input);
         }
-        public static akka.contrib.persistence.query.QueryViewFormats.QueryViewSnapshot parseDelimitedFrom(
+        public static QueryViewSnapshot parseDelimitedFrom(
                 java.io.InputStream input,
                 akka.protobuf.ExtensionRegistryLite extensionRegistry)
                 throws java.io.IOException {
             return PARSER.parseDelimitedFrom(input, extensionRegistry);
         }
-        public static akka.contrib.persistence.query.QueryViewFormats.QueryViewSnapshot parseFrom(
+        public static QueryViewSnapshot parseFrom(
                 akka.protobuf.CodedInputStream input)
                 throws java.io.IOException {
             return PARSER.parseFrom(input);
         }
-        public static akka.contrib.persistence.query.QueryViewFormats.QueryViewSnapshot parseFrom(
+        public static QueryViewSnapshot parseFrom(
                 akka.protobuf.CodedInputStream input,
                 akka.protobuf.ExtensionRegistryLite extensionRegistry)
                 throws java.io.IOException {
@@ -953,14 +953,14 @@ public final class QueryViewFormats {
 
         public static Builder newBuilder() { return Builder.create(); }
         public Builder newBuilderForType() { return newBuilder(); }
-        public static Builder newBuilder(akka.contrib.persistence.query.QueryViewFormats.QueryViewSnapshot prototype) {
+        public static Builder newBuilder(QueryViewSnapshot prototype) {
             return newBuilder().mergeFrom(prototype);
         }
         public Builder toBuilder() { return newBuilder(this); }
 
-        @java.lang.Override
+        @Override
         protected Builder newBuilderForType(
-                akka.protobuf.GeneratedMessage.BuilderParent parent) {
+                BuilderParent parent) {
             Builder builder = new Builder(parent);
             return builder;
         }
@@ -970,17 +970,17 @@ public final class QueryViewFormats {
         public static final class Builder extends
                 akka.protobuf.GeneratedMessage.Builder<Builder> implements
                 // @@protoc_insertion_point(builder_implements:akka.contrib.persistence.query.QueryViewSnapshot)
-                akka.contrib.persistence.query.QueryViewFormats.QueryViewSnapshotOrBuilder {
+                QueryViewSnapshotOrBuilder {
             public static final akka.protobuf.Descriptors.Descriptor
             getDescriptor() {
-                return akka.contrib.persistence.query.QueryViewFormats.internal_static_akka_contrib_persistence_query_QueryViewSnapshot_descriptor;
+                return QueryViewFormats.internal_static_akka_contrib_persistence_query_QueryViewSnapshot_descriptor;
             }
 
-            protected akka.protobuf.GeneratedMessage.FieldAccessorTable
+            protected FieldAccessorTable
             internalGetFieldAccessorTable() {
-                return akka.contrib.persistence.query.QueryViewFormats.internal_static_akka_contrib_persistence_query_QueryViewSnapshot_fieldAccessorTable
+                return QueryViewFormats.internal_static_akka_contrib_persistence_query_QueryViewSnapshot_fieldAccessorTable
                         .ensureFieldAccessorsInitialized(
-                                akka.contrib.persistence.query.QueryViewFormats.QueryViewSnapshot.class, akka.contrib.persistence.query.QueryViewFormats.QueryViewSnapshot.Builder.class);
+                                QueryViewSnapshot.class, Builder.class);
             }
 
             // Construct using akka.contrib.persistence.query.QueryViewFormats.QueryViewSnapshot.newBuilder()
@@ -989,7 +989,7 @@ public final class QueryViewFormats {
             }
 
             private Builder(
-                    akka.protobuf.GeneratedMessage.BuilderParent parent) {
+                    BuilderParent parent) {
                 super(parent);
                 maybeForceBuilderInitialization();
             }
@@ -1013,13 +1013,13 @@ public final class QueryViewFormats {
                     sequenceNrsBuilder_.clear();
                 }
                 if (maxOffsetBuilder_ == null) {
-                    maxOffset_ = akka.contrib.persistence.query.QueryViewFormats.Payload.getDefaultInstance();
+                    maxOffset_ = Payload.getDefaultInstance();
                 } else {
                     maxOffsetBuilder_.clear();
                 }
                 bitField0_ = (bitField0_ & ~0x00000002);
                 if (dataBuilder_ == null) {
-                    data_ = akka.contrib.persistence.query.QueryViewFormats.Payload.getDefaultInstance();
+                    data_ = Payload.getDefaultInstance();
                 } else {
                     dataBuilder_.clear();
                 }
@@ -1033,23 +1033,23 @@ public final class QueryViewFormats {
 
             public akka.protobuf.Descriptors.Descriptor
             getDescriptorForType() {
-                return akka.contrib.persistence.query.QueryViewFormats.internal_static_akka_contrib_persistence_query_QueryViewSnapshot_descriptor;
+                return QueryViewFormats.internal_static_akka_contrib_persistence_query_QueryViewSnapshot_descriptor;
             }
 
-            public akka.contrib.persistence.query.QueryViewFormats.QueryViewSnapshot getDefaultInstanceForType() {
-                return akka.contrib.persistence.query.QueryViewFormats.QueryViewSnapshot.getDefaultInstance();
+            public QueryViewSnapshot getDefaultInstanceForType() {
+                return QueryViewSnapshot.getDefaultInstance();
             }
 
-            public akka.contrib.persistence.query.QueryViewFormats.QueryViewSnapshot build() {
-                akka.contrib.persistence.query.QueryViewFormats.QueryViewSnapshot result = buildPartial();
+            public QueryViewSnapshot build() {
+                QueryViewSnapshot result = buildPartial();
                 if (!result.isInitialized()) {
                     throw newUninitializedMessageException(result);
                 }
                 return result;
             }
 
-            public akka.contrib.persistence.query.QueryViewFormats.QueryViewSnapshot buildPartial() {
-                akka.contrib.persistence.query.QueryViewFormats.QueryViewSnapshot result = new akka.contrib.persistence.query.QueryViewFormats.QueryViewSnapshot(this);
+            public QueryViewSnapshot buildPartial() {
+                QueryViewSnapshot result = new QueryViewSnapshot(this);
                 int from_bitField0_ = bitField0_;
                 int to_bitField0_ = 0;
                 if (sequenceNrsBuilder_ == null) {
@@ -1083,16 +1083,16 @@ public final class QueryViewFormats {
             }
 
             public Builder mergeFrom(akka.protobuf.Message other) {
-                if (other instanceof akka.contrib.persistence.query.QueryViewFormats.QueryViewSnapshot) {
-                    return mergeFrom((akka.contrib.persistence.query.QueryViewFormats.QueryViewSnapshot)other);
+                if (other instanceof QueryViewSnapshot) {
+                    return mergeFrom((QueryViewSnapshot)other);
                 } else {
                     super.mergeFrom(other);
                     return this;
                 }
             }
 
-            public Builder mergeFrom(akka.contrib.persistence.query.QueryViewFormats.QueryViewSnapshot other) {
-                if (other == akka.contrib.persistence.query.QueryViewFormats.QueryViewSnapshot.getDefaultInstance()) return this;
+            public Builder mergeFrom(QueryViewSnapshot other) {
+                if (other == QueryViewSnapshot.getDefaultInstance()) return this;
                 if (sequenceNrsBuilder_ == null) {
                     if (!other.sequenceNrs_.isEmpty()) {
                         if (sequenceNrs_.isEmpty()) {
@@ -1137,11 +1137,11 @@ public final class QueryViewFormats {
                     akka.protobuf.CodedInputStream input,
                     akka.protobuf.ExtensionRegistryLite extensionRegistry)
                     throws java.io.IOException {
-                akka.contrib.persistence.query.QueryViewFormats.QueryViewSnapshot parsedMessage = null;
+                QueryViewSnapshot parsedMessage = null;
                 try {
                     parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
                 } catch (akka.protobuf.InvalidProtocolBufferException e) {
-                    parsedMessage = (akka.contrib.persistence.query.QueryViewFormats.QueryViewSnapshot) e.getUnfinishedMessage();
+                    parsedMessage = (QueryViewSnapshot) e.getUnfinishedMessage();
                     throw e;
                 } finally {
                     if (parsedMessage != null) {
@@ -1152,22 +1152,22 @@ public final class QueryViewFormats {
             }
             private int bitField0_;
 
-            private java.util.List<akka.contrib.persistence.query.QueryViewFormats.QueryViewSnapshot.SequenceNrEntry> sequenceNrs_ =
+            private java.util.List<SequenceNrEntry> sequenceNrs_ =
                     java.util.Collections.emptyList();
             private void ensureSequenceNrsIsMutable() {
                 if (!((bitField0_ & 0x00000001) == 0x00000001)) {
-                    sequenceNrs_ = new java.util.ArrayList<akka.contrib.persistence.query.QueryViewFormats.QueryViewSnapshot.SequenceNrEntry>(sequenceNrs_);
+                    sequenceNrs_ = new java.util.ArrayList<SequenceNrEntry>(sequenceNrs_);
                     bitField0_ |= 0x00000001;
                 }
             }
 
             private akka.protobuf.RepeatedFieldBuilder<
-                    akka.contrib.persistence.query.QueryViewFormats.QueryViewSnapshot.SequenceNrEntry, akka.contrib.persistence.query.QueryViewFormats.QueryViewSnapshot.SequenceNrEntry.Builder, akka.contrib.persistence.query.QueryViewFormats.QueryViewSnapshot.SequenceNrEntryOrBuilder> sequenceNrsBuilder_;
+                    SequenceNrEntry, SequenceNrEntry.Builder, SequenceNrEntryOrBuilder> sequenceNrsBuilder_;
 
             /**
              * <code>repeated .akka.contrib.persistence.query.QueryViewSnapshot.SequenceNrEntry sequenceNrs = 1;</code>
              */
-            public java.util.List<akka.contrib.persistence.query.QueryViewFormats.QueryViewSnapshot.SequenceNrEntry> getSequenceNrsList() {
+            public java.util.List<SequenceNrEntry> getSequenceNrsList() {
                 if (sequenceNrsBuilder_ == null) {
                     return java.util.Collections.unmodifiableList(sequenceNrs_);
                 } else {
@@ -1187,7 +1187,7 @@ public final class QueryViewFormats {
             /**
              * <code>repeated .akka.contrib.persistence.query.QueryViewSnapshot.SequenceNrEntry sequenceNrs = 1;</code>
              */
-            public akka.contrib.persistence.query.QueryViewFormats.QueryViewSnapshot.SequenceNrEntry getSequenceNrs(int index) {
+            public SequenceNrEntry getSequenceNrs(int index) {
                 if (sequenceNrsBuilder_ == null) {
                     return sequenceNrs_.get(index);
                 } else {
@@ -1198,7 +1198,7 @@ public final class QueryViewFormats {
              * <code>repeated .akka.contrib.persistence.query.QueryViewSnapshot.SequenceNrEntry sequenceNrs = 1;</code>
              */
             public Builder setSequenceNrs(
-                    int index, akka.contrib.persistence.query.QueryViewFormats.QueryViewSnapshot.SequenceNrEntry value) {
+                    int index, SequenceNrEntry value) {
                 if (sequenceNrsBuilder_ == null) {
                     if (value == null) {
                         throw new NullPointerException();
@@ -1215,7 +1215,7 @@ public final class QueryViewFormats {
              * <code>repeated .akka.contrib.persistence.query.QueryViewSnapshot.SequenceNrEntry sequenceNrs = 1;</code>
              */
             public Builder setSequenceNrs(
-                    int index, akka.contrib.persistence.query.QueryViewFormats.QueryViewSnapshot.SequenceNrEntry.Builder builderForValue) {
+                    int index, SequenceNrEntry.Builder builderForValue) {
                 if (sequenceNrsBuilder_ == null) {
                     ensureSequenceNrsIsMutable();
                     sequenceNrs_.set(index, builderForValue.build());
@@ -1228,7 +1228,7 @@ public final class QueryViewFormats {
             /**
              * <code>repeated .akka.contrib.persistence.query.QueryViewSnapshot.SequenceNrEntry sequenceNrs = 1;</code>
              */
-            public Builder addSequenceNrs(akka.contrib.persistence.query.QueryViewFormats.QueryViewSnapshot.SequenceNrEntry value) {
+            public Builder addSequenceNrs(SequenceNrEntry value) {
                 if (sequenceNrsBuilder_ == null) {
                     if (value == null) {
                         throw new NullPointerException();
@@ -1245,7 +1245,7 @@ public final class QueryViewFormats {
              * <code>repeated .akka.contrib.persistence.query.QueryViewSnapshot.SequenceNrEntry sequenceNrs = 1;</code>
              */
             public Builder addSequenceNrs(
-                    int index, akka.contrib.persistence.query.QueryViewFormats.QueryViewSnapshot.SequenceNrEntry value) {
+                    int index, SequenceNrEntry value) {
                 if (sequenceNrsBuilder_ == null) {
                     if (value == null) {
                         throw new NullPointerException();
@@ -1262,7 +1262,7 @@ public final class QueryViewFormats {
              * <code>repeated .akka.contrib.persistence.query.QueryViewSnapshot.SequenceNrEntry sequenceNrs = 1;</code>
              */
             public Builder addSequenceNrs(
-                    akka.contrib.persistence.query.QueryViewFormats.QueryViewSnapshot.SequenceNrEntry.Builder builderForValue) {
+                    SequenceNrEntry.Builder builderForValue) {
                 if (sequenceNrsBuilder_ == null) {
                     ensureSequenceNrsIsMutable();
                     sequenceNrs_.add(builderForValue.build());
@@ -1276,7 +1276,7 @@ public final class QueryViewFormats {
              * <code>repeated .akka.contrib.persistence.query.QueryViewSnapshot.SequenceNrEntry sequenceNrs = 1;</code>
              */
             public Builder addSequenceNrs(
-                    int index, akka.contrib.persistence.query.QueryViewFormats.QueryViewSnapshot.SequenceNrEntry.Builder builderForValue) {
+                    int index, SequenceNrEntry.Builder builderForValue) {
                 if (sequenceNrsBuilder_ == null) {
                     ensureSequenceNrsIsMutable();
                     sequenceNrs_.add(index, builderForValue.build());
@@ -1290,7 +1290,7 @@ public final class QueryViewFormats {
              * <code>repeated .akka.contrib.persistence.query.QueryViewSnapshot.SequenceNrEntry sequenceNrs = 1;</code>
              */
             public Builder addAllSequenceNrs(
-                    java.lang.Iterable<? extends akka.contrib.persistence.query.QueryViewFormats.QueryViewSnapshot.SequenceNrEntry> values) {
+                    Iterable<? extends SequenceNrEntry> values) {
                 if (sequenceNrsBuilder_ == null) {
                     ensureSequenceNrsIsMutable();
                     akka.protobuf.AbstractMessageLite.Builder.addAll(
@@ -1330,14 +1330,14 @@ public final class QueryViewFormats {
             /**
              * <code>repeated .akka.contrib.persistence.query.QueryViewSnapshot.SequenceNrEntry sequenceNrs = 1;</code>
              */
-            public akka.contrib.persistence.query.QueryViewFormats.QueryViewSnapshot.SequenceNrEntry.Builder getSequenceNrsBuilder(
+            public SequenceNrEntry.Builder getSequenceNrsBuilder(
                     int index) {
                 return getSequenceNrsFieldBuilder().getBuilder(index);
             }
             /**
              * <code>repeated .akka.contrib.persistence.query.QueryViewSnapshot.SequenceNrEntry sequenceNrs = 1;</code>
              */
-            public akka.contrib.persistence.query.QueryViewFormats.QueryViewSnapshot.SequenceNrEntryOrBuilder getSequenceNrsOrBuilder(
+            public SequenceNrEntryOrBuilder getSequenceNrsOrBuilder(
                     int index) {
                 if (sequenceNrsBuilder_ == null) {
                     return sequenceNrs_.get(index);  } else {
@@ -1347,7 +1347,7 @@ public final class QueryViewFormats {
             /**
              * <code>repeated .akka.contrib.persistence.query.QueryViewSnapshot.SequenceNrEntry sequenceNrs = 1;</code>
              */
-            public java.util.List<? extends akka.contrib.persistence.query.QueryViewFormats.QueryViewSnapshot.SequenceNrEntryOrBuilder>
+            public java.util.List<? extends SequenceNrEntryOrBuilder>
             getSequenceNrsOrBuilderList() {
                 if (sequenceNrsBuilder_ != null) {
                     return sequenceNrsBuilder_.getMessageOrBuilderList();
@@ -1358,31 +1358,31 @@ public final class QueryViewFormats {
             /**
              * <code>repeated .akka.contrib.persistence.query.QueryViewSnapshot.SequenceNrEntry sequenceNrs = 1;</code>
              */
-            public akka.contrib.persistence.query.QueryViewFormats.QueryViewSnapshot.SequenceNrEntry.Builder addSequenceNrsBuilder() {
+            public SequenceNrEntry.Builder addSequenceNrsBuilder() {
                 return getSequenceNrsFieldBuilder().addBuilder(
-                        akka.contrib.persistence.query.QueryViewFormats.QueryViewSnapshot.SequenceNrEntry.getDefaultInstance());
+                        SequenceNrEntry.getDefaultInstance());
             }
             /**
              * <code>repeated .akka.contrib.persistence.query.QueryViewSnapshot.SequenceNrEntry sequenceNrs = 1;</code>
              */
-            public akka.contrib.persistence.query.QueryViewFormats.QueryViewSnapshot.SequenceNrEntry.Builder addSequenceNrsBuilder(
+            public SequenceNrEntry.Builder addSequenceNrsBuilder(
                     int index) {
                 return getSequenceNrsFieldBuilder().addBuilder(
-                        index, akka.contrib.persistence.query.QueryViewFormats.QueryViewSnapshot.SequenceNrEntry.getDefaultInstance());
+                        index, SequenceNrEntry.getDefaultInstance());
             }
             /**
              * <code>repeated .akka.contrib.persistence.query.QueryViewSnapshot.SequenceNrEntry sequenceNrs = 1;</code>
              */
-            public java.util.List<akka.contrib.persistence.query.QueryViewFormats.QueryViewSnapshot.SequenceNrEntry.Builder>
+            public java.util.List<SequenceNrEntry.Builder>
             getSequenceNrsBuilderList() {
                 return getSequenceNrsFieldBuilder().getBuilderList();
             }
             private akka.protobuf.RepeatedFieldBuilder<
-                    akka.contrib.persistence.query.QueryViewFormats.QueryViewSnapshot.SequenceNrEntry, akka.contrib.persistence.query.QueryViewFormats.QueryViewSnapshot.SequenceNrEntry.Builder, akka.contrib.persistence.query.QueryViewFormats.QueryViewSnapshot.SequenceNrEntryOrBuilder>
+                    SequenceNrEntry, SequenceNrEntry.Builder, SequenceNrEntryOrBuilder>
             getSequenceNrsFieldBuilder() {
                 if (sequenceNrsBuilder_ == null) {
                     sequenceNrsBuilder_ = new akka.protobuf.RepeatedFieldBuilder<
-                            akka.contrib.persistence.query.QueryViewFormats.QueryViewSnapshot.SequenceNrEntry, akka.contrib.persistence.query.QueryViewFormats.QueryViewSnapshot.SequenceNrEntry.Builder, akka.contrib.persistence.query.QueryViewFormats.QueryViewSnapshot.SequenceNrEntryOrBuilder>(
+                            SequenceNrEntry, SequenceNrEntry.Builder, SequenceNrEntryOrBuilder>(
                             sequenceNrs_,
                             ((bitField0_ & 0x00000001) == 0x00000001),
                             getParentForChildren(),
@@ -1392,9 +1392,9 @@ public final class QueryViewFormats {
                 return sequenceNrsBuilder_;
             }
 
-            private akka.contrib.persistence.query.QueryViewFormats.Payload maxOffset_ = akka.contrib.persistence.query.QueryViewFormats.Payload.getDefaultInstance();
+            private Payload maxOffset_ = Payload.getDefaultInstance();
             private akka.protobuf.SingleFieldBuilder<
-                    akka.contrib.persistence.query.QueryViewFormats.Payload, akka.contrib.persistence.query.QueryViewFormats.Payload.Builder, akka.contrib.persistence.query.QueryViewFormats.PayloadOrBuilder> maxOffsetBuilder_;
+                    Payload, Payload.Builder, PayloadOrBuilder> maxOffsetBuilder_;
             /**
              * <code>optional .akka.contrib.persistence.query.Payload maxOffset = 2;</code>
              */
@@ -1404,7 +1404,7 @@ public final class QueryViewFormats {
             /**
              * <code>optional .akka.contrib.persistence.query.Payload maxOffset = 2;</code>
              */
-            public akka.contrib.persistence.query.QueryViewFormats.Payload getMaxOffset() {
+            public Payload getMaxOffset() {
                 if (maxOffsetBuilder_ == null) {
                     return maxOffset_;
                 } else {
@@ -1414,7 +1414,7 @@ public final class QueryViewFormats {
             /**
              * <code>optional .akka.contrib.persistence.query.Payload maxOffset = 2;</code>
              */
-            public Builder setMaxOffset(akka.contrib.persistence.query.QueryViewFormats.Payload value) {
+            public Builder setMaxOffset(Payload value) {
                 if (maxOffsetBuilder_ == null) {
                     if (value == null) {
                         throw new NullPointerException();
@@ -1431,7 +1431,7 @@ public final class QueryViewFormats {
              * <code>optional .akka.contrib.persistence.query.Payload maxOffset = 2;</code>
              */
             public Builder setMaxOffset(
-                    akka.contrib.persistence.query.QueryViewFormats.Payload.Builder builderForValue) {
+                    Payload.Builder builderForValue) {
                 if (maxOffsetBuilder_ == null) {
                     maxOffset_ = builderForValue.build();
                     onChanged();
@@ -1444,12 +1444,12 @@ public final class QueryViewFormats {
             /**
              * <code>optional .akka.contrib.persistence.query.Payload maxOffset = 2;</code>
              */
-            public Builder mergeMaxOffset(akka.contrib.persistence.query.QueryViewFormats.Payload value) {
+            public Builder mergeMaxOffset(Payload value) {
                 if (maxOffsetBuilder_ == null) {
                     if (((bitField0_ & 0x00000002) == 0x00000002) &&
-                            maxOffset_ != akka.contrib.persistence.query.QueryViewFormats.Payload.getDefaultInstance()) {
+                            maxOffset_ != Payload.getDefaultInstance()) {
                         maxOffset_ =
-                                akka.contrib.persistence.query.QueryViewFormats.Payload.newBuilder(maxOffset_).mergeFrom(value).buildPartial();
+                                Payload.newBuilder(maxOffset_).mergeFrom(value).buildPartial();
                     } else {
                         maxOffset_ = value;
                     }
@@ -1465,7 +1465,7 @@ public final class QueryViewFormats {
              */
             public Builder clearMaxOffset() {
                 if (maxOffsetBuilder_ == null) {
-                    maxOffset_ = akka.contrib.persistence.query.QueryViewFormats.Payload.getDefaultInstance();
+                    maxOffset_ = Payload.getDefaultInstance();
                     onChanged();
                 } else {
                     maxOffsetBuilder_.clear();
@@ -1476,7 +1476,7 @@ public final class QueryViewFormats {
             /**
              * <code>optional .akka.contrib.persistence.query.Payload maxOffset = 2;</code>
              */
-            public akka.contrib.persistence.query.QueryViewFormats.Payload.Builder getMaxOffsetBuilder() {
+            public Payload.Builder getMaxOffsetBuilder() {
                 bitField0_ |= 0x00000002;
                 onChanged();
                 return getMaxOffsetFieldBuilder().getBuilder();
@@ -1484,7 +1484,7 @@ public final class QueryViewFormats {
             /**
              * <code>optional .akka.contrib.persistence.query.Payload maxOffset = 2;</code>
              */
-            public akka.contrib.persistence.query.QueryViewFormats.PayloadOrBuilder getMaxOffsetOrBuilder() {
+            public PayloadOrBuilder getMaxOffsetOrBuilder() {
                 if (maxOffsetBuilder_ != null) {
                     return maxOffsetBuilder_.getMessageOrBuilder();
                 } else {
@@ -1495,11 +1495,11 @@ public final class QueryViewFormats {
              * <code>optional .akka.contrib.persistence.query.Payload maxOffset = 2;</code>
              */
             private akka.protobuf.SingleFieldBuilder<
-                    akka.contrib.persistence.query.QueryViewFormats.Payload, akka.contrib.persistence.query.QueryViewFormats.Payload.Builder, akka.contrib.persistence.query.QueryViewFormats.PayloadOrBuilder>
+                    Payload, Payload.Builder, PayloadOrBuilder>
             getMaxOffsetFieldBuilder() {
                 if (maxOffsetBuilder_ == null) {
                     maxOffsetBuilder_ = new akka.protobuf.SingleFieldBuilder<
-                            akka.contrib.persistence.query.QueryViewFormats.Payload, akka.contrib.persistence.query.QueryViewFormats.Payload.Builder, akka.contrib.persistence.query.QueryViewFormats.PayloadOrBuilder>(
+                            Payload, Payload.Builder, PayloadOrBuilder>(
                             getMaxOffset(),
                             getParentForChildren(),
                             isClean());
@@ -1508,9 +1508,9 @@ public final class QueryViewFormats {
                 return maxOffsetBuilder_;
             }
 
-            private akka.contrib.persistence.query.QueryViewFormats.Payload data_ = akka.contrib.persistence.query.QueryViewFormats.Payload.getDefaultInstance();
+            private Payload data_ = Payload.getDefaultInstance();
             private akka.protobuf.SingleFieldBuilder<
-                    akka.contrib.persistence.query.QueryViewFormats.Payload, akka.contrib.persistence.query.QueryViewFormats.Payload.Builder, akka.contrib.persistence.query.QueryViewFormats.PayloadOrBuilder> dataBuilder_;
+                    Payload, Payload.Builder, PayloadOrBuilder> dataBuilder_;
             /**
              * <code>optional .akka.contrib.persistence.query.Payload data = 3;</code>
              */
@@ -1520,7 +1520,7 @@ public final class QueryViewFormats {
             /**
              * <code>optional .akka.contrib.persistence.query.Payload data = 3;</code>
              */
-            public akka.contrib.persistence.query.QueryViewFormats.Payload getData() {
+            public Payload getData() {
                 if (dataBuilder_ == null) {
                     return data_;
                 } else {
@@ -1530,7 +1530,7 @@ public final class QueryViewFormats {
             /**
              * <code>optional .akka.contrib.persistence.query.Payload data = 3;</code>
              */
-            public Builder setData(akka.contrib.persistence.query.QueryViewFormats.Payload value) {
+            public Builder setData(Payload value) {
                 if (dataBuilder_ == null) {
                     if (value == null) {
                         throw new NullPointerException();
@@ -1547,7 +1547,7 @@ public final class QueryViewFormats {
              * <code>optional .akka.contrib.persistence.query.Payload data = 3;</code>
              */
             public Builder setData(
-                    akka.contrib.persistence.query.QueryViewFormats.Payload.Builder builderForValue) {
+                    Payload.Builder builderForValue) {
                 if (dataBuilder_ == null) {
                     data_ = builderForValue.build();
                     onChanged();
@@ -1560,12 +1560,12 @@ public final class QueryViewFormats {
             /**
              * <code>optional .akka.contrib.persistence.query.Payload data = 3;</code>
              */
-            public Builder mergeData(akka.contrib.persistence.query.QueryViewFormats.Payload value) {
+            public Builder mergeData(Payload value) {
                 if (dataBuilder_ == null) {
                     if (((bitField0_ & 0x00000004) == 0x00000004) &&
-                            data_ != akka.contrib.persistence.query.QueryViewFormats.Payload.getDefaultInstance()) {
+                            data_ != Payload.getDefaultInstance()) {
                         data_ =
-                                akka.contrib.persistence.query.QueryViewFormats.Payload.newBuilder(data_).mergeFrom(value).buildPartial();
+                                Payload.newBuilder(data_).mergeFrom(value).buildPartial();
                     } else {
                         data_ = value;
                     }
@@ -1581,7 +1581,7 @@ public final class QueryViewFormats {
              */
             public Builder clearData() {
                 if (dataBuilder_ == null) {
-                    data_ = akka.contrib.persistence.query.QueryViewFormats.Payload.getDefaultInstance();
+                    data_ = Payload.getDefaultInstance();
                     onChanged();
                 } else {
                     dataBuilder_.clear();
@@ -1592,7 +1592,7 @@ public final class QueryViewFormats {
             /**
              * <code>optional .akka.contrib.persistence.query.Payload data = 3;</code>
              */
-            public akka.contrib.persistence.query.QueryViewFormats.Payload.Builder getDataBuilder() {
+            public Payload.Builder getDataBuilder() {
                 bitField0_ |= 0x00000004;
                 onChanged();
                 return getDataFieldBuilder().getBuilder();
@@ -1600,7 +1600,7 @@ public final class QueryViewFormats {
             /**
              * <code>optional .akka.contrib.persistence.query.Payload data = 3;</code>
              */
-            public akka.contrib.persistence.query.QueryViewFormats.PayloadOrBuilder getDataOrBuilder() {
+            public PayloadOrBuilder getDataOrBuilder() {
                 if (dataBuilder_ != null) {
                     return dataBuilder_.getMessageOrBuilder();
                 } else {
@@ -1611,11 +1611,11 @@ public final class QueryViewFormats {
              * <code>optional .akka.contrib.persistence.query.Payload data = 3;</code>
              */
             private akka.protobuf.SingleFieldBuilder<
-                    akka.contrib.persistence.query.QueryViewFormats.Payload, akka.contrib.persistence.query.QueryViewFormats.Payload.Builder, akka.contrib.persistence.query.QueryViewFormats.PayloadOrBuilder>
+                    Payload, Payload.Builder, PayloadOrBuilder>
             getDataFieldBuilder() {
                 if (dataBuilder_ == null) {
                     dataBuilder_ = new akka.protobuf.SingleFieldBuilder<
-                            akka.contrib.persistence.query.QueryViewFormats.Payload, akka.contrib.persistence.query.QueryViewFormats.Payload.Builder, akka.contrib.persistence.query.QueryViewFormats.PayloadOrBuilder>(
+                            Payload, Payload.Builder, PayloadOrBuilder>(
                             getData(),
                             getParentForChildren(),
                             isClean());
@@ -1664,7 +1664,7 @@ public final class QueryViewFormats {
         /**
          * <code>optional string messageManifest = 4;</code>
          */
-        java.lang.String getMessageManifest();
+        String getMessageManifest();
         /**
          * <code>optional string messageManifest = 4;</code>
          */
@@ -1695,7 +1695,7 @@ public final class QueryViewFormats {
         }
 
         private final akka.protobuf.UnknownFieldSet unknownFields;
-        @java.lang.Override
+        @Override
         public final akka.protobuf.UnknownFieldSet
         getUnknownFields() {
             return this.unknownFields;
@@ -1753,14 +1753,14 @@ public final class QueryViewFormats {
         }
         public static final akka.protobuf.Descriptors.Descriptor
         getDescriptor() {
-            return akka.contrib.persistence.query.QueryViewFormats.internal_static_akka_contrib_persistence_query_Payload_descriptor;
+            return QueryViewFormats.internal_static_akka_contrib_persistence_query_Payload_descriptor;
         }
 
-        protected akka.protobuf.GeneratedMessage.FieldAccessorTable
+        protected FieldAccessorTable
         internalGetFieldAccessorTable() {
-            return akka.contrib.persistence.query.QueryViewFormats.internal_static_akka_contrib_persistence_query_Payload_fieldAccessorTable
+            return QueryViewFormats.internal_static_akka_contrib_persistence_query_Payload_fieldAccessorTable
                     .ensureFieldAccessorsInitialized(
-                            akka.contrib.persistence.query.QueryViewFormats.Payload.class, akka.contrib.persistence.query.QueryViewFormats.Payload.Builder.class);
+                            Payload.class, Builder.class);
         }
 
         public static akka.protobuf.Parser<Payload> PARSER =
@@ -1773,7 +1773,7 @@ public final class QueryViewFormats {
                     }
                 };
 
-        @java.lang.Override
+        @Override
         public akka.protobuf.Parser<Payload> getParserForType() {
             return PARSER;
         }
@@ -1810,7 +1810,7 @@ public final class QueryViewFormats {
         }
 
         public static final int MESSAGEMANIFEST_FIELD_NUMBER = 4;
-        private java.lang.Object messageManifest_;
+        private Object messageManifest_;
         /**
          * <code>optional string messageManifest = 4;</code>
          */
@@ -1820,14 +1820,14 @@ public final class QueryViewFormats {
         /**
          * <code>optional string messageManifest = 4;</code>
          */
-        public java.lang.String getMessageManifest() {
-            java.lang.Object ref = messageManifest_;
-            if (ref instanceof java.lang.String) {
-                return (java.lang.String) ref;
+        public String getMessageManifest() {
+            Object ref = messageManifest_;
+            if (ref instanceof String) {
+                return (String) ref;
             } else {
                 akka.protobuf.ByteString bs =
                         (akka.protobuf.ByteString) ref;
-                java.lang.String s = bs.toStringUtf8();
+                String s = bs.toStringUtf8();
                 if (bs.isValidUtf8()) {
                     messageManifest_ = s;
                 }
@@ -1839,11 +1839,11 @@ public final class QueryViewFormats {
          */
         public akka.protobuf.ByteString
         getMessageManifestBytes() {
-            java.lang.Object ref = messageManifest_;
-            if (ref instanceof java.lang.String) {
+            Object ref = messageManifest_;
+            if (ref instanceof String) {
                 akka.protobuf.ByteString b =
                         akka.protobuf.ByteString.copyFromUtf8(
-                                (java.lang.String) ref);
+                                (String) ref);
                 messageManifest_ = b;
                 return b;
             } else {
@@ -1905,59 +1905,59 @@ public final class QueryViewFormats {
         }
 
         private static final long serialVersionUID = 0L;
-        @java.lang.Override
-        protected java.lang.Object writeReplace()
+        @Override
+        protected Object writeReplace()
                 throws java.io.ObjectStreamException {
             return super.writeReplace();
         }
 
-        public static akka.contrib.persistence.query.QueryViewFormats.Payload parseFrom(
+        public static Payload parseFrom(
                 akka.protobuf.ByteString data)
                 throws akka.protobuf.InvalidProtocolBufferException {
             return PARSER.parseFrom(data);
         }
-        public static akka.contrib.persistence.query.QueryViewFormats.Payload parseFrom(
+        public static Payload parseFrom(
                 akka.protobuf.ByteString data,
                 akka.protobuf.ExtensionRegistryLite extensionRegistry)
                 throws akka.protobuf.InvalidProtocolBufferException {
             return PARSER.parseFrom(data, extensionRegistry);
         }
-        public static akka.contrib.persistence.query.QueryViewFormats.Payload parseFrom(byte[] data)
+        public static Payload parseFrom(byte[] data)
                 throws akka.protobuf.InvalidProtocolBufferException {
             return PARSER.parseFrom(data);
         }
-        public static akka.contrib.persistence.query.QueryViewFormats.Payload parseFrom(
+        public static Payload parseFrom(
                 byte[] data,
                 akka.protobuf.ExtensionRegistryLite extensionRegistry)
                 throws akka.protobuf.InvalidProtocolBufferException {
             return PARSER.parseFrom(data, extensionRegistry);
         }
-        public static akka.contrib.persistence.query.QueryViewFormats.Payload parseFrom(java.io.InputStream input)
+        public static Payload parseFrom(java.io.InputStream input)
                 throws java.io.IOException {
             return PARSER.parseFrom(input);
         }
-        public static akka.contrib.persistence.query.QueryViewFormats.Payload parseFrom(
+        public static Payload parseFrom(
                 java.io.InputStream input,
                 akka.protobuf.ExtensionRegistryLite extensionRegistry)
                 throws java.io.IOException {
             return PARSER.parseFrom(input, extensionRegistry);
         }
-        public static akka.contrib.persistence.query.QueryViewFormats.Payload parseDelimitedFrom(java.io.InputStream input)
+        public static Payload parseDelimitedFrom(java.io.InputStream input)
                 throws java.io.IOException {
             return PARSER.parseDelimitedFrom(input);
         }
-        public static akka.contrib.persistence.query.QueryViewFormats.Payload parseDelimitedFrom(
+        public static Payload parseDelimitedFrom(
                 java.io.InputStream input,
                 akka.protobuf.ExtensionRegistryLite extensionRegistry)
                 throws java.io.IOException {
             return PARSER.parseDelimitedFrom(input, extensionRegistry);
         }
-        public static akka.contrib.persistence.query.QueryViewFormats.Payload parseFrom(
+        public static Payload parseFrom(
                 akka.protobuf.CodedInputStream input)
                 throws java.io.IOException {
             return PARSER.parseFrom(input);
         }
-        public static akka.contrib.persistence.query.QueryViewFormats.Payload parseFrom(
+        public static Payload parseFrom(
                 akka.protobuf.CodedInputStream input,
                 akka.protobuf.ExtensionRegistryLite extensionRegistry)
                 throws java.io.IOException {
@@ -1966,14 +1966,14 @@ public final class QueryViewFormats {
 
         public static Builder newBuilder() { return Builder.create(); }
         public Builder newBuilderForType() { return newBuilder(); }
-        public static Builder newBuilder(akka.contrib.persistence.query.QueryViewFormats.Payload prototype) {
+        public static Builder newBuilder(Payload prototype) {
             return newBuilder().mergeFrom(prototype);
         }
         public Builder toBuilder() { return newBuilder(this); }
 
-        @java.lang.Override
+        @Override
         protected Builder newBuilderForType(
-                akka.protobuf.GeneratedMessage.BuilderParent parent) {
+                BuilderParent parent) {
             Builder builder = new Builder(parent);
             return builder;
         }
@@ -1983,17 +1983,17 @@ public final class QueryViewFormats {
         public static final class Builder extends
                 akka.protobuf.GeneratedMessage.Builder<Builder> implements
                 // @@protoc_insertion_point(builder_implements:akka.contrib.persistence.query.Payload)
-                akka.contrib.persistence.query.QueryViewFormats.PayloadOrBuilder {
+                PayloadOrBuilder {
             public static final akka.protobuf.Descriptors.Descriptor
             getDescriptor() {
-                return akka.contrib.persistence.query.QueryViewFormats.internal_static_akka_contrib_persistence_query_Payload_descriptor;
+                return QueryViewFormats.internal_static_akka_contrib_persistence_query_Payload_descriptor;
             }
 
-            protected akka.protobuf.GeneratedMessage.FieldAccessorTable
+            protected FieldAccessorTable
             internalGetFieldAccessorTable() {
-                return akka.contrib.persistence.query.QueryViewFormats.internal_static_akka_contrib_persistence_query_Payload_fieldAccessorTable
+                return QueryViewFormats.internal_static_akka_contrib_persistence_query_Payload_fieldAccessorTable
                         .ensureFieldAccessorsInitialized(
-                                akka.contrib.persistence.query.QueryViewFormats.Payload.class, akka.contrib.persistence.query.QueryViewFormats.Payload.Builder.class);
+                                Payload.class, Builder.class);
             }
 
             // Construct using akka.contrib.persistence.query.QueryViewFormats.Payload.newBuilder()
@@ -2002,7 +2002,7 @@ public final class QueryViewFormats {
             }
 
             private Builder(
-                    akka.protobuf.GeneratedMessage.BuilderParent parent) {
+                    BuilderParent parent) {
                 super(parent);
                 maybeForceBuilderInitialization();
             }
@@ -2031,23 +2031,23 @@ public final class QueryViewFormats {
 
             public akka.protobuf.Descriptors.Descriptor
             getDescriptorForType() {
-                return akka.contrib.persistence.query.QueryViewFormats.internal_static_akka_contrib_persistence_query_Payload_descriptor;
+                return QueryViewFormats.internal_static_akka_contrib_persistence_query_Payload_descriptor;
             }
 
-            public akka.contrib.persistence.query.QueryViewFormats.Payload getDefaultInstanceForType() {
-                return akka.contrib.persistence.query.QueryViewFormats.Payload.getDefaultInstance();
+            public Payload getDefaultInstanceForType() {
+                return Payload.getDefaultInstance();
             }
 
-            public akka.contrib.persistence.query.QueryViewFormats.Payload build() {
-                akka.contrib.persistence.query.QueryViewFormats.Payload result = buildPartial();
+            public Payload build() {
+                Payload result = buildPartial();
                 if (!result.isInitialized()) {
                     throw newUninitializedMessageException(result);
                 }
                 return result;
             }
 
-            public akka.contrib.persistence.query.QueryViewFormats.Payload buildPartial() {
-                akka.contrib.persistence.query.QueryViewFormats.Payload result = new akka.contrib.persistence.query.QueryViewFormats.Payload(this);
+            public Payload buildPartial() {
+                Payload result = new Payload(this);
                 int from_bitField0_ = bitField0_;
                 int to_bitField0_ = 0;
                 if (((from_bitField0_ & 0x00000001) == 0x00000001)) {
@@ -2068,16 +2068,16 @@ public final class QueryViewFormats {
             }
 
             public Builder mergeFrom(akka.protobuf.Message other) {
-                if (other instanceof akka.contrib.persistence.query.QueryViewFormats.Payload) {
-                    return mergeFrom((akka.contrib.persistence.query.QueryViewFormats.Payload)other);
+                if (other instanceof Payload) {
+                    return mergeFrom((Payload)other);
                 } else {
                     super.mergeFrom(other);
                     return this;
                 }
             }
 
-            public Builder mergeFrom(akka.contrib.persistence.query.QueryViewFormats.Payload other) {
-                if (other == akka.contrib.persistence.query.QueryViewFormats.Payload.getDefaultInstance()) return this;
+            public Builder mergeFrom(Payload other) {
+                if (other == Payload.getDefaultInstance()) return this;
                 if (other.hasEnclosedMessage()) {
                     setEnclosedMessage(other.getEnclosedMessage());
                 }
@@ -2101,11 +2101,11 @@ public final class QueryViewFormats {
                     akka.protobuf.CodedInputStream input,
                     akka.protobuf.ExtensionRegistryLite extensionRegistry)
                     throws java.io.IOException {
-                akka.contrib.persistence.query.QueryViewFormats.Payload parsedMessage = null;
+                Payload parsedMessage = null;
                 try {
                     parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
                 } catch (akka.protobuf.InvalidProtocolBufferException e) {
-                    parsedMessage = (akka.contrib.persistence.query.QueryViewFormats.Payload) e.getUnfinishedMessage();
+                    parsedMessage = (Payload) e.getUnfinishedMessage();
                     throw e;
                 } finally {
                     if (parsedMessage != null) {
@@ -2183,7 +2183,7 @@ public final class QueryViewFormats {
                 return this;
             }
 
-            private java.lang.Object messageManifest_ = "";
+            private Object messageManifest_ = "";
             /**
              * <code>optional string messageManifest = 4;</code>
              */
@@ -2193,18 +2193,18 @@ public final class QueryViewFormats {
             /**
              * <code>optional string messageManifest = 4;</code>
              */
-            public java.lang.String getMessageManifest() {
-                java.lang.Object ref = messageManifest_;
-                if (!(ref instanceof java.lang.String)) {
+            public String getMessageManifest() {
+                Object ref = messageManifest_;
+                if (!(ref instanceof String)) {
                     akka.protobuf.ByteString bs =
                             (akka.protobuf.ByteString) ref;
-                    java.lang.String s = bs.toStringUtf8();
+                    String s = bs.toStringUtf8();
                     if (bs.isValidUtf8()) {
                         messageManifest_ = s;
                     }
                     return s;
                 } else {
-                    return (java.lang.String) ref;
+                    return (String) ref;
                 }
             }
             /**
@@ -2212,11 +2212,11 @@ public final class QueryViewFormats {
              */
             public akka.protobuf.ByteString
             getMessageManifestBytes() {
-                java.lang.Object ref = messageManifest_;
+                Object ref = messageManifest_;
                 if (ref instanceof String) {
                     akka.protobuf.ByteString b =
                             akka.protobuf.ByteString.copyFromUtf8(
-                                    (java.lang.String) ref);
+                                    (String) ref);
                     messageManifest_ = b;
                     return b;
                 } else {
@@ -2227,7 +2227,7 @@ public final class QueryViewFormats {
              * <code>optional string messageManifest = 4;</code>
              */
             public Builder setMessageManifest(
-                    java.lang.String value) {
+                    String value) {
                 if (value == null) {
                     throw new NullPointerException();
                 }
@@ -2293,7 +2293,7 @@ public final class QueryViewFormats {
     private static akka.protobuf.Descriptors.FileDescriptor
             descriptor;
     static {
-        java.lang.String[] descriptorData = {
+        String[] descriptorData = {
                 "\n(src/main/protobuf/QueryViewFormats.pro" +
                         "to\022\036akka.contrib.persistence.query\"\234\002\n\021Q" +
                         "ueryViewSnapshot\022V\n\013sequenceNrs\030\001 \003(\0132A." +
@@ -2324,19 +2324,19 @@ public final class QueryViewFormats {
         internal_static_akka_contrib_persistence_query_QueryViewSnapshot_fieldAccessorTable = new
                 akka.protobuf.GeneratedMessage.FieldAccessorTable(
                 internal_static_akka_contrib_persistence_query_QueryViewSnapshot_descriptor,
-                new java.lang.String[] { "SequenceNrs", "MaxOffset", "Data", });
+                new String[] { "SequenceNrs", "MaxOffset", "Data", });
         internal_static_akka_contrib_persistence_query_QueryViewSnapshot_SequenceNrEntry_descriptor =
                 internal_static_akka_contrib_persistence_query_QueryViewSnapshot_descriptor.getNestedTypes().get(0);
         internal_static_akka_contrib_persistence_query_QueryViewSnapshot_SequenceNrEntry_fieldAccessorTable = new
                 akka.protobuf.GeneratedMessage.FieldAccessorTable(
                 internal_static_akka_contrib_persistence_query_QueryViewSnapshot_SequenceNrEntry_descriptor,
-                new java.lang.String[] { "PersistenceId", "SequenceNr", });
+                new String[] { "PersistenceId", "SequenceNr", });
         internal_static_akka_contrib_persistence_query_Payload_descriptor =
                 getDescriptor().getMessageTypes().get(1);
         internal_static_akka_contrib_persistence_query_Payload_fieldAccessorTable = new
                 akka.protobuf.GeneratedMessage.FieldAccessorTable(
                 internal_static_akka_contrib_persistence_query_Payload_descriptor,
-                new java.lang.String[] { "EnclosedMessage", "SerializerId", "MessageManifest", });
+                new String[] { "EnclosedMessage", "SerializerId", "MessageManifest", });
     }
 
     // @@protoc_insertion_point(outer_class_scope)
