@@ -2,12 +2,11 @@ package akka.contrib.persistence.query
 
 import java.nio.ByteBuffer
 
-import akka.persistence.query.{Offset, Sequence}
+import akka.persistence.query.Sequence
 import akka.serialization.SerializationExtension
 import com.ovoenergy.UnitSpec
 import com.ovoenergy.akka.AkkaFixture
-import org.scalacheck.Arbitrary
-import org.scalacheck.Gen
+import org.scalacheck.{Arbitrary, Gen}
 
 import scala.util.{Failure, Try}
 
