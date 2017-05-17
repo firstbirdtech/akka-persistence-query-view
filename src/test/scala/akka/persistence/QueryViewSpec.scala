@@ -3,6 +3,7 @@ package akka.persistence
 import akka.actor.{ActorRef, Props, Status, Terminated}
 import akka.contrib.persistence.query.LevelDbQuerySupport
 import akka.pattern._
+import akka.persistence.QueryView.ForceUpdate
 import akka.persistence.journal.Tagged
 import akka.stream.scaladsl.Source
 import akka.testkit.TestProbe
@@ -10,6 +11,7 @@ import akka.util.Timeout
 import com.ovoenergy.akka.{AkkaFixture, AkkaPersistenceFixture}
 import com.ovoenergy.{ConfigFixture, UnitSpec}
 
+import scala.concurrent.Promise
 import scala.concurrent.duration._
 
 class QueryViewSpec extends UnitSpec with ConfigFixture with AkkaFixture with AkkaPersistenceFixture {
@@ -79,6 +81,33 @@ class QueryViewSpec extends UnitSpec with ConfigFixture with AkkaFixture with Ak
           }
         }
 
+        "receives events from new recoverystream on force update" in new PersistenceIdQueryViewContextOnlyRecoveryStream("test-1") {
+
+          writeToJournal("test-1", Tagged("test-1-1", Set("one")))
+          writeToJournal("test-1", Tagged("test-1-2", Set("two")))
+          writeToJournal("test-2", Tagged("test-2-1", Set("one")))
+          writeToJournal("test-2", Tagged("test-2-2", Set("two")))
+          writeToJournal("test-1", Tagged("test-1-3", Set("one")))
+
+          restartUnderTest()
+
+          val recoveryMessages = Seq("test-1-1", "test-1-2", "test-1-3")
+          eventually {
+            val receivedMessages = underTest.ask(GetMessage).mapTo[Vector[String]].futureValue
+            receivedMessages should contain theSameElementsInOrderAs recoveryMessages
+          }
+
+          writeToJournal("test-1", Tagged("test-1-4", Set("one")))
+          writeToJournal("test-2", Tagged("test-2-3", Set("one")))
+
+          val expectedMessages = Seq("test-1-1", "test-1-2", "test-1-3", "test-1-4")
+          eventually {
+            forceUpdate()
+            val receivedMessages = underTest.ask(GetMessage).mapTo[Vector[String]].futureValue
+            receivedMessages should contain theSameElementsInOrderAs expectedMessages
+          }
+        }
+
         "load status from snapshot and receive journal events" in new PersistenceIdQueryViewContext("test-1") {
 
           writeToJournal("test-1", Tagged("test-1-1", Set("one")))
@@ -141,7 +170,6 @@ class QueryViewSpec extends UnitSpec with ConfigFixture with AkkaFixture with Ak
             val receivedMessages = underTest.ask(GetMessage).mapTo[Vector[String]].futureValue
             receivedMessages should contain theSameElementsInOrderAs expectedMessages
           }
-
         }
 
         "continue receiving live events with the given tag" in new TagQueryViewContext("one") {
@@ -160,6 +188,33 @@ class QueryViewSpec extends UnitSpec with ConfigFixture with AkkaFixture with Ak
           val expectedMessages = Seq("test-1-1", "test-2-1", "test-1-3", "test-1-4", "test-2-3")
 
           eventually {
+            val receivedMessages = underTest.ask(GetMessage).mapTo[Vector[String]].futureValue
+            receivedMessages should contain theSameElementsInOrderAs expectedMessages
+          }
+        }
+
+        "receives events from new recoverystream on force update" in new TagQueryViewContextOnlyRecoveryStream("one") {
+
+          writeToJournal("test-1", Tagged("test-1-1", Set("one")))
+          writeToJournal("test-1", Tagged("test-1-2", Set("two")))
+          writeToJournal("test-2", Tagged("test-2-1", Set("one")))
+          writeToJournal("test-2", Tagged("test-2-2", Set("two")))
+          writeToJournal("test-1", Tagged("test-1-3", Set("one")))
+
+          restartUnderTest()
+
+          val recoveryMessages = Seq("test-1-1", "test-2-1", "test-1-3")
+          eventually {
+            val receivedMessages = underTest.ask(GetMessage).mapTo[Vector[String]].futureValue
+            receivedMessages should contain theSameElementsInOrderAs recoveryMessages
+          }
+
+          writeToJournal("test-1", Tagged("test-1-4", Set("one")))
+          writeToJournal("test-2", Tagged("test-2-3", Set("one")))
+
+          val expectedMessages = Seq("test-1-1", "test-2-1", "test-1-3", "test-1-4", "test-2-3")
+          eventually {
+            forceUpdate()
             val receivedMessages = underTest.ask(GetMessage).mapTo[Vector[String]].futureValue
             receivedMessages should contain theSameElementsInOrderAs expectedMessages
           }
@@ -213,12 +268,11 @@ class QueryViewSpec extends UnitSpec with ConfigFixture with AkkaFixture with Ak
       probe.send(underTest, SaveSnapshot)
       probe.expectMsg(SnapshotSaved)
     }
-  }
 
-  class TagQueryViewContext(tag: String) extends QueryViewContext {
-
-    override protected def createUnderTest(): ActorRef =
-      system.actorOf(Props(new TagQueryView(tag)))
+    def forceUpdate(): Unit = {
+      val probe = TestProbe()
+      probe.send(underTest, ForceUpdate)
+    }
   }
 
   class PersistenceIdQueryViewContext(persistenceId: String) extends QueryViewContext {
@@ -227,24 +281,55 @@ class QueryViewSpec extends UnitSpec with ConfigFixture with AkkaFixture with Ak
       system.actorOf(Props(new PersistenceIdQueryView(persistenceId)))
   }
 
+  class PersistenceIdQueryViewContextOnlyRecoveryStream(persistenceId: String) extends QueryViewContext {
+
+    override protected def createUnderTest(): ActorRef =
+      system.actorOf(Props(new PersistenceIdQueryViewOnlyRecoveryStream(persistenceId)))
+  }
+
+  class TagQueryViewContext(tag: String) extends QueryViewContext {
+
+    override protected def createUnderTest(): ActorRef =
+      system.actorOf(Props(new TagQueryView(tag)))
+  }
+
+  class TagQueryViewContextOnlyRecoveryStream(tag: String) extends QueryViewContext {
+
+    override protected def createUnderTest(): ActorRef =
+      system.actorOf(Props(new TagQueryViewOnlyRecoveryStream(tag)))
+  }
 }
 
 class PersistenceIdQueryView(persistenceId: String) extends TestQueryView {
 
   override def recoveringStream(sequenceNrByPersistenceId: Map[String, Long], lastOffset: OT): Source[AnyRef, _] =
-    queries.currentEventsByPersistenceId(persistenceId)
+    queries.currentEventsByPersistenceId(persistenceId, sequenceNrByPersistenceId.get(persistenceId).map(_ + 1).getOrElse(0))
 
   override def liveStream(sequenceNrByPersistenceId: Map[String, Long], lastOffset: OT): Source[AnyRef, _] =
-    queries.eventsByPersistenceId(persistenceId, sequenceNrByPersistenceId.getOrElse(persistenceId, 0L))
+    queries.eventsByPersistenceId(persistenceId, sequenceNrByPersistenceId.get(persistenceId).map(_ + 1).getOrElse(0))
+}
+
+class PersistenceIdQueryViewOnlyRecoveryStream(persistenceId: String) extends PersistenceIdQueryView(persistenceId) {
+
+  override def liveStream(sequenceNrByPersistenceId: Map[String, Long], lastOffset: OT): Source[AnyRef, _] =
+    Source.fromFuture(Promise().future) //never ending stream without elements
 }
 
 class TagQueryView(tag: String) extends TestQueryView {
+
+  override def allowOutOfOrderEvents = true
 
   override def recoveringStream(sequenceNrByPersistenceId: Map[String, Long], lastOffset: OT): Source[AnyRef, _] =
     queries.currentEventsByTag(tag, lastOffset)
 
   override def liveStream(sequenceNrByPersistenceId: Map[String, Long], lastOffset: OT): Source[AnyRef, _] =
     queries.eventsByTag(tag, lastOffset)
+}
+
+class TagQueryViewOnlyRecoveryStream(tag: String) extends TagQueryView(tag) {
+
+  override def liveStream(sequenceNrByPersistenceId: Map[String, Long], lastOffset: OT): Source[AnyRef, _] =
+    Source.fromFuture(Promise().future) //never ending stream without elements
 }
 
 object TestQueryView {

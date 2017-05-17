@@ -17,9 +17,9 @@
 package akka.persistence
 
 import akka.actor._
-import akka.contrib.persistence.query.{LiveStreamCompletedException, QuerySupport, QueryViewSnapshot}
+import akka.contrib.persistence.query.{LiveStreamCompletedException, QueryViewSnapshot}
 import akka.persistence.SnapshotProtocol.LoadSnapshotResult
-import akka.persistence.query.{EventEnvelope, EventEnvelope2, Offset, Sequence}
+import akka.persistence.query.{EventEnvelope, EventEnvelope2, Sequence}
 import akka.stream.ActorMaterializer
 import akka.stream.scaladsl._
 
@@ -46,6 +46,19 @@ object QueryView {
 
   private case class LiveStreamFailed(cause: Throwable)
 
+  /**
+    * Additionally to being updated by the live stream the QueryView instantly issues a query using the recovery stream to perform a fast forced update
+    * (useful in corner cases when the live stream has a high delay/polling interval)
+    * While updating a subsequent ForceUpdate is ignored.
+    */
+  case object ForceUpdate
+
+  private case object StartForceUpdate
+
+  private case object ForceUpdateCompleted
+
+  private case class ForceUpdateFailed(cause: Throwable)
+
   sealed trait State
 
   object State {
@@ -57,26 +70,6 @@ object QueryView {
     case object Live extends State
 
   }
-
-  private object PersistenceIdAndSequenceNr {
-
-    def unapply(arg: AnyRef): Option[(String, Long)] = arg match {
-      case EventEnvelope2(_, persistenceId, sequenceNr, _) => Some(persistenceId -> sequenceNr)
-      case EventEnvelope(_, persistenceId, sequenceNr, _) => Some(persistenceId -> sequenceNr)
-      case _ => None
-    }
-  }
-
-  implicit class RichSource[T, M](s: Source[T, M]) {
-    def filterAlreadyReceived(nextSequenceNrsByPersistenceId: Map[String, Long]): Source[T, M] =
-      s.filter {
-        // This will avoid duplicate events due to low precision offset.
-        case PersistenceIdAndSequenceNr(pId, sNr) =>
-          nextSequenceNrsByPersistenceId.get(pId).forall(sNr >= _)
-        case _ => false // We don't want to make pass anything else
-      }
-  }
-
 }
 
 trait EventStreamOffsetTyped {
@@ -110,6 +103,7 @@ abstract class QueryView
   private[this] var currentState: State = State.WaitingForSnapshot
   private[this] var loadSnapshotTimer: Option[Cancellable] = None
   private[this] var savingSnapshot: Boolean = false
+  private[this] var forcedUpdateInProgress: Boolean = false
 
   private val persistence = Persistence(context.system)
   override private[persistence] val snapshotStore: ActorRef = persistence.snapshotStoreFor(snapshotPluginId)
@@ -169,6 +163,23 @@ abstract class QueryView
     */
   def preLive(): Unit = {}
 
+  /**
+    * @see [[ForceUpdate]]
+    */
+  def forceUpdate(): Unit = startForceUpdate()
+
+  /**
+    * Assumes events in recoveringStream and liveStream are strictly ordered or fail otherwise.
+    * (currently stashing too early received events is not implemented)
+    * @return
+    */
+  def allowOutOfOrderEvents: Boolean = false
+
+  /**
+    * Is called when the stream of a forceUpdate has completed
+    */
+  def onForceUpdateCompleted() = {}
+
   // Status accessors
 
   /**
@@ -192,6 +203,14 @@ abstract class QueryView
     * Return the last replayed message offset from the journal.
     */
   final def lastOffset: OT = _lastOffset
+
+  /**
+    * The current sequenceNr of given persistenceId
+    *
+    * @param persistenceId
+    * @return
+    */
+  final def lastSequenceNrFor(persistenceId: String): Long = _sequenceNrByPersistenceId.getOrElse(persistenceId, 0)
 
   /**
     * Return the number of processed events since last snapshot has been taken.
@@ -245,24 +264,33 @@ abstract class QueryView
       case StartLive =>
         sender() ! EventReplayed
 
-      case EventEnvelope2(offset:OT, persistenceId, sequenceNr, event) ⇒
-        _lastOffset = offset
-        _sequenceNrByPersistenceId = _sequenceNrByPersistenceId + (persistenceId -> (sequenceNr + 1))
-        _noOfEventsSinceLastSnapshot = _noOfEventsSinceLastSnapshot + 1
-        super.aroundReceive(behaviour, event)
+      case EventEnvelope2(offset: OT, persistenceId, sequenceNr, event) ⇒
+        processEvent(behaviour, offset, persistenceId, sequenceNr, event)
         sender() ! EventReplayed
 
       case EventEnvelope(offset, persistenceId, sequenceNr, event) ⇒
-        _lastOffset = Sequence(offset)
-        _sequenceNrByPersistenceId = _sequenceNrByPersistenceId + (persistenceId -> (sequenceNr + 1))
-        _noOfEventsSinceLastSnapshot = _noOfEventsSinceLastSnapshot + 1
-        super.aroundReceive(behaviour, event)
+        processEvent(behaviour, Sequence(offset), persistenceId, sequenceNr, event)
         sender() ! EventReplayed
 
       case LiveStreamFailed(ex) ⇒
         log.error(ex, s"Live stream failed, it is a fatal error")
         // We have to crash the actor
         throw ex
+
+      case ForceUpdate ⇒
+        startForceUpdate()
+
+      case StartForceUpdate ⇒
+        log.debug("update stream started")
+        sender() ! EventReplayed
+
+      case ForceUpdateCompleted ⇒
+        forcedUpdateInProgress = false
+        onForceUpdateCompleted()
+
+      case ForceUpdateFailed(f) ⇒
+        log.error(f, "forceupdate failed")
+        forcedUpdateInProgress = false
 
       case msg@SaveSnapshotSuccess(metadata) ⇒
         snapshotSaved(metadata)
@@ -283,17 +311,11 @@ abstract class QueryView
         sender() ! EventReplayed
 
       case EventEnvelope(offset, persistenceId, sequenceNr, event) ⇒
-        _lastOffset = Sequence(offset)
-        _sequenceNrByPersistenceId = _sequenceNrByPersistenceId + (persistenceId -> (sequenceNr + 1))
-        _noOfEventsSinceLastSnapshot = _noOfEventsSinceLastSnapshot + 1
-        super.aroundReceive(behaviour, event)
+        processEvent(behaviour, Sequence(offset), persistenceId, sequenceNr, event)
         sender() ! EventReplayed
 
-      case EventEnvelope2(offset:OT, persistenceId, sequenceNr, event) ⇒
-        _lastOffset = offset
-        _sequenceNrByPersistenceId = _sequenceNrByPersistenceId + (persistenceId -> (sequenceNr + 1))
-        _noOfEventsSinceLastSnapshot = _noOfEventsSinceLastSnapshot + 1
-        super.aroundReceive(behaviour, event)
+      case EventEnvelope2(offset: OT, persistenceId, sequenceNr, event) ⇒
+        processEvent(behaviour, offset, persistenceId, sequenceNr, event)
         sender() ! EventReplayed
 
       case QueryView.RecoveryCompleted ⇒
@@ -315,6 +337,22 @@ abstract class QueryView
       case _: Any ⇒
         recoveringStash.stash()
     }
+
+  private def processEvent(behaviour: Receive, offset: OT, persistenceId: String, sequenceNr: Long, event: Any) = {
+    val expectedNextSeqForPersistenceId = _sequenceNrByPersistenceId.getOrElse(persistenceId, 0L) + 1
+    if (!allowOutOfOrderEvents && sequenceNr > expectedNextSeqForPersistenceId) {
+      throw new IllegalStateException(s"received out of order event for $persistenceId. Expected sequenceNr $expectedNextSeqForPersistenceId but got $sequenceNr")
+    }
+    else if (sequenceNr >= expectedNextSeqForPersistenceId) {
+      _lastOffset = offset
+      _sequenceNrByPersistenceId = _sequenceNrByPersistenceId + (persistenceId -> sequenceNr)
+      _noOfEventsSinceLastSnapshot = _noOfEventsSinceLastSnapshot + 1
+      super.aroundReceive(behaviour, event)
+    }
+    else {
+      log.debug("filter already processed event for sequenceNr {} event {}", sequenceNr, event)
+    }
+  }
 
   private def waitingForSnapshot(behaviour: Receive, msg: Any) =
     msg match {
@@ -353,11 +391,7 @@ abstract class QueryView
     val recoverySink =
       Sink.actorRefWithAck(self, StartRecovery, EventReplayed, QueryView.RecoveryCompleted, e => RecoveryFailed(e))
 
-    stream
-        .filterAlreadyReceived(_sequenceNrByPersistenceId)
-        .concat(Source.single(QueryView.RecoveryCompleted))
-        .to(recoverySink)
-        .run()
+    stream.to(recoverySink).run()
   }
 
   private def startLive(): Unit = {
@@ -376,10 +410,18 @@ abstract class QueryView
         e => LiveStreamFailed(e)
       )
 
-    liveStream(_sequenceNrByPersistenceId,lastOffset)
-        .filterAlreadyReceived(_sequenceNrByPersistenceId)
-        .to(liveSink)
-        .run()
+    liveStream(_sequenceNrByPersistenceId, lastOffset).to(liveSink).run()
+  }
+
+  private def startForceUpdate(): Unit = {
+    if (forcedUpdateInProgress) {
+      log.debug("ignore forceupdate since forceupdate is already in progress")
+    }
+    else {
+      log.debug("forceupdate for persistentid {} and offset {}", _sequenceNrByPersistenceId, lastOffset)
+      val forceUpdateSink = Sink.actorRefWithAck(self, StartForceUpdate, EventReplayed, ForceUpdateCompleted, e => ForceUpdateFailed(e))
+      recoveringStream(_sequenceNrByPersistenceId, lastOffset).to(forceUpdateSink).run()
+    }
   }
 
   override def saveSnapshot(snapshot: Any): Unit = if (!savingSnapshot) {
@@ -397,5 +439,4 @@ abstract class QueryView
     savingSnapshot = false
     log.error(error, s"Error saving snapshot")
   }
-
 }

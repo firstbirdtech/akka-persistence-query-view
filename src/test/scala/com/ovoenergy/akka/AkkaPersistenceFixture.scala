@@ -9,7 +9,7 @@ import com.ovoenergy.ConfigFixture
 import com.ovoenergy.akka.AkkaPersistenceFixture.JournalWriter.DeleteFromJournal
 import com.typesafe.config.{Config, ConfigFactory}
 import org.scalatest.concurrent.{Eventually, ScalaFutures}
-import org.scalatest.{BeforeAndAfterEach, Notifying, Suite}
+import org.scalatest._
 
 import scala.reflect.ClassTag
 
@@ -36,7 +36,7 @@ object AkkaPersistenceFixture {
         deleteMessages(toSequenceNr)
         waitForDeletion = Some(sender())
 
-      case msg @ DeleteMessagesSuccess(toSequenceNr) =>
+      case msg: DeleteMessagesSuccess =>
         waitForDeletion.foreach(_ ! msg)
         waitForDeletion = None
 
@@ -63,9 +63,10 @@ trait AkkaPersistenceFixture extends ConfigFixture with ScalaFutures with Before
 
     note(s"Journal dir: $journalDir Snapshot dir: $snapshotDir")
 
-    ConfigFactory.parseString(s"""
-        |akka.persistence.journal.leveldb.dir = "${journalDir.toAbsolutePath.toString}"
-        |akka.persistence.snapshot-store.local.dir = "${snapshotDir.toAbsolutePath.toString}"
+    ConfigFactory.parseString(
+      s"""
+         |akka.persistence.journal.leveldb.dir = "${journalDir.toAbsolutePath.toString}"
+         |akka.persistence.snapshot-store.local.dir = "${snapshotDir.toAbsolutePath.toString}"
       """.stripMargin).withFallback(super.initConfig())
   }
 
@@ -88,9 +89,9 @@ trait AkkaPersistenceFixture extends ConfigFixture with ScalaFutures with Before
 
   def deleteFromJournal(persistenceId: String, toSequenceNr: Long): Unit = withJournalWriter(persistenceId) { writer ⇒
     writer
-      .ask(DeleteFromJournal(toSequenceNr))(10.seconds)
-      .mapTo[DeleteMessagesSuccess]
-      .futureValue(timeout(scaled(5.seconds)))
+        .ask(DeleteFromJournal(toSequenceNr))(10.seconds)
+        .mapTo[DeleteMessagesSuccess]
+        .futureValue(timeout(scaled(5.seconds)))
     note(s"Events deleted from $persistenceId up to $toSequenceNr")
   }
 
