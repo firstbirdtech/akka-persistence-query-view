@@ -219,7 +219,6 @@ abstract class QueryView
 
   override protected[akka] def aroundPreStart(): Unit = {
     super.aroundPreStart()
-    loadSnapshot(snapshotterId, SnapshotSelectionCriteria.Latest, Long.MaxValue)
     // If the `loadSnapshotTimeout` is finite, it makes sure the Actor will not get stuck in 'waitingForSnapshot' state.
     loadSnapshotTimer = loadSnapshotTimeout match {
       case timeout: FiniteDuration ⇒
@@ -234,6 +233,7 @@ abstract class QueryView
         None
     }
     currentState = State.WaitingForSnapshot
+    loadSnapshot(snapshotterId, SnapshotSelectionCriteria.Latest, Long.MaxValue)
   }
 
   override protected[akka] def aroundPostStop(): Unit = {
