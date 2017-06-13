@@ -81,7 +81,9 @@ class QueryViewSpec extends UnitSpec with ConfigFixture with AkkaFixture with Ak
           }
         }
 
-        "receives events from new recoverystream on force update" in new PersistenceIdQueryViewContextOnlyRecoveryStream("test-1") {
+        "receives events from new recoverystream on force update" in new PersistenceIdQueryViewContextOnlyRecoveryStream(
+          "test-1"
+        ) {
 
           writeToJournal("test-1", Tagged("test-1-1", Set("one")))
           writeToJournal("test-1", Tagged("test-1-2", Set("two")))
@@ -303,7 +305,10 @@ class QueryViewSpec extends UnitSpec with ConfigFixture with AkkaFixture with Ak
 class PersistenceIdQueryView(persistenceId: String) extends TestQueryView {
 
   override def recoveringStream(sequenceNrByPersistenceId: Map[String, Long], lastOffset: OT): Source[AnyRef, _] =
-    queries.currentEventsByPersistenceId(persistenceId, sequenceNrByPersistenceId.get(persistenceId).map(_ + 1).getOrElse(0))
+    queries.currentEventsByPersistenceId(
+      persistenceId,
+      sequenceNrByPersistenceId.get(persistenceId).map(_ + 1).getOrElse(0)
+    )
 
   override def liveStream(sequenceNrByPersistenceId: Map[String, Long], lastOffset: OT): Source[AnyRef, _] =
     queries.eventsByPersistenceId(persistenceId, sequenceNrByPersistenceId.get(persistenceId).map(_ + 1).getOrElse(0))
@@ -316,8 +321,6 @@ class PersistenceIdQueryViewOnlyRecoveryStream(persistenceId: String) extends Pe
 }
 
 class TagQueryView(tag: String) extends TestQueryView {
-
-  override def allowOutOfOrderEvents = true
 
   override def recoveringStream(sequenceNrByPersistenceId: Map[String, Long], lastOffset: OT): Source[AnyRef, _] =
     queries.currentEventsByTag(tag, lastOffset)

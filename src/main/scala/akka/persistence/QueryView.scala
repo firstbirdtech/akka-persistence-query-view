@@ -73,6 +73,7 @@ object QueryView {
 }
 
 trait EventStreamOffsetTyped {
+
   /**
     * Type of offset used for position in the event stream
     */
@@ -82,12 +83,11 @@ trait EventStreamOffsetTyped {
 
 abstract class QueryView
     extends Actor
-        with Snapshotter
-        with EventStreamOffsetTyped
-        with Stash
-        with StashFactory
-        with ActorLogging {
-
+    with Snapshotter
+    with EventStreamOffsetTyped
+    with Stash
+    with StashFactory
+    with ActorLogging {
 
   import QueryView._
   import context._
@@ -169,13 +169,6 @@ abstract class QueryView
   def forceUpdate(): Unit = startForceUpdate()
 
   /**
-    * Assumes events in recoveringStream and liveStream are strictly ordered or fail otherwise.
-    * (currently stashing too early received events is not implemented)
-    * @return
-    */
-  def allowOutOfOrderEvents: Boolean = false
-
-  /**
     * Is called when the stream of a forceUpdate has completed
     */
   def onForceUpdateCompleted() = {}
@@ -202,7 +195,7 @@ abstract class QueryView
   /**
     * Return the last replayed message offset from the journal.
     */
-  final def lastOffset: OT = _lastOffset
+  final def lastOffset: OT = Option(_lastOffset).getOrElse(firstOffset)
 
   /**
     * The current sequenceNr of given persistenceId
@@ -226,7 +219,6 @@ abstract class QueryView
 
   override protected[akka] def aroundPreStart(): Unit = {
     super.aroundPreStart()
-    loadSnapshot(snapshotterId, SnapshotSelectionCriteria.Latest, Long.MaxValue)
     // If the `loadSnapshotTimeout` is finite, it makes sure the Actor will not get stuck in 'waitingForSnapshot' state.
     loadSnapshotTimer = loadSnapshotTimeout match {
       case timeout: FiniteDuration ⇒
@@ -241,6 +233,7 @@ abstract class QueryView
         None
     }
     currentState = State.WaitingForSnapshot
+    loadSnapshot(snapshotterId, SnapshotSelectionCriteria.Latest, Long.MaxValue)
   }
 
   override protected[akka] def aroundPostStop(): Unit = {
@@ -292,11 +285,11 @@ abstract class QueryView
         log.error(f, "forceupdate failed")
         forcedUpdateInProgress = false
 
-      case msg@SaveSnapshotSuccess(metadata) ⇒
+      case msg @ SaveSnapshotSuccess(metadata) ⇒
         snapshotSaved(metadata)
         super.aroundReceive(behaviour, msg)
 
-      case msg@SaveSnapshotFailure(metadata, error) ⇒
+      case msg @ SaveSnapshotFailure(metadata, error) ⇒
         snapshotSavingFailed(metadata, error)
         super.aroundReceive(behaviour, msg)
 
@@ -319,18 +312,19 @@ abstract class QueryView
         sender() ! EventReplayed
 
       case QueryView.RecoveryCompleted ⇒
+        log.info("Recovery completed")
         startLive()
 
       case RecoveryFailed(ex) ⇒
         // TODO if it is a Timeout decide if switch to live or crash
-        // We have to crash the actor
+        log.error(ex, "Error recovering")
         throw ex
 
-      case msg@SaveSnapshotSuccess(metadata) ⇒
+      case msg @ SaveSnapshotSuccess(metadata) ⇒
         snapshotSaved(metadata)
         super.aroundReceive(behaviour, msg)
 
-      case msg@SaveSnapshotFailure(metadata, error) ⇒
+      case msg @ SaveSnapshotFailure(metadata, error) ⇒
         snapshotSavingFailed(metadata, error)
         super.aroundReceive(behaviour, msg)
 
@@ -340,17 +334,13 @@ abstract class QueryView
 
   private def processEvent(behaviour: Receive, offset: OT, persistenceId: String, sequenceNr: Long, event: Any) = {
     val expectedNextSeqForPersistenceId = _sequenceNrByPersistenceId.getOrElse(persistenceId, 0L) + 1
-    if (!allowOutOfOrderEvents && sequenceNr > expectedNextSeqForPersistenceId) {
-      throw new IllegalStateException(s"received out of order event for $persistenceId. Expected sequenceNr $expectedNextSeqForPersistenceId but got $sequenceNr")
-    }
-    else if (sequenceNr >= expectedNextSeqForPersistenceId) {
+    if (sequenceNr >= expectedNextSeqForPersistenceId) {
       _lastOffset = offset
       _sequenceNrByPersistenceId = _sequenceNrByPersistenceId + (persistenceId -> sequenceNr)
       _noOfEventsSinceLastSnapshot = _noOfEventsSinceLastSnapshot + 1
       super.aroundReceive(behaviour, event)
-    }
-    else {
-      log.debug("filter already processed event for sequenceNr {} event {}", sequenceNr, event)
+    } else {
+      log.debug(s"filter already processed event for sequenceNr=$sequenceNr event=$event")
     }
   }
 
@@ -413,16 +403,15 @@ abstract class QueryView
     liveStream(_sequenceNrByPersistenceId, lastOffset).to(liveSink).run()
   }
 
-  private def startForceUpdate(): Unit = {
+  private def startForceUpdate(): Unit =
     if (forcedUpdateInProgress) {
       log.debug("ignore forceupdate since forceupdate is already in progress")
-    }
-    else {
+    } else {
       log.debug("forceupdate for persistentid {} and offset {}", _sequenceNrByPersistenceId, lastOffset)
-      val forceUpdateSink = Sink.actorRefWithAck(self, StartForceUpdate, EventReplayed, ForceUpdateCompleted, e => ForceUpdateFailed(e))
+      val forceUpdateSink =
+        Sink.actorRefWithAck(self, StartForceUpdate, EventReplayed, ForceUpdateCompleted, e => ForceUpdateFailed(e))
       recoveringStream(_sequenceNrByPersistenceId, lastOffset).to(forceUpdateSink).run()
     }
-  }
 
   override def saveSnapshot(snapshot: Any): Unit = if (!savingSnapshot) {
     // Decorate the snapshot
@@ -431,12 +420,17 @@ abstract class QueryView
   }
 
   private def snapshotSaved(metadata: SnapshotMetadata): Unit = {
+    savingSnapshot = false
     lastSnapshotSequenceNr = metadata.sequenceNr
     _noOfEventsSinceLastSnapshot = 0L
+    log.debug(
+      s"Snapshot saved successfully snapshotterId=$snapshotterId lastSnapshotSequenceNr=$lastSnapshotSequenceNr"
+    )
+
   }
 
   private def snapshotSavingFailed(metadata: SnapshotMetadata, error: Throwable): Unit = {
     savingSnapshot = false
-    log.error(error, s"Error saving snapshot")
+    log.error(error, s"Error saving snapshot snapshotterId=$snapshotterId")
   }
 }
