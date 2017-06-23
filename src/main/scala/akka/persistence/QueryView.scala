@@ -218,7 +218,16 @@ abstract class QueryView
   // Behavior
 
   override protected[akka] def aroundPreStart(): Unit = {
+    loadSnapshot()
     super.aroundPreStart()
+  }
+
+  override protected[akka] def aroundPreRestart(reason: Throwable, message: Option[Any]): Unit = {
+    loadSnapshot()
+    super.aroundPreRestart(reason, message)
+  }
+
+  private def loadSnapshot(): Unit = {
     // If the `loadSnapshotTimeout` is finite, it makes sure the Actor will not get stuck in 'waitingForSnapshot' state.
     loadSnapshotTimer = loadSnapshotTimeout match {
       case timeout: FiniteDuration ⇒
@@ -236,8 +245,15 @@ abstract class QueryView
     loadSnapshot(snapshotterId, SnapshotSelectionCriteria.Latest, Long.MaxValue)
   }
 
+  override protected[akka] def aroundPostRestart(reason: Throwable): Unit = {
+    cancelSnapshotTimer()
+    super.aroundPostRestart(reason)
+  }
+
+  private def cancelSnapshotTimer(): Unit = loadSnapshotTimer.foreach(_.cancel())
+
   override protected[akka] def aroundPostStop(): Unit = {
-    loadSnapshotTimer.foreach(_.cancel())
+    cancelSnapshotTimer()
     materializer.shutdown()
     super.aroundPostStop()
   }

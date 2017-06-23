@@ -245,6 +245,23 @@ class QueryViewSpec extends UnitSpec with ConfigFixture with AkkaFixture with Ak
             receivedMessages should contain theSameElementsInOrderAs expectedMessages
           }
         }
+
+        "recover from failure in live stream" in new FailingLiveQueryViewContext("one") {
+          writeToJournal("test-1", Tagged("test-1-1", Set("one")))
+          writeToJournal("test-1", Tagged("test-1-2", Set("one")))
+
+          eventually {
+            val receivedMessages = underTest.ask(GetMessage).mapTo[Vector[String]].futureValue
+            receivedMessages should contain theSameElementsInOrderAs Seq("test-1-1", "test-1-2")
+          }
+
+          writeToJournal("test-1", Tagged("test-1-3", Set("one")))
+
+          eventually {
+            val receivedMessages = underTest.ask(GetMessage).mapTo[Vector[String]].futureValue
+            receivedMessages should contain theSameElementsInOrderAs Seq("test-1-1", "test-1-2", "test-1-3")
+          }
+        }
       }
     }
   }
@@ -300,6 +317,18 @@ class QueryViewSpec extends UnitSpec with ConfigFixture with AkkaFixture with Ak
     override protected def createUnderTest(): ActorRef =
       system.actorOf(Props(new TagQueryViewOnlyRecoveryStream(tag)))
   }
+
+  class FailingLiveQueryViewContext(tag: String) extends QueryViewContext {
+
+    private var fail = true
+
+    override protected def createUnderTest(): ActorRef = {
+      val actor = system.actorOf(Props(new FailingLiveQueryView(tag, fail)))
+      fail = false
+      actor
+    }
+
+  }
 }
 
 class PersistenceIdQueryView(persistenceId: String) extends TestQueryView {
@@ -333,6 +362,20 @@ class TagQueryViewOnlyRecoveryStream(tag: String) extends TagQueryView(tag) {
 
   override def liveStream(sequenceNrByPersistenceId: Map[String, Long], lastOffset: OT): Source[AnyRef, _] =
     Source.fromFuture(Promise().future) //never ending stream without elements
+}
+
+class FailingLiveQueryView(tag: String, var fail: Boolean) extends TagQueryView(tag) {
+
+  override def recoveringStream(sequenceNrByPersistenceId: Map[String, Long], lastOffset: OT): Source[AnyRef, _] =
+    queries.currentEventsByTag(tag, lastOffset)
+
+  override def liveStream(sequenceNrByPersistenceId: Map[String, Long], lastOffset: OT): Source[AnyRef, _] = {
+    if (fail) {
+      Source.failed(new RuntimeException("Live failed."))
+    } else {
+      super.liveStream(sequenceNrByPersistenceId, lastOffset)
+    }
+  }
 }
 
 object TestQueryView {
