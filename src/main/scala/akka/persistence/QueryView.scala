@@ -378,7 +378,7 @@ abstract class QueryView
       case LoadSnapshotFailed(ex) ⇒
         // It is recoverable so we don't need to crash the actor
         log.error(ex, s"Error loading the snapshot")
-        loadSnapshot()
+        startRecovery()
 
       case _ ⇒
         recoveringStash.stash()
