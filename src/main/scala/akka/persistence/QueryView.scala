@@ -18,7 +18,7 @@ package akka.persistence
 
 import akka.actor._
 import akka.contrib.persistence.query.{LiveStreamCompletedException, QueryViewSnapshot}
-import akka.persistence.SnapshotProtocol.LoadSnapshotResult
+import akka.persistence.SnapshotProtocol.{LoadSnapshotFailed, LoadSnapshotResult}
 import akka.persistence.query.{EventEnvelope, EventEnvelope2, Sequence}
 import akka.stream.ActorMaterializer
 import akka.stream.scaladsl._
@@ -38,7 +38,7 @@ object QueryView {
 
   private case object EventReplayed
 
-  private case class LoadSnapshotFailed(cause: Throwable)
+  private case object LoadSnapshotTimeout
 
   private case object RecoveryCompleted
 
@@ -235,7 +235,7 @@ abstract class QueryView
           context.system.scheduler.scheduleOnce(
             timeout,
             self,
-            LoadSnapshotFailed(new TimeoutException(s"Load snapshot timeout after $timeout"))
+            LoadSnapshotTimeout
           )
         )
       case _ ⇒
@@ -259,7 +259,7 @@ abstract class QueryView
   }
 
   override protected[akka] def aroundReceive(behaviour: Receive, msg: Any): Unit = {
-    log.debug(s"Query view received message: [$msg]")
+    log.debug(s"Query view in state [$currentState] received message: [$msg]")
     if (isWaitingForSnapshot) {
       waitingForSnapshot(behaviour, msg)
     } else if (isRecovering) {
@@ -349,8 +349,14 @@ abstract class QueryView
       case LiveStreamFailed(ex) =>
         log.error(ex, s"Live stream failed while recovering, ignoring...")
 
-      case msg ⇒
-        log.debug(s"Stashing while recovering: [$msg]")
+      case LoadSnapshotTimeout =>
+        log.error("Unexpected load snapshot timeout while recovering.")
+
+      case LoadSnapshotFailed(ex) =>
+        log.error(ex, "Unexpected snapshot failed error while recovering.")
+
+      case other ⇒
+        log.debug(s"Stashing while recovering: [$other]")
         recoveringStash.stash()
     }
 
@@ -381,16 +387,20 @@ abstract class QueryView
       case LoadSnapshotResult(None, _) ⇒
         startRecovery()
 
-      case LoadSnapshotFailed(ex) ⇒
+      case LoadSnapshotTimeout ⇒
         // It is recoverable so we don't need to crash the actor
-        log.error(ex, s"Error loading the snapshot")
+        log.error(s"Timeout loading the snapshot after [$loadSnapshotTimeout]")
+        startRecovery()
+
+      case LoadSnapshotFailed(ex) =>
+        log.error(ex, "Error while loading the snapshot.")
         startRecovery()
 
       case LiveStreamFailed(ex) =>
         log.error(ex, s"Live stream failed while waiting for snapshot, ignoring...")
 
-      case msg ⇒
-        log.debug(s"Stashing while waiting for snapshot: [$msg]")
+      case other: Any ⇒
+        log.debug(s"Stashing while waiting for snapshot: [$other]")
         recoveringStash.stash()
     }
 
