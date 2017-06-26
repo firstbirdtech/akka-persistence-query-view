@@ -258,7 +258,8 @@ abstract class QueryView
     super.aroundPostStop()
   }
 
-  override protected[akka] def aroundReceive(behaviour: Receive, msg: Any): Unit =
+  override protected[akka] def aroundReceive(behaviour: Receive, msg: Any): Unit = {
+    log.debug(s"Query view received message: [$msg]")
     if (isWaitingForSnapshot) {
       waitingForSnapshot(behaviour, msg)
     } else if (isRecovering) {
@@ -267,6 +268,7 @@ abstract class QueryView
       assert(isLive)
       live(behaviour, msg)
     }
+  }
 
   private def live(behaviour: Receive, msg: Any) =
     msg match {
@@ -344,7 +346,11 @@ abstract class QueryView
         snapshotSavingFailed(metadata, error)
         super.aroundReceive(behaviour, msg)
 
-      case _: Any ⇒
+      case LiveStreamFailed(ex) =>
+        log.error(ex, s"Live stream failed while recovering, ignoring...")
+
+      case msg ⇒
+        log.debug(s"Stashing while recovering: [$msg]")
         recoveringStash.stash()
     }
 
@@ -380,7 +386,11 @@ abstract class QueryView
         log.error(ex, s"Error loading the snapshot")
         startRecovery()
 
-      case _ ⇒
+      case LiveStreamFailed(ex) =>
+        log.error(ex, s"Live stream failed while waiting for snapshot, ignoring...")
+
+      case msg ⇒
+        log.debug(s"Stashing while waiting for snapshot: [$msg]")
         recoveringStash.stash()
     }
 
