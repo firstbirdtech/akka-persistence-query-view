@@ -284,11 +284,8 @@ class QueryViewSpec extends UnitSpec with ConfigFixture with AkkaFixture with Ak
 
   class FailingLiveQueryViewContext(tag: String) extends QueryViewContext {
 
-    private var fail = true
-
     override protected def createUnderTest(): ActorRef = {
-      val actor = system.actorOf(Props(new FailingLiveQueryView(tag, fail)))
-      fail = false
+      val actor = system.actorOf(Props(new FailingLiveQueryView(tag)))
       actor
     }
 
@@ -328,18 +325,13 @@ class TagQueryViewOnlyRecoveryStream(tag: String) extends TagQueryView(tag) {
     Source.fromFuture(Promise().future) //never ending stream without elements
 }
 
-class FailingLiveQueryView(tag: String, var fail: Boolean) extends TagQueryView(tag) {
+class FailingLiveQueryView(tag: String) extends TagQueryView(tag) {
 
   override def recoveringStream(sequenceNrByPersistenceId: Map[String, Long], lastOffset: OT): Source[AnyRef, _] =
     queries.currentEventsByTag(tag, lastOffset)
 
-  override def liveStream(sequenceNrByPersistenceId: Map[String, Long], lastOffset: OT): Source[AnyRef, _] = {
-    if (fail) {
-      Source.failed(new RuntimeException("Live failed."))
-    } else {
-      super.liveStream(sequenceNrByPersistenceId, lastOffset)
-    }
-  }
+  override def liveStream(sequenceNrByPersistenceId: Map[String, Long], lastOffset: OT): Source[AnyRef, _] =
+    Source.failed(new RuntimeException("Live failed."))
 }
 
 object TestQueryView {
