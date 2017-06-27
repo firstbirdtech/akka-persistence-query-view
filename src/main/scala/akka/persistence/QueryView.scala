@@ -18,7 +18,7 @@ package akka.persistence
 
 import akka.actor._
 import akka.contrib.persistence.query.{LiveStreamCompletedException, QueryViewSnapshot}
-import akka.persistence.SnapshotProtocol.LoadSnapshotResult
+import akka.persistence.SnapshotProtocol.{LoadSnapshotFailed, LoadSnapshotResult}
 import akka.persistence.query.{EventEnvelope, EventEnvelope2, Sequence}
 import akka.stream.ActorMaterializer
 import akka.stream.scaladsl._
@@ -38,7 +38,7 @@ object QueryView {
 
   private case object EventReplayed
 
-  private case class LoadSnapshotFailed(cause: Throwable)
+  private case object LoadSnapshotTimeout
 
   private case object RecoveryCompleted
 
@@ -218,31 +218,48 @@ abstract class QueryView
   // Behavior
 
   override protected[akka] def aroundPreStart(): Unit = {
+    loadSnapshot()
     super.aroundPreStart()
+  }
+
+  override protected[akka] def aroundPreRestart(reason: Throwable, message: Option[Any]): Unit = {
+    loadSnapshot()
+    super.aroundPreRestart(reason, message)
+  }
+
+  private def loadSnapshot(): Unit = {
     // If the `loadSnapshotTimeout` is finite, it makes sure the Actor will not get stuck in 'waitingForSnapshot' state.
     loadSnapshotTimer = loadSnapshotTimeout match {
-      case timeout: FiniteDuration ⇒
+      case timeout: FiniteDuration =>
         Some(
           context.system.scheduler.scheduleOnce(
             timeout,
             self,
-            LoadSnapshotFailed(new TimeoutException(s"Load snapshot timeout after $timeout"))
+            LoadSnapshotTimeout
           )
         )
-      case _ ⇒
+      case _ =>
         None
     }
     currentState = State.WaitingForSnapshot
     loadSnapshot(snapshotterId, SnapshotSelectionCriteria.Latest, Long.MaxValue)
   }
 
+  override protected[akka] def aroundPostRestart(reason: Throwable): Unit = {
+    cancelSnapshotTimer()
+    super.aroundPostRestart(reason)
+  }
+
+  private def cancelSnapshotTimer(): Unit = loadSnapshotTimer.foreach(_.cancel())
+
   override protected[akka] def aroundPostStop(): Unit = {
-    loadSnapshotTimer.foreach(_.cancel())
+    cancelSnapshotTimer()
     materializer.shutdown()
     super.aroundPostStop()
   }
 
-  override protected[akka] def aroundReceive(behaviour: Receive, msg: Any): Unit =
+  override protected[akka] def aroundReceive(behaviour: Receive, msg: Any): Unit = {
+    log.debug(s"Query view in state [$currentState] received message: [$msg]")
     if (isWaitingForSnapshot) {
       waitingForSnapshot(behaviour, msg)
     } else if (isRecovering) {
@@ -251,33 +268,34 @@ abstract class QueryView
       assert(isLive)
       live(behaviour, msg)
     }
+  }
 
   private def live(behaviour: Receive, msg: Any) =
     msg match {
       case StartLive =>
         sender() ! EventReplayed
 
-      case EventEnvelope2(offset: OT, persistenceId, sequenceNr, event) ⇒
+      case EventEnvelope2(offset: OT, persistenceId, sequenceNr, event) =>
         processEvent(behaviour, offset, persistenceId, sequenceNr, event)
         sender() ! EventReplayed
 
-      case EventEnvelope(offset, persistenceId, sequenceNr, event) ⇒
+      case EventEnvelope(offset, persistenceId, sequenceNr, event) =>
         processEvent(behaviour, Sequence(offset), persistenceId, sequenceNr, event)
         sender() ! EventReplayed
 
-      case LiveStreamFailed(ex) ⇒
+      case LiveStreamFailed(ex) =>
         log.error(ex, s"Live stream failed, it is a fatal error")
         // We have to crash the actor
         throw ex
 
-      case ForceUpdate ⇒
+      case ForceUpdate =>
         startForceUpdate()
 
-      case StartForceUpdate ⇒
+      case StartForceUpdate =>
         log.debug("update stream started")
         sender() ! EventReplayed
 
-      case ForceUpdateCompleted ⇒
+      case ForceUpdateCompleted =>
         forcedUpdateInProgress = false
         onForceUpdateCompleted()
 
@@ -328,7 +346,17 @@ abstract class QueryView
         snapshotSavingFailed(metadata, error)
         super.aroundReceive(behaviour, msg)
 
-      case _: Any ⇒
+      case LiveStreamFailed(ex) =>
+        log.error(ex, s"Live stream failed while recovering, ignoring...")
+
+      case LoadSnapshotTimeout =>
+        log.error("Unexpected load snapshot timeout while recovering.")
+
+      case LoadSnapshotFailed(ex) =>
+        log.error(ex, "Unexpected snapshot failed error while recovering.")
+
+      case other =>
+        log.debug(s"Stashing while recovering: [$other]")
         recoveringStash.stash()
     }
 
@@ -356,15 +384,23 @@ abstract class QueryView
         }
         startRecovery()
 
-      case LoadSnapshotResult(None, _) ⇒
+      case LoadSnapshotResult(None, _) =>
         startRecovery()
 
-      case LoadSnapshotFailed(ex) ⇒
+      case LoadSnapshotTimeout =>
         // It is recoverable so we don't need to crash the actor
-        log.error(ex, s"Error loading the snapshot")
+        log.error(s"Timeout loading the snapshot after [$loadSnapshotTimeout]")
         startRecovery()
 
-      case _ ⇒
+      case LoadSnapshotFailed(ex) =>
+        log.error(ex, "Error while loading the snapshot.")
+        startRecovery()
+
+      case LiveStreamFailed(ex) =>
+        log.error(ex, s"Live stream failed while waiting for snapshot, ignoring...")
+
+      case other =>
+        log.debug(s"Stashing while waiting for snapshot: [$other]")
         recoveringStash.stash()
     }
 
@@ -374,8 +410,8 @@ abstract class QueryView
     currentState = State.Recovering
 
     val stream = recoveryTimeout match {
-      case t: FiniteDuration ⇒ recoveringStream(_sequenceNrByPersistenceId, lastOffset).completionTimeout(t)
-      case _ ⇒ recoveringStream(_sequenceNrByPersistenceId, lastOffset)
+      case t: FiniteDuration => recoveringStream(_sequenceNrByPersistenceId, lastOffset).completionTimeout(t)
+      case _ => recoveringStream(_sequenceNrByPersistenceId, lastOffset)
     }
 
     val recoverySink =
