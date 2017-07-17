@@ -221,9 +221,9 @@ abstract class QueryView
     super.aroundPreStart()
   }
 
-  override protected[akka] def aroundPreRestart(reason: Throwable, message: Option[Any]): Unit = {
+  override protected[akka] def aroundPostRestart(reason: Throwable): Unit = {
     loadSnapshot()
-    super.aroundPreRestart(reason, message)
+    super.aroundPostRestart(reason)
   }
 
   private def loadSnapshot(): Unit = {
@@ -244,18 +244,19 @@ abstract class QueryView
     loadSnapshot(snapshotterId, SnapshotSelectionCriteria.Latest, Long.MaxValue)
   }
 
-  override protected[akka] def aroundPostRestart(reason: Throwable): Unit = {
+  override protected[akka] def aroundPreRestart(reason: Throwable, message: Option[Any]): Unit = {
     cancelSnapshotTimer()
-    super.aroundPostRestart(reason)
+    materializer.shutdown()
+    super.aroundPreRestart(reason,message)
   }
-
-  private def cancelSnapshotTimer(): Unit = loadSnapshotTimer.foreach(_.cancel())
 
   override protected[akka] def aroundPostStop(): Unit = {
     cancelSnapshotTimer()
     materializer.shutdown()
     super.aroundPostStop()
   }
+
+  private def cancelSnapshotTimer(): Unit = loadSnapshotTimer.foreach(_.cancel())
 
   override protected[akka] def aroundReceive(behaviour: Receive, msg: Any): Unit = {
     log.debug("Query view in state [{}] received message: [{}]", currentState, msg)
@@ -311,7 +312,6 @@ abstract class QueryView
         super.aroundReceive(behaviour, msg)
 
       case _ ⇒
-        _noOfEventsSinceLastSnapshot = _noOfEventsSinceLastSnapshot + 1
         super.aroundReceive(behaviour, msg)
     }
 
@@ -458,8 +458,7 @@ abstract class QueryView
     savingSnapshot = false
     lastSnapshotSequenceNr = metadata.sequenceNr
     _noOfEventsSinceLastSnapshot = 0L
-    log.debug(s"Snapshot saved successfully snapshotterId={} lastSnapshotSequenceNr={}", snapshotterId, lastSnapshotSequenceNr)
-
+    log.debug("Snapshot saved successfully snapshotterId={} lastSnapshotSequenceNr={}", snapshotterId, lastSnapshotSequenceNr)
   }
 
   private def snapshotSavingFailed(metadata: SnapshotMetadata, error: Throwable): Unit = {
