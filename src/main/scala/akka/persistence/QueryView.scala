@@ -301,6 +301,7 @@ abstract class QueryView
       case ForceUpdateFailed(f) ⇒
         log.error(f, "forceupdate failed")
         forcedUpdateInProgress = false
+        onForceUpdateCompleted()
 
       case msg@SaveSnapshotSuccess(metadata) ⇒
         snapshotSaved(metadata)
@@ -443,6 +444,7 @@ abstract class QueryView
       log.debug("ignore forceupdate since forceupdate is already in progress")
     } else {
       log.debug("forceupdate for persistentid {} and offset {}", _sequenceNrByPersistenceId, lastOffset)
+      forcedUpdateInProgress = true
       val forceUpdateSink =
         Sink.actorRefWithAck(self, StartForceUpdate, EventReplayed, ForceUpdateCompleted, e => ForceUpdateFailed(e))
       recoveringStream(_sequenceNrByPersistenceId, lastOffset).to(forceUpdateSink).run()
