@@ -18,6 +18,7 @@ package akka.persistence
 
 import akka.actor._
 import akka.contrib.persistence.query.{LiveStreamCompletedException, QueryViewSnapshot}
+import akka.dispatch.{DequeBasedMessageQueueSemantics, RequiresMessageQueue}
 import akka.persistence.SnapshotProtocol.{LoadSnapshotFailed, LoadSnapshotResult}
 import akka.persistence.query.{EventEnvelope, EventEnvelope2, Sequence}
 import akka.stream.ActorMaterializer
@@ -84,7 +85,7 @@ abstract class QueryView
     extends Actor
         with Snapshotter
         with EventStreamOffsetTyped
-        with Stash
+        with RequiresMessageQueue[DequeBasedMessageQueueSemantics]
         with StashFactory
         with ActorLogging {
 
