@@ -378,7 +378,7 @@ abstract class QueryView
         val offer = SnapshotOffer(metadata, status.data)
         if (behaviour.isDefinedAt(offer)) {
           super.aroundReceive(behaviour, offer)
-          _lastOffset = status.maxOffset
+          _lastOffset = status.maxOffset.asInstanceOf[OT]
           _sequenceNrByPersistenceId = status.sequenceNrs
           lastSnapshotSequenceNr = metadata.sequenceNr
         }
