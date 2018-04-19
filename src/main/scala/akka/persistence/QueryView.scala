@@ -20,7 +20,7 @@ import akka.actor._
 import akka.contrib.persistence.query.{LiveStreamCompletedException, QueryViewSnapshot}
 import akka.dispatch.{DequeBasedMessageQueueSemantics, RequiresMessageQueue}
 import akka.persistence.SnapshotProtocol.{LoadSnapshotFailed, LoadSnapshotResult}
-import akka.persistence.query.{EventEnvelope, EventEnvelope2, Sequence}
+import akka.persistence.query.{EventEnvelope, Offset}
 import akka.stream.ActorMaterializer
 import akka.stream.scaladsl._
 
@@ -77,8 +77,7 @@ trait EventStreamOffsetTyped {
   /**
     * Type of offset used for position in the event stream
     */
-  //todo replace with 'OT <: Offset' but not possible as long as EventEnvelope (not EventEnvelope2) is used which is bound to Sequence
-  type OT = Sequence
+  type OT = Offset
 }
 
 abstract class QueryView
@@ -145,7 +144,7 @@ abstract class QueryView
   /**
     * It is the source od EventEnvelope used to recover the view status. It MUST be finite stream.
     *
-    * It is declared as AnyRef to be able to return [[EventEnvelope]] or [[EventEnvelope2]].
+    * It is declared as AnyRef to be able to return [[EventEnvelope]].
     */
   def recoveringStream(sequenceNrByPersistenceId: Map[String, Long], lastOffset: OT): Source[AnyRef, _]
 
@@ -153,7 +152,7 @@ abstract class QueryView
     * It is the source od EventEnvelope used to receive live events, it MUST be a infinite stream (eg: It should never
     * complete)
     *
-    * It is declared as AnyRef to be able to return [[EventEnvelope]] or [[EventEnvelope2]].
+    * It is declared as AnyRef to be able to return [[EventEnvelope]].
     */
   def liveStream(sequenceNrByPersistenceId: Map[String, Long], lastOffset: OT): Source[AnyRef, _]
 
@@ -276,12 +275,8 @@ abstract class QueryView
       case StartLive =>
         sender() ! EventReplayed
 
-      case EventEnvelope2(offset: OT, persistenceId, sequenceNr, event) =>
+      case EventEnvelope(offset: OT, persistenceId, sequenceNr, event) =>
         processEvent(behaviour, offset, persistenceId, sequenceNr, event)
-        sender() ! EventReplayed
-
-      case EventEnvelope(offset, persistenceId, sequenceNr, event) =>
-        processEvent(behaviour, Sequence(offset), persistenceId, sequenceNr, event)
         sender() ! EventReplayed
 
       case LiveStreamFailed(ex) =>
@@ -322,11 +317,7 @@ abstract class QueryView
       case StartRecovery =>
         sender() ! EventReplayed
 
-      case EventEnvelope(offset, persistenceId, sequenceNr, event) ⇒
-        processEvent(behaviour, Sequence(offset), persistenceId, sequenceNr, event)
-        sender() ! EventReplayed
-
-      case EventEnvelope2(offset: OT, persistenceId, sequenceNr, event) ⇒
+      case EventEnvelope(offset: OT, persistenceId, sequenceNr, event) ⇒
         processEvent(behaviour, offset, persistenceId, sequenceNr, event)
         sender() ! EventReplayed
 
@@ -379,7 +370,7 @@ abstract class QueryView
         val offer = SnapshotOffer(metadata, status.data)
         if (behaviour.isDefinedAt(offer)) {
           super.aroundReceive(behaviour, offer)
-          _lastOffset = status.maxOffset.asInstanceOf[OT]
+          _lastOffset = status.maxOffset
           _sequenceNrByPersistenceId = status.sequenceNrs
           lastSnapshotSequenceNr = metadata.sequenceNr
         }
