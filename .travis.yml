@@ -1,0 +1,30 @@
+language: scala
+
+sudo: required
+
+scala:
+   - 2.11.8
+   - 2.12.1
+
+jdk:
+   - oraclejdk8
+
+script:
+  - sbt clean test
+
+before_cache:
+  - find $HOME/.ivy2 -name "ivydata-*.properties" -print -delete
+  - find $HOME/.sbt  -name "*.lock"               -print -delete
+
+cache:
+  directories:
+    - $HOME/.ivy2/cache
+    - $HOME/.sbt/boot
+
+
+env:
+  global:
+    # encrypt with: travis encrypt BINTRAY_USER=...
+    - secure: "X1eqOb6FoEFjG8MC0WD/6HaRghbnCQCbao36NzAsX4AzEy6MTPH33jamZ291HGmOOTde8BHPHFl5BEN8A/224LAF/Xw7RxYF8rIjCSY6nVoJvave9HOqQY/+WgtNdU+qf9gx9lKxbPeRMDdc1V1koTepzDTbAnPe/A9AKGB2rKcB5dEh+axzwXQE1l6A7sHNb2rHnS6ZcpiHJaS8FO/FT9Bcsga2KffqFKKQDr2L9OuN+fNGVzrrkEVEsofUBkgxoOjZ4/TthbgboJoMmI5s3mxn2+oi8iVKIE94wqWl3GlgQaRAagUoYgJoiSRGCWtPQcA2kFh5MmIKMzKme13zrYTfa4T0/vPLmR1DvgPrdGOh62IXWUYTD7g3yNtrPM22LJV3pFoEQydNgn+zhcPvWrTfT9BVOu1tQ8EZtSrOB0m1HSH6+hDYEoBRWZgpKkbo4DYettfettkMhozXfcJHCghZ7oYwJmeV6Mxdjh4UPeuqrw95jfpwCYWxoTkyA44t+imocQ9yXvSdFDGQiAXlyTM06W5+yZnTDSbhcc3N77Eqh7rNg47n1cXKO7jfwU5OqE4DB7i4sHMDcJ6RG5fmD/QU3vkDe/Jc13zg42sTRqr4c1KSL/f/F9HWf66RO4cY1APTYAQS9y+6dse93SmpfGxwPJlUsNLMB6wjbcBLne4="
+    # encrypt with: travis encrypt BINTRAY_PASS=...
+    - secure: "lrazhfKlmLjgRZBWKHnFlWbe2BUN5/lkVeKjnHtmifMxy9jkFGhbyyOyCpLaHYqCEdqUlRdskxnPM+36LweMEkAJmyx5JwsWeyUNtT8uFHCC3TRlcoIUb5B7sCuWZrbkhwPbNLMPOcDwmc+2e1GOfOrGiB1lh4b6IcY9ZuP9TALSvNut1yH8wL2U07Pz1oQGNSExhMHP8nW0MzG+qbhh+XOZa26ssxWS39YGjPMwRKALGPdCFaWgTzR84NdFjo64YXSB3evVdTKff7rhoAy81fbMFVsQL3ksvfERBLc67E5kC2fQNfN/2rLUO9ajqtVNclOlmhfOh7r5lit5VARbCx2mFb8w66k30WMAvRZD+JPDJ++TgUE5AtaoQueM84PgPqOFFOig35YvzCXVFlMhjTbOETNsE8+OdFbUDdDbABw29+9wogNjO4usmeP9hkuxf4H9i6J0t+mFRTtHphsez3jNSkqwmbWdpKY1e2rSwVHFaPxd026ZDlz+xD2owGIbJx8/Lpk2iDPUhyHgp8oj7u26Exr6QmBRXtAIXmvuNENvsFZ20TMHn+9czJ1yw1i/9EcbCFRRinHHTTWs0HxcvK5GJVkzyn54Jhj8bWwoUmBySdQIJSd1UFt4smpIfTOxMU2E1LgKWikfApcvwPHMHTW/HihIuIrtBtF9KogcVPE="
