@@ -3,12 +3,12 @@ import sbt._
 object Dependencies {
 
   object typesafe {
-    val config = "com.typesafe" % "config" % "1.3.1"
+    val config = "com.typesafe" % "config" % "1.3.3"
   }
 
   object slf4j {
 
-    private val version = "1.7.22"
+    private val version = "1.7.25"
 
     val api = "org.slf4j" % "slf4j-api" % version
     val log4jOverSlf4j = "org.slf4j" % "log4j-over-slf4j" % version
@@ -32,7 +32,7 @@ object Dependencies {
 
   object akka {
 
-    private val version = "2.4.18"
+    private val version = "2.5.12"
 
     val actor = "com.typesafe.akka" %% "akka-actor" % version
     val remote = "com.typesafe.akka" %% "akka-remote" % version
@@ -44,26 +44,26 @@ object Dependencies {
     val clusterMetrics = "com.typesafe.akka" %% "akka-cluster-metrics" % version
     val persistence = "com.typesafe.akka" %% "akka-persistence" % version
     val protobuf = "com.typesafe.akka" %% "akka-protobuf" % version
-    val persistenceQuery = "com.typesafe.akka" %% "akka-persistence-query-experimental" % version
+    val persistenceQuery = "com.typesafe.akka" %% "akka-persistence-query" % version
     val persistenceTck = "com.typesafe.akka" %% "akka-persistence-tck" % version
     val testKit = "com.typesafe.akka" %% "akka-testkit" % version
     val stream = "com.typesafe.akka" %% "akka-stream" % version
     val streamTestKit = "com.typesafe.akka" %% "akka-stream-testkit" % version
   }
 
-  val scalaTest = "org.scalatest" %% "scalatest" % "3.0.1"
-  val scalaCheck = "org.scalacheck" %% "scalacheck" % "1.13.4"
+  val scalaTest = "org.scalatest" %% "scalatest" % "3.0.5"
+  val scalaCheck = "org.scalacheck" %% "scalacheck" % "1.13.5"
 
   object scalaMock {
 
-    private val version = "3.4.2"
+    private val version = "3.6.0"
 
     val scalaTestSupport = "org.scalamock" %% "scalamock-scalatest-support" % version
   }
 
   object LevelDb {
 
-    val levelDb = "org.iq80.leveldb" % "leveldb" % "0.9"
+    val levelDb = "org.iq80.leveldb" % "leveldb" % "0.10"
     val leveldbJni = "org.fusesource.leveldbjni" % "leveldbjni-all" % "1.8"
 
   }
