@@ -1,8 +1,7 @@
 import Dependencies._
 import com.typesafe.sbt.GitPlugin.autoImport._
-import com.typesafe.sbt.{GitBranchPrompt, GitVersioning}
 import com.typesafe.sbt.git._
-import de.heikoseeberger.sbtheader.license.Apache2_0
+import com.typesafe.sbt.{GitBranchPrompt, GitVersioning}
 
 lazy val `akka-persistence-query-view` = (project in file("."))
   .enablePlugins(GitVersioning, GitBranchPrompt, BuildInfoPlugin)
@@ -14,6 +13,14 @@ lazy val `akka-persistence-query-view` = (project in file("."))
     homepage := Some(url("https://github.com/firstbirdtech/akka-persistence-query-view")),
     startYear := Some(2016),
     licenses := Seq(("Apache-2.0", url("http://www.apache.org/licenses/LICENSE-2.0"))),
+    developers := List(
+      Developer(
+        "pedro.dias@firstbird.com",
+        "Pedro Dias",
+        "pedro.dias@firstbird.com",
+        url("https://firstbird.com")
+      )
+    ),
     git.remoteRepo := "origin",
     git.runner := ConsoleGitRunner,
     git.baseVersion := "0.1.0",

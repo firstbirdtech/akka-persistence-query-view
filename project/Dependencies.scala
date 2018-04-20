@@ -3,12 +3,12 @@ import sbt._
 object Dependencies {
 
   object typesafe {
-    val config = "com.typesafe" % "config" % "1.3.1"
+    val config = "com.typesafe" % "config" % "1.3.3"
   }
 
   object slf4j {
 
-    private val version = "1.7.22"
+    private val version = "1.7.25"
 
     val api = "org.slf4j" % "slf4j-api" % version
     val log4jOverSlf4j = "org.slf4j" % "log4j-over-slf4j" % version
@@ -51,19 +51,19 @@ object Dependencies {
     val streamTestKit = "com.typesafe.akka" %% "akka-stream-testkit" % version
   }
 
-  val scalaTest = "org.scalatest" %% "scalatest" % "3.0.1"
-  val scalaCheck = "org.scalacheck" %% "scalacheck" % "1.13.4"
+  val scalaTest = "org.scalatest" %% "scalatest" % "3.0.5"
+  val scalaCheck = "org.scalacheck" %% "scalacheck" % "1.13.5"
 
   object scalaMock {
 
-    private val version = "3.4.2"
+    private val version = "3.6.0"
 
     val scalaTestSupport = "org.scalamock" %% "scalamock-scalatest-support" % version
   }
 
   object LevelDb {
 
-    val levelDb = "org.iq80.leveldb" % "leveldb" % "0.9"
+    val levelDb = "org.iq80.leveldb" % "leveldb" % "0.10"
     val leveldbJni = "org.fusesource.leveldbjni" % "leveldbjni-all" % "1.8"
 
   }
