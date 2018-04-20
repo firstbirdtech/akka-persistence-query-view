@@ -25,8 +25,8 @@ lazy val `akka-persistence-query-view` = (project in file("."))
     git.runner := ConsoleGitRunner,
     git.baseVersion := "0.1.0",
     git.useGitDescribe := true,
-    scalaVersion := "2.12.1",
-    crossScalaVersions := Seq(scalaVersion.value, "2.11.8"),
+    scalaVersion := "2.12.4",
+    crossScalaVersions := Seq(scalaVersion.value, "2.11.12"),
     resolvers ++= Seq(Resolver.mavenLocal, Resolver.typesafeRepo("releases")),
     // THe scaladoc is causing issue when generating doc around the snapshot format
     publishArtifact in (Compile, packageDoc) := false,
