@@ -32,7 +32,7 @@ object Dependencies {
 
   object akka {
 
-    private val version = "2.5.12"
+    private val version = "2.5.13"
 
     val actor = "com.typesafe.akka" %% "akka-actor" % version
     val remote = "com.typesafe.akka" %% "akka-remote" % version
