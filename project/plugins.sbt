@@ -1,9 +1,9 @@
-addSbtPlugin("com.eed3si9n" % "sbt-buildinfo" % "0.6.1")
-addSbtPlugin("com.typesafe.sbt" % "sbt-git" % "0.8.5")
-addSbtPlugin("de.heikoseeberger" % "sbt-header" % "1.6.0")
-addSbtPlugin("com.geirsson" % "sbt-scalafmt" % "0.5.1")
-addSbtPlugin("me.lessis" % "bintray-sbt" % "0.3.0-8-g6d0c3f8")
-addSbtPlugin("org.tpolecat" % "tut-plugin" % "0.4.8")
+addSbtPlugin("com.eed3si9n" % "sbt-buildinfo" % "0.9.0")
+addSbtPlugin("com.typesafe.sbt" % "sbt-git" % "1.0.0") // Where is this even used?
+addSbtPlugin("de.heikoseeberger" % "sbt-header" % "5.4.0") // Is this worth anything?
+addSbtPlugin("org.scalameta" % "sbt-scalafmt" % "2.3.2")
+addSbtPlugin("org.foundweekends" % "sbt-bintray" % "0.5.6")
+//addSbtPlugin("org.tpolecat" % "tut-plugin" % "0.4.8") // Deprecated -> use mdoc instead
 
 // To resolve custom bintray-sbt plugin
 resolvers += Resolver.url("2m-sbt-plugin-releases", url("https://dl.bintray.com/2m/sbt-plugin-releases/"))(

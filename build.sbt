@@ -48,8 +48,8 @@ lazy val `akka-persistence-query-view` = (project in file("."))
       logback.classic % Test,
       LevelDb.levelDb % Test
     ),
-    tutSettings,
-    tutTargetDirectory := baseDirectory.value,
+    //tutSettings,
+    //tutTargetDirectory := baseDirectory.value,
     bintrayOrganization := Some("firstbird"),
     bintrayRepository := "maven",
     bintrayPackageLabels := Seq("akka", "akka-persistence", "event-sourcing", "cqrs")
