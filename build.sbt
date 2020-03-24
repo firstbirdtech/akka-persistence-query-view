@@ -19,7 +19,7 @@ lazy val root = project
       homepageUrl
     ),
     scalaVersion := "2.13.1",
-    crossScalaVersions := Seq(scalaVersion.value, "2.11.12"),
+    crossScalaVersions := Seq(scalaVersion.value, "2.12.11"),
     scalacOptions ++= Seq(
       "-encoding",
       "UTF-8",
