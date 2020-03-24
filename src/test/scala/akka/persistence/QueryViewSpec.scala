@@ -19,7 +19,7 @@ class QueryViewSpec extends UnitSpec with ConfigFixture with AkkaFixture with Ak
 
   import TestQueryView._
 
-  private implicit val askTimeout = Timeout(15.seconds)
+  private implicit val askTimeout                      = Timeout(15.seconds)
   override implicit def patienceConfig: PatienceConfig = PatienceConfig(scaled(5.seconds), scaled(50.milliseconds))
 
   "QueryView" when {
@@ -67,7 +67,8 @@ class QueryViewSpec extends UnitSpec with ConfigFixture with AkkaFixture with Ak
           assertGetMessages(Seq("test-1-1", "test-1-2", "test-1-3", "test-1-4"))
         }
 
-        "receives events from new recoverystream on force update" in new PersistenceIdQueryViewContextOnlyRecoveryStream("test-1") {
+        "receives events from new recoverystream on force update" in new PersistenceIdQueryViewContextOnlyRecoveryStream(
+          "test-1") {
 
           writeToJournal("test-1", Tagged("test-1-1", Set("one")))
           writeToJournal("test-1", Tagged("test-1-2", Set("two")))
@@ -220,7 +221,7 @@ class QueryViewSpec extends UnitSpec with ConfigFixture with AkkaFixture with Ak
   trait QueryViewContext {
 
     private var _underTest: ActorRef = createUnderTest()
-    def underTest: ActorRef = _underTest
+    def underTest: ActorRef          = _underTest
 
     def restartUnderTest(): Unit = {
       val probe = TestProbe()
@@ -335,9 +336,9 @@ class FailingLiveQueryView(tag: String) extends TagQueryView(tag) {
 }
 
 object TestQueryView {
-  val GetMessage = "GetMessages"
-  val SaveSnapshot = "SaveSnapshot"
-  val SnapshotSaved = "SnapshotSaved"
+  val GetMessage     = "GetMessages"
+  val SaveSnapshot   = "SaveSnapshot"
+  val SnapshotSaved  = "SnapshotSaved"
   val ThrowException = "ThrowException"
 }
 

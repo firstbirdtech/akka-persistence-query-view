@@ -58,13 +58,12 @@ trait AkkaPersistenceFixture extends ConfigFixture with ScalaFutures with Before
 
   override protected def initConfig(): Config = {
 
-    val journalDir = Files.createTempDirectory("journal")
+    val journalDir  = Files.createTempDirectory("journal")
     val snapshotDir = Files.createTempDirectory("snapshot")
 
     note(s"Journal dir: $journalDir Snapshot dir: $snapshotDir")
 
-    ConfigFactory.parseString(
-      s"""
+    ConfigFactory.parseString(s"""
          |akka.persistence.journal.leveldb.dir = "${journalDir.toAbsolutePath.toString}"
          |akka.persistence.snapshot-store.local.dir = "${snapshotDir.toAbsolutePath.toString}"
       """.stripMargin).withFallback(super.initConfig())
@@ -89,9 +88,9 @@ trait AkkaPersistenceFixture extends ConfigFixture with ScalaFutures with Before
 
   def deleteFromJournal(persistenceId: String, toSequenceNr: Long): Unit = withJournalWriter(persistenceId) { writer =>
     writer
-        .ask(DeleteFromJournal(toSequenceNr))(10.seconds)
-        .mapTo[DeleteMessagesSuccess]
-        .futureValue(timeout(scaled(5.seconds)))
+      .ask(DeleteFromJournal(toSequenceNr))(10.seconds)
+      .mapTo[DeleteMessagesSuccess]
+      .futureValue(timeout(scaled(5.seconds)))
     note(s"Events deleted from $persistenceId up to $toSequenceNr")
   }
 

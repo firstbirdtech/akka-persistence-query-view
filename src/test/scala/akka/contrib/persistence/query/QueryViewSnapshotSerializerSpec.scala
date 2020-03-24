@@ -21,8 +21,8 @@ class QueryViewSnapshotSerializerSpec extends UnitSpec with AkkaFixture {
 
   implicit def arbQueryViewSnapshot[T](implicit arbT: Arbitrary[T]): Arbitrary[QueryViewSnapshot[T]] =
     Arbitrary(for {
-      data <- arbT.arbitrary
-      offset <- Gen.choose(1L, Long.MaxValue).map(Sequence)
+      data        <- arbT.arbitrary
+      offset      <- Gen.choose(1L, Long.MaxValue).map(Sequence)
       sequenceNrs <- Gen.mapOf(Gen.zip(Gen.alphaStr, Gen.posNum[Long]))
     } yield QueryViewSnapshot(data, offset, sequenceNrs))
 
@@ -31,8 +31,8 @@ class QueryViewSnapshotSerializerSpec extends UnitSpec with AkkaFixture {
       val serialization = SerializationExtension(extendedActorSystem)
 
       val (resolvedSerializer, result) = (for {
-        serializer <- serialization.serializerOf(classOf[QueryViewSnapshotSerializer].getName)
-        serialized <- serialization.serialize(testValue)
+        serializer   <- serialization.serializerOf(classOf[QueryViewSnapshotSerializer].getName)
+        serialized   <- serialization.serialize(testValue)
         deserialized <- serialization.deserialize(serialized, serializer.identifier, "")
       } yield serializer -> deserialized).get
 
@@ -60,8 +60,8 @@ class QueryViewSnapshotSerializerSpec extends UnitSpec with AkkaFixture {
       val serialization = SerializationExtension(extendedActorSystem)
 
       (for {
-        serializer <- serialization.serializerOf(classOf[QueryViewSnapshotSerializer].getName)
-        serialized <- serialization.serialize(testValue)
+        serializer   <- serialization.serializerOf(classOf[QueryViewSnapshotSerializer].getName)
+        serialized   <- serialization.serialize(testValue)
         deserialized <- serialization.deserialize(serialized, serializer.identifier, "")
       } yield deserialized) shouldBe a[Failure[_]]
 

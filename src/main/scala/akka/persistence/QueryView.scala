@@ -82,11 +82,11 @@ trait EventStreamOffsetTyped {
 
 abstract class QueryView
     extends Actor
-        with Snapshotter
-        with EventStreamOffsetTyped
-        with RequiresMessageQueue[DequeBasedMessageQueueSemantics]
-        with StashFactory
-        with ActorLogging {
+    with Snapshotter
+    with EventStreamOffsetTyped
+    with RequiresMessageQueue[DequeBasedMessageQueueSemantics]
+    with StashFactory
+    with ActorLogging {
 
   import QueryView._
   import context._
@@ -95,18 +95,18 @@ abstract class QueryView
 
   def firstOffset: OT
 
-  private[this] var _lastOffset: OT = firstOffset
+  private[this] var _lastOffset: OT                               = firstOffset
   private[this] var _sequenceNrByPersistenceId: Map[String, Long] = Map.empty
-  private[this] var lastSnapshotSequenceNr: Long = 0L
-  private[this] var _noOfEventsSinceLastSnapshot: Long = 0L
-  private[this] var currentState: State = State.WaitingForSnapshot
-  private[this] var loadSnapshotTimer: Option[Cancellable] = None
-  private[this] var savingSnapshot: Boolean = false
-  private[this] var forcedUpdateInProgress: Boolean = false
+  private[this] var lastSnapshotSequenceNr: Long                  = 0L
+  private[this] var _noOfEventsSinceLastSnapshot: Long            = 0L
+  private[this] var currentState: State                           = State.WaitingForSnapshot
+  private[this] var loadSnapshotTimer: Option[Cancellable]        = None
+  private[this] var savingSnapshot: Boolean                       = false
+  private[this] var forcedUpdateInProgress: Boolean               = false
 
-  private val persistence = Persistence(context.system)
+  private val persistence                                   = Persistence(context.system)
   override private[persistence] val snapshotStore: ActorRef = persistence.snapshotStoreFor(snapshotPluginId)
-  private implicit val materializer = ActorMaterializer()(context)
+  private implicit val materializer                         = ActorMaterializer()(context)
 
   /**
     * This stash will contain the messages received during the recovery phase.
@@ -247,7 +247,7 @@ abstract class QueryView
   override protected[akka] def aroundPreRestart(reason: Throwable, message: Option[Any]): Unit = {
     cancelSnapshotTimer()
     materializer.shutdown()
-    super.aroundPreRestart(reason,message)
+    super.aroundPreRestart(reason, message)
   }
 
   override protected[akka] def aroundPostStop(): Unit = {
@@ -300,11 +300,11 @@ abstract class QueryView
         forcedUpdateInProgress = false
         onForceUpdateCompleted()
 
-      case msg@SaveSnapshotSuccess(metadata) =>
+      case msg @ SaveSnapshotSuccess(metadata) =>
         snapshotSaved(metadata)
         super.aroundReceive(behaviour, msg)
 
-      case msg@SaveSnapshotFailure(metadata, error) =>
+      case msg @ SaveSnapshotFailure(metadata, error) =>
         snapshotSavingFailed(metadata, error)
         super.aroundReceive(behaviour, msg)
 
@@ -330,11 +330,11 @@ abstract class QueryView
         log.error(ex, "Error recovering")
         throw ex
 
-      case msg@SaveSnapshotSuccess(metadata) =>
+      case msg @ SaveSnapshotSuccess(metadata) =>
         snapshotSaved(metadata)
         super.aroundReceive(behaviour, msg)
 
-      case msg@SaveSnapshotFailure(metadata, error) =>
+      case msg @ SaveSnapshotFailure(metadata, error) =>
         snapshotSavingFailed(metadata, error)
         super.aroundReceive(behaviour, msg)
 
@@ -403,7 +403,7 @@ abstract class QueryView
 
     val stream = recoveryTimeout match {
       case t: FiniteDuration => recoveringStream(_sequenceNrByPersistenceId, lastOffset).completionTimeout(t)
-      case _ => recoveringStream(_sequenceNrByPersistenceId, lastOffset)
+      case _                 => recoveringStream(_sequenceNrByPersistenceId, lastOffset)
     }
 
     val recoverySink =
@@ -452,7 +452,9 @@ abstract class QueryView
     savingSnapshot = false
     lastSnapshotSequenceNr = metadata.sequenceNr
     _noOfEventsSinceLastSnapshot = 0L
-    log.debug("Snapshot saved successfully snapshotterId={} lastSnapshotSequenceNr={}", snapshotterId, lastSnapshotSequenceNr)
+    log.debug("Snapshot saved successfully snapshotterId={} lastSnapshotSequenceNr={}",
+              snapshotterId,
+              lastSnapshotSequenceNr)
   }
 
   private def snapshotSavingFailed(metadata: SnapshotMetadata, error: Throwable): Unit = {
