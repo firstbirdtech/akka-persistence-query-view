@@ -27,7 +27,7 @@ class QueryViewSnapshotSerializerSpec extends UnitSpec with AkkaFixture {
     } yield QueryViewSnapshot(data, offset, sequenceNrs))
 
   "QueryViewSnapshotSerializer" should {
-    "Serialize and deserialize any QueryViewSnapshot" in forAll { testValue: QueryViewSnapshot[String] ⇒
+    "Serialize and deserialize any QueryViewSnapshot" in forAll { testValue: QueryViewSnapshot[String] =>
       val serialization = SerializationExtension(extendedActorSystem)
 
       val (resolvedSerializer, result) = (for {
@@ -41,7 +41,7 @@ class QueryViewSnapshotSerializerSpec extends UnitSpec with AkkaFixture {
     }
 
     "Serialize and deserialize any QueryViewSnapshot using ByteBuffer" in forAll {
-      testValue: QueryViewSnapshot[String] ⇒
+      testValue: QueryViewSnapshot[String] =>
         val serialization = SerializationExtension(extendedActorSystem)
 
         val (resolvedSerializer, result) = (for {
@@ -56,7 +56,7 @@ class QueryViewSnapshotSerializerSpec extends UnitSpec with AkkaFixture {
         result should be(testValue)
     }
 
-    "fail if the data is not serializable" in forAll { testValue: QueryViewSnapshot[NonSerializable] ⇒
+    "fail if the data is not serializable" in forAll { testValue: QueryViewSnapshot[NonSerializable] =>
       val serialization = SerializationExtension(extendedActorSystem)
 
       (for {

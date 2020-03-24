@@ -295,20 +295,20 @@ abstract class QueryView
         forcedUpdateInProgress = false
         onForceUpdateCompleted()
 
-      case ForceUpdateFailed(f) ⇒
+      case ForceUpdateFailed(f) =>
         log.error(f, "forceupdate failed")
         forcedUpdateInProgress = false
         onForceUpdateCompleted()
 
-      case msg@SaveSnapshotSuccess(metadata) ⇒
+      case msg@SaveSnapshotSuccess(metadata) =>
         snapshotSaved(metadata)
         super.aroundReceive(behaviour, msg)
 
-      case msg@SaveSnapshotFailure(metadata, error) ⇒
+      case msg@SaveSnapshotFailure(metadata, error) =>
         snapshotSavingFailed(metadata, error)
         super.aroundReceive(behaviour, msg)
 
-      case _ ⇒
+      case _ =>
         super.aroundReceive(behaviour, msg)
     }
 
@@ -317,24 +317,24 @@ abstract class QueryView
       case StartRecovery =>
         sender() ! EventReplayed
 
-      case EventEnvelope(offset: OT, persistenceId, sequenceNr, event) ⇒
+      case EventEnvelope(offset: OT, persistenceId, sequenceNr, event) =>
         processEvent(behaviour, offset, persistenceId, sequenceNr, event)
         sender() ! EventReplayed
 
-      case QueryView.RecoveryCompleted ⇒
+      case QueryView.RecoveryCompleted =>
         log.info("Recovery completed")
         startLive()
 
-      case RecoveryFailed(ex) ⇒
+      case RecoveryFailed(ex) =>
         // TODO if it is a Timeout decide if switch to live or crash
         log.error(ex, "Error recovering")
         throw ex
 
-      case msg@SaveSnapshotSuccess(metadata) ⇒
+      case msg@SaveSnapshotSuccess(metadata) =>
         snapshotSaved(metadata)
         super.aroundReceive(behaviour, msg)
 
-      case msg@SaveSnapshotFailure(metadata, error) ⇒
+      case msg@SaveSnapshotFailure(metadata, error) =>
         snapshotSavingFailed(metadata, error)
         super.aroundReceive(behaviour, msg)
 
@@ -366,7 +366,7 @@ abstract class QueryView
 
   private def waitingForSnapshot(behaviour: Receive, msg: Any) =
     msg match {
-      case LoadSnapshotResult(Some(SelectedSnapshot(metadata, status: QueryViewSnapshot[_])), _) ⇒
+      case LoadSnapshotResult(Some(SelectedSnapshot(metadata, status: QueryViewSnapshot[_])), _) =>
         val offer = SnapshotOffer(metadata, status.data)
         if (behaviour.isDefinedAt(offer)) {
           super.aroundReceive(behaviour, offer)

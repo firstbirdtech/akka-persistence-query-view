@@ -51,7 +51,7 @@ object Dependencies {
   }
 
   // TODO: Are those needed?
-  val scalaTest = "org.scalatest" %% "scalatest" % "3.1.1"
+  val scalaTest = "org.scalatest" %% "scalatest" % "3.0.8"
   val scalaCheck = "org.scalacheck" %% "scalacheck" % "1.14.3"
 
   object LevelDb {
@@ -60,9 +60,9 @@ object Dependencies {
   }
 
   object scalaMock {
-    private val version = "3.6.0"
+    private val version = "4.4.0"
 
-    val scalaTestSupport = "org.scalamock" %% "scalamock-scalatest-support" % version
+    val scalaTestSupport = "org.scalamock" %% "scalamock" % version
   }
 
   val core: Seq[ModuleID] = Seq(

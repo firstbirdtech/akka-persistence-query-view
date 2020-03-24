@@ -18,8 +18,22 @@ lazy val root = project
       "hello@firstbird.com",
       homepageUrl
     ),
-    scalaVersion := "2.12.4",
+    scalaVersion := "2.13.1",
     crossScalaVersions := Seq(scalaVersion.value, "2.11.12"),
+    scalacOptions ++= Seq(
+      "-encoding",
+      "UTF-8",
+      "-feature",
+      "-unchecked",
+      "-deprecation",
+      "-Xfatal-warnings",
+      "-Xlint",
+      "-Ywarn-dead-code",
+    ),
+    javacOptions ++= Seq(
+      "-Xlint:unchecked",
+      "-Xlint:deprecation"
+    ),
     // THe scaladoc is causing issue when generating doc around the snapshot format
     //publishArtifact in (Compile, packageDoc) := false,
     libraryDependencies ++= Dependencies.core

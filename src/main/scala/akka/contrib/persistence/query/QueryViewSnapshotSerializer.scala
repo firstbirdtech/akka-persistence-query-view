@@ -25,7 +25,7 @@ import akka.persistence.query.Offset
 import akka.protobuf.ByteString
 import akka.serialization.{BaseSerializer, ByteBufferSerializer, SerializationExtension, SerializerWithStringManifest}
 
-import scala.collection.JavaConverters._
+import scala.jdk.CollectionConverters._
 
 class QueryViewSnapshotSerializer(val system: ExtendedActorSystem) extends BaseSerializer with ByteBufferSerializer {
 

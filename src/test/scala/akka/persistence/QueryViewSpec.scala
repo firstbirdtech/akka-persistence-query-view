@@ -370,7 +370,7 @@ abstract class TestQueryView extends QueryView with LevelDbQuerySupport {
     case ThrowException =>
       throw new RuntimeException("???")
 
-    case SnapshotOffer(_, snapshot: Vector[String]) =>
+    case SnapshotOffer(_, snapshot: Vector[String] @unchecked) =>
       messages = snapshot
 
     case GetMessage =>
