@@ -34,14 +34,9 @@ lazy val root = project
       "-Xlint:unchecked",
       "-Xlint:deprecation"
     ),
-    // THe scaladoc is causing issue when generating doc around the snapshot format
-    //publishArtifact in (Compile, packageDoc) := false,
     libraryDependencies ++= Dependencies.core
 
     //tutSettings,
     //tutTargetDirectory := baseDirectory.value,
-    //bintrayOrganization := Some("firstbird"),
-    //bintrayRepository := "maven",
-    //bintrayPackageLabels := Seq("akka", "akka-persistence", "event-sourcing", "cqrs")
   )
   .enablePlugins(BuildInfoPlugin)
