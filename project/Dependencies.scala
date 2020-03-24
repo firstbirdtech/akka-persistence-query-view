@@ -4,7 +4,7 @@ import sbt.librarymanagement.ModuleID
 object Dependencies {
 
   object akka {
-    private val version = "2.5.13"
+    private val version = "2.5.30"
 
     val actor = "com.typesafe.akka" %% "akka-actor" % version
     val remote = "com.typesafe.akka" %% "akka-remote" % version
@@ -33,11 +33,10 @@ object Dependencies {
     private val version = "1.1.8"
 
     val core = "ch.qos.logback" % "logback-core" % version
-    val classic = "ch.qos.logback" % "logback-classic" % version
   }
 
   object slf4j {
-    private val version = "1.7.25"
+    private val version = "1.7.30"
 
     val api = "org.slf4j" % "slf4j-api" % version
     val log4jOverSlf4j = "org.slf4j" % "log4j-over-slf4j" % version
@@ -46,17 +45,17 @@ object Dependencies {
   }
 
   object typesafe {
-    private val version = "1.3.3"
+    private val version = "1.4.0"
 
     val config = "com.typesafe" % "config" % version
   }
 
   // TODO: Are those needed?
-  val scalaTest = "org.scalatest" %% "scalatest" % "3.0.5"
-  val scalaCheck = "org.scalacheck" %% "scalacheck" % "1.13.5"
+  val scalaTest = "org.scalatest" %% "scalatest" % "3.1.1"
+  val scalaCheck = "org.scalacheck" %% "scalacheck" % "1.14.3"
 
   object LevelDb {
-    val levelDb = "org.iq80.leveldb" % "leveldb" % "0.10"
+    val levelDb = "org.iq80.leveldb" % "leveldb" % "0.12"
     val leveldbJni = "org.fusesource.leveldbjni" % "leveldbjni-all" % "1.8"
   }
 
@@ -79,7 +78,6 @@ object Dependencies {
     scalaCheck % Test,
     akka.streamTestKit % Test,
     akka.slf4j % Test,
-    logback.classic % Test,
     scalaMock.scalaTestSupport % Test,
     LevelDb.levelDb % Test
   )
