@@ -3,11 +3,11 @@ language: scala
 sudo: required
 
 scala:
-   - 2.11.12
-   - 2.12.4
+   - 2.13.1
+   - 2.12.11
 
 jdk:
-   - oraclejdk8
+   - openjdk8
 
 script:
   - sbt clean test
