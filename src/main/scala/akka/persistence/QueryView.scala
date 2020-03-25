@@ -410,6 +410,7 @@ abstract class QueryView
       Sink.actorRefWithAck(self, StartRecovery, EventReplayed, QueryView.RecoveryCompleted, e => RecoveryFailed(e))
 
     stream.to(recoverySink).run()
+    ()
   }
 
   private def startLive(): Unit = {
@@ -429,6 +430,7 @@ abstract class QueryView
       )
 
     liveStream(_sequenceNrByPersistenceId, lastOffset).to(liveSink).run()
+    ()
   }
 
   private def startForceUpdate(): Unit =
@@ -440,6 +442,7 @@ abstract class QueryView
       val forceUpdateSink =
         Sink.actorRefWithAck(self, StartForceUpdate, EventReplayed, ForceUpdateCompleted, e => ForceUpdateFailed(e))
       recoveringStream(_sequenceNrByPersistenceId, lastOffset).to(forceUpdateSink).run()
+      ()
     }
 
   override def saveSnapshot(snapshot: Any): Unit = if (!savingSnapshot) {

@@ -243,6 +243,7 @@ class QueryViewSpec extends UnitSpec with ConfigFixture with AkkaFixture with Ak
       val probe = TestProbe()
       probe.send(underTest, SaveSnapshot)
       probe.expectMsg(SnapshotSaved)
+      ()
     }
 
     def forceUpdate(): Unit = {
