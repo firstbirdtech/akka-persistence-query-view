@@ -17,8 +17,6 @@ lazy val root = project
       "hello@firstbird.com",
       homepageUrl
     ),
-    scalaVersion := "2.13.1",
-    crossScalaVersions := Seq(scalaVersion.value, "2.12.11"),
     scalacOptions ++= Seq(
       "-deprecation",                  // Emit warning and location for usages of deprecated APIs.
       "-explaintypes",                 // Explain type errors in more detail.
