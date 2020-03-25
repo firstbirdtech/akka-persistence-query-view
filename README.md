@@ -1,4 +1,4 @@
-This is a fork of [ovotech/akka-persistence-query-view](https://github.com/ovotech/akka-persistence-query-view) which uses akka version 2.5.x instead of 2.4.x.
+This is a fork of [danischroeter/akka-persistence-query-view](https://github.com/danischroeter/akka-persistence-query-view) which uses akka version 2.5.x instead of 2.4.x.
 
 Persistence query view
 ======================
