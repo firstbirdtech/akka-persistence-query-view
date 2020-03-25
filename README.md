@@ -3,9 +3,7 @@ This is a fork of [ovotech/akka-persistence-query-view](https://github.com/ovote
 Persistence query view
 ======================
 
-[![CircleCI Badge](https://circleci.com/gh/ovotech/akka-persistence-query-view.svg?style=shield)](https://circleci.com/gh/ovotech/akka-persistence-query-view)
-[![Codacy Badge](https://api.codacy.com/project/badge/Grade/5d8922799fdc44d48764e8f647ba28dc)](https://www.codacy.com/app/me_62/akka-persistence-query-view?utm_source=github.com&utm_medium=referral&utm_content=ovotech/akka-persistence-query-view&utm_campaign=badger)
-[![Download](https://api.bintray.com/packages/ovotech/maven/akka-persistence-query-view/images/download.svg)](https://bintray.com/ovotech/maven/akka-persistence-query-view/_latestVersion)
+[![Build Status](https://travis-ci.org/firstbirdtech/akka-persistence-query-view.svg?branch=master)](https://travis-ci.org/firstbirdtech/akka-persistence-query-view)
 
 The `QueryView` is a replacement of the deprecated `PersistentView` in Akka Persistence module.
 
