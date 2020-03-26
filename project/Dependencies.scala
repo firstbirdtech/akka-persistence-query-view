@@ -50,11 +50,15 @@ object Dependencies {
     val config = "com.typesafe" % "config" % version
   }
 
+  object scala {
+    val collectionCompat = "org.scala-lang.modules" %% "scala-collection-compat" % "2.1.4"
+  }
+
   // TODO: Are those needed?
   val scalaTest = "org.scalatest" %% "scalatest" % "3.0.8"
   val scalaCheck = "org.scalacheck" %% "scalacheck" % "1.14.3"
 
-  object LevelDb {
+  object levelDb {
     val levelDb = "org.iq80.leveldb" % "leveldb" % "0.12"
     val leveldbJni = "org.fusesource.leveldbjni" % "leveldbjni-all" % "1.8"
   }
@@ -79,6 +83,9 @@ object Dependencies {
     akka.streamTestKit % Test,
     akka.slf4j % Test,
     scalaMock.scalaTestSupport % Test,
-    LevelDb.levelDb % Test
+    levelDb.levelDb % Test,
+
+    // -- Backwards Compatibility --
+    scala.collectionCompat
   )
 }
