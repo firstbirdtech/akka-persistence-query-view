@@ -55,7 +55,8 @@ lazy val root = project
       "-Xlint:deprecation"
     ),
     libraryDependencies ++= Dependencies.core,
-    autoAPIMappings := true
+    // Needed because the API doc for Akka-Persistence can't be found and the warning would abort publishing
+    Compile / doc / scalacOptions := Seq()
 
     //tutSettings,
     //tutTargetDirectory := baseDirectory.value,

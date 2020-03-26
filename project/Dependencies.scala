@@ -48,6 +48,7 @@ object Dependencies {
     akka.persistence,
     akka.persistenceQuery,
     akka.protobuf,
+    logback.classic,
     slf4j.api,
     typesafe.config,
     // -- Testing --
