@@ -21,7 +21,6 @@ When the view is in `WaitingForSnapshot` or `Recovering` it will not reply to an
 Add a dependency to your `build.sbt`:
 
 ```
-resolvers += Resolver.bintrayRepo("ovotech", "maven")
 libraryDependencies += "com.ovoenergy" %% "akka-persistence-query-view" % "<version>"
 ```
 

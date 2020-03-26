@@ -6,7 +6,6 @@ object Dependencies {
   object akka {
     private val version = "2.5.30"
 
-    // TODO: Check for unused dependencies
     val actor            = "com.typesafe.akka" %% "akka-actor"             % version
     val slf4j            = "com.typesafe.akka" %% "akka-slf4j"             % version
     val persistence      = "com.typesafe.akka" %% "akka-persistence"       % version
