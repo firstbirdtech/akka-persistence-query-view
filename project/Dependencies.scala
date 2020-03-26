@@ -6,21 +6,22 @@ object Dependencies {
   object akka {
     private val version = "2.5.30"
 
-    val actor = "com.typesafe.akka" %% "akka-actor" % version
-    val remote = "com.typesafe.akka" %% "akka-remote" % version
-    val cluster = "com.typesafe.akka" %% "akka-cluster" % version
-    val slf4j = "com.typesafe.akka" %% "akka-slf4j" % version
-    val contrib = "com.typesafe.akka" %% "akka-contrib" % version
-    val clusterTools = "com.typesafe.akka" %% "akka-cluster-tools" % version
-    val clusterSharding = "com.typesafe.akka" %% "akka-cluster-sharding" % version
-    val clusterMetrics = "com.typesafe.akka" %% "akka-cluster-metrics" % version
-    val persistence = "com.typesafe.akka" %% "akka-persistence" % version
-    val protobuf = "com.typesafe.akka" %% "akka-protobuf" % version
+    // TODO: Check for unused dependencies
+    val actor            = "com.typesafe.akka" %% "akka-actor"             % version
+    val remote           = "com.typesafe.akka" %% "akka-remote"            % version
+    val cluster          = "com.typesafe.akka" %% "akka-cluster"           % version
+    val slf4j            = "com.typesafe.akka" %% "akka-slf4j"             % version
+    val contrib          = "com.typesafe.akka" %% "akka-contrib"           % version
+    val clusterTools     = "com.typesafe.akka" %% "akka-cluster-tools"     % version
+    val clusterSharding  = "com.typesafe.akka" %% "akka-cluster-sharding"  % version
+    val clusterMetrics   = "com.typesafe.akka" %% "akka-cluster-metrics"   % version
+    val persistence      = "com.typesafe.akka" %% "akka-persistence"       % version
+    val protobuf         = "com.typesafe.akka" %% "akka-protobuf"          % version
     val persistenceQuery = "com.typesafe.akka" %% "akka-persistence-query" % version
-    val persistenceTck = "com.typesafe.akka" %% "akka-persistence-tck" % version
-    val testKit = "com.typesafe.akka" %% "akka-testkit" % version
-    val stream = "com.typesafe.akka" %% "akka-stream" % version
-    val streamTestKit = "com.typesafe.akka" %% "akka-stream-testkit" % version
+    val persistenceTck   = "com.typesafe.akka" %% "akka-persistence-tck"   % version
+    val testKit          = "com.typesafe.akka" %% "akka-testkit"           % version
+    val stream           = "com.typesafe.akka" %% "akka-stream"            % version
+    val streamTestKit    = "com.typesafe.akka" %% "akka-stream-testkit"    % version
   }
 
   object log4j {
@@ -38,10 +39,10 @@ object Dependencies {
   object slf4j {
     private val version = "1.7.30"
 
-    val api = "org.slf4j" % "slf4j-api" % version
+    val api            = "org.slf4j" % "slf4j-api"        % version
     val log4jOverSlf4j = "org.slf4j" % "log4j-over-slf4j" % version
-    val jclOverSlf4j = "org.slf4j" % "jcl-over-slf4j" % version
-    val nop = "org.slf4j" % "slf4j-nop" % version
+    val jclOverSlf4j   = "org.slf4j" % "jcl-over-slf4j"   % version
+    val nop            = "org.slf4j" % "slf4j-nop"        % version
   }
 
   object typesafe {
@@ -55,11 +56,11 @@ object Dependencies {
   }
 
   // TODO: Are those needed?
-  val scalaTest = "org.scalatest" %% "scalatest" % "3.0.8"
+  val scalaTest  = "org.scalatest"  %% "scalatest"  % "3.0.8"
   val scalaCheck = "org.scalacheck" %% "scalacheck" % "1.14.3"
 
   object levelDb {
-    val levelDb = "org.iq80.leveldb" % "leveldb" % "0.12"
+    val levelDb    = "org.iq80.leveldb"          % "leveldb"        % "0.12"
     val leveldbJni = "org.fusesource.leveldbjni" % "leveldbjni-all" % "1.8"
   }
 
@@ -78,13 +79,12 @@ object Dependencies {
     slf4j.api,
     typesafe.config,
     // -- Testing --
-    scalaTest % Test,
-    scalaCheck % Test,
-    akka.streamTestKit % Test,
-    akka.slf4j % Test,
+    scalaTest                  % Test,
+    scalaCheck                 % Test,
+    akka.streamTestKit         % Test,
+    akka.slf4j                 % Test,
     scalaMock.scalaTestSupport % Test,
-    levelDb.levelDb % Test,
-
+    levelDb.levelDb            % Test,
     // -- Backwards Compatibility --
     scala.collectionCompat
   )
