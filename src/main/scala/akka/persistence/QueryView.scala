@@ -144,7 +144,7 @@ abstract class QueryView
   /**
     * It is the source od EventEnvelope used to recover the view status. It MUST be finite stream.
     *
-    * It is declared as AnyRef to be able to return [[EventEnvelope]].
+    * It is declared as AnyRef to be able to return [[akka.persistence.query.EventEnvelope]].
     */
   def recoveringStream(sequenceNrByPersistenceId: Map[String, Long], lastOffset: OT): Source[AnyRef, _]
 
@@ -152,7 +152,7 @@ abstract class QueryView
     * It is the source od EventEnvelope used to receive live events, it MUST be a infinite stream (eg: It should never
     * complete)
     *
-    * It is declared as AnyRef to be able to return [[EventEnvelope]].
+    * It is declared as AnyRef to be able to return [[akka.persistence.query.EventEnvelope]].
     */
   def liveStream(sequenceNrByPersistenceId: Map[String, Long], lastOffset: OT): Source[AnyRef, _]
 
@@ -163,7 +163,7 @@ abstract class QueryView
   def preLive(): Unit = {}
 
   /**
-    * @see [[ForceUpdate]]
+    * @see [[akka.persistence.QueryView.ForceUpdate]]
     */
   def forceUpdate(): Unit = startForceUpdate()
 

@@ -54,7 +54,8 @@ lazy val root = project
       "-Xlint:unchecked",
       "-Xlint:deprecation"
     ),
-    libraryDependencies ++= Dependencies.core
+    libraryDependencies ++= Dependencies.core,
+    autoAPIMappings := true
 
     //tutSettings,
     //tutTargetDirectory := baseDirectory.value,
