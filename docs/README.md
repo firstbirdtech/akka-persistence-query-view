@@ -21,7 +21,7 @@ When the view is in `WaitingForSnapshot` or `Recovering` it will not reply to an
 Add a dependency to your `build.sbt`:
 
 ```
-libraryDependencies += "com.firstbird" %% "akka-persistence-query-view" % "0.1.15-M1+0-912bf83a+20200327-0927"
+libraryDependencies += "com.firstbird" %% "akka-persistence-query-view" % "@VERSION@"
 ```
 
 ## How to implement

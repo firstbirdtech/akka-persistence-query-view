@@ -20,7 +20,7 @@ object Dependencies {
   }
 
   object slf4j {
-    val api            = "org.slf4j" % "slf4j-api"        % "1.7.30"
+    val api = "org.slf4j" % "slf4j-api" % "1.7.30"
   }
 
   object typesafe {
@@ -31,7 +31,7 @@ object Dependencies {
   val scalaCheck = "org.scalacheck" %% "scalacheck" % "1.14.3"
 
   object levelDb {
-    val levelDb    = "org.iq80.leveldb"          % "leveldb"        % "0.12"
+    val levelDb = "org.iq80.leveldb" % "leveldb" % "0.12"
   }
 
   object scalaMock {

@@ -57,8 +57,16 @@ lazy val root = project
     libraryDependencies ++= Dependencies.core,
     // Needed because the API doc for Akka-Persistence can't be found and the warning would abort publishing
     Compile / doc / scalacOptions := Seq()
-
-    //tutSettings,
-    //tutTargetDirectory := baseDirectory.value,
   )
   .enablePlugins(BuildInfoPlugin)
+
+lazy val docs = project
+  .in(file("mdocs"))
+  .settings(
+    mdocOut := baseDirectory.value,
+    mdocVariables := Map(
+      "VERSION" -> version.value
+    )
+  )
+  .dependsOn(root)
+  .enablePlugins(MdocPlugin)
