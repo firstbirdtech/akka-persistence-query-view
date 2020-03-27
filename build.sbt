@@ -63,7 +63,7 @@ lazy val root = project
 lazy val docs = project
   .in(file("mdocs"))
   .settings(
-    mdocOut := baseDirectory.value,
+    mdocOut := new File("."),
     mdocVariables := Map(
       "VERSION" -> version.value
     )
