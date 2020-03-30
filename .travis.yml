@@ -3,11 +3,12 @@ language: scala
 sudo: required
 
 scala:
-   - 2.12.11
-   - 2.13.1
+  - 2.12.11
+  - 2.13.1
 
 jdk:
-   - openjdk11
+  - openjdk8
+  - openjdk11
 
 script:
   - sbt clean scalafmtCheckAll scalafmtSbtCheck test
@@ -19,4 +20,5 @@ before_cache:
 cache:
   directories:
     - $HOME/.ivy2/cache
-    - $HOME/.sbt/boot
+    - $HOME/.coursier/cache
+    - $HOME/.sbt

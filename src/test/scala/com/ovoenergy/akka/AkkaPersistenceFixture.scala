@@ -41,9 +41,7 @@ object AkkaPersistenceFixture {
         waitForDeletion = None
 
       case event =>
-        persist(event) { persisted =>
-          sender() ! persisted
-        }
+        persist(event) { persisted => sender() ! persisted }
     }
   }
 
