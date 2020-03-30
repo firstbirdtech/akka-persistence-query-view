@@ -304,8 +304,8 @@ abstract class QueryView
         snapshotSaved(metadata)
         super.aroundReceive(behaviour, msg)
 
-      case msg @ SaveSnapshotFailure(metadata, error) =>
-        snapshotSavingFailed(metadata, error)
+      case msg @ SaveSnapshotFailure(_, error) =>
+        snapshotSavingFailed(error)
         super.aroundReceive(behaviour, msg)
 
       case _ =>
@@ -334,8 +334,8 @@ abstract class QueryView
         snapshotSaved(metadata)
         super.aroundReceive(behaviour, msg)
 
-      case msg @ SaveSnapshotFailure(metadata, error) =>
-        snapshotSavingFailed(metadata, error)
+      case msg @ SaveSnapshotFailure(_, error) =>
+        snapshotSavingFailed(error)
         super.aroundReceive(behaviour, msg)
 
       case LiveStreamFailed(ex) =>
@@ -460,7 +460,7 @@ abstract class QueryView
               lastSnapshotSequenceNr)
   }
 
-  private def snapshotSavingFailed(metadata: SnapshotMetadata, error: Throwable): Unit = {
+  private def snapshotSavingFailed(error: Throwable): Unit = {
     savingSnapshot = false
     log.error(error, "Error saving snapshot snapshotterId={}", snapshotterId)
   }

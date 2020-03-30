@@ -13,7 +13,7 @@ import scala.util.{Failure, Try}
 class QueryViewSnapshotSerializerSpec extends UnitSpec with AkkaFixture {
   import Arbitrary._
 
-  class NonSerializable(value: String)
+  class NonSerializable(val value: String)
 
   implicit val arbNonSerializable: Arbitrary[NonSerializable] = Arbitrary(for {
     value <- arbitrary[String]
