@@ -3,6 +3,7 @@ This is a fork of [danischroeter/akka-persistence-query-view](https://github.com
 Persistence query view
 ======================
 
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/a79268411b2647dd81cd6061ec590f56)](https://app.codacy.com/gh/firstbirdtech/akka-persistence-query-view?utm_source=github.com&utm_medium=referral&utm_content=firstbirdtech/akka-persistence-query-view&utm_campaign=Badge_Grade_Dashboard)
 [![Build Status](https://travis-ci.org/firstbirdtech/akka-persistence-query-view.svg?branch=master)](https://travis-ci.org/firstbirdtech/akka-persistence-query-view)
 
 The `QueryView` is a replacement of the deprecated `PersistentView` in Akka Persistence module.
