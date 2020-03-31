@@ -40,10 +40,8 @@ object AkkaPersistenceFixture {
         waitForDeletion.foreach(_ ! msg)
         waitForDeletion = None
 
-      case event ⇒
-        persist(event) { persisted ⇒
-          sender() ! persisted
-        }
+      case event =>
+        persist(event) { persisted => sender() ! persisted }
     }
   }
 
@@ -58,19 +56,18 @@ trait AkkaPersistenceFixture extends ConfigFixture with ScalaFutures with Before
 
   override protected def initConfig(): Config = {
 
-    val journalDir = Files.createTempDirectory("journal")
+    val journalDir  = Files.createTempDirectory("journal")
     val snapshotDir = Files.createTempDirectory("snapshot")
 
     note(s"Journal dir: $journalDir Snapshot dir: $snapshotDir")
 
-    ConfigFactory.parseString(
-      s"""
+    ConfigFactory.parseString(s"""
          |akka.persistence.journal.leveldb.dir = "${journalDir.toAbsolutePath.toString}"
          |akka.persistence.snapshot-store.local.dir = "${snapshotDir.toAbsolutePath.toString}"
       """.stripMargin).withFallback(super.initConfig())
   }
 
-  def withJournalWriter[T](pId: String)(f: ActorRef ⇒ T): T = {
+  def withJournalWriter[T](pId: String)(f: ActorRef => T): T = {
 
     val writer = system.actorOf(JournalWriter.props(pId))
     try {
@@ -81,17 +78,17 @@ trait AkkaPersistenceFixture extends ConfigFixture with ScalaFutures with Before
   }
 
   def writeToJournal[T](persistenceId: String, event: T)(implicit tag: ClassTag[T]): T =
-    withJournalWriter(persistenceId) { writer ⇒
+    withJournalWriter(persistenceId) { writer =>
       val written = writer.ask(event)(10.seconds).mapTo[T].futureValue(timeout(scaled(5.seconds)))
       note(s"Event written $written")
       written
     }
 
-  def deleteFromJournal(persistenceId: String, toSequenceNr: Long): Unit = withJournalWriter(persistenceId) { writer ⇒
+  def deleteFromJournal(persistenceId: String, toSequenceNr: Long): Unit = withJournalWriter(persistenceId) { writer =>
     writer
-        .ask(DeleteFromJournal(toSequenceNr))(10.seconds)
-        .mapTo[DeleteMessagesSuccess]
-        .futureValue(timeout(scaled(5.seconds)))
+      .ask(DeleteFromJournal(toSequenceNr))(10.seconds)
+      .mapTo[DeleteMessagesSuccess]
+      .futureValue(timeout(scaled(5.seconds)))
     note(s"Events deleted from $persistenceId up to $toSequenceNr")
   }
 

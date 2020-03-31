@@ -1,11 +1,9 @@
-This is a fork of [ovotech/akka-persistence-query-view](https://github.com/ovotech/akka-persistence-query-view) which uses akka version 2.5.x instead of 2.4.x.
+This is a fork of [danischroeter/akka-persistence-query-view](https://github.com/danischroeter/akka-persistence-query-view) which uses akka version 2.5.x instead of 2.4.x.
 
 Persistence query view
 ======================
 
-[![CircleCI Badge](https://circleci.com/gh/ovotech/akka-persistence-query-view.svg?style=shield)](https://circleci.com/gh/ovotech/akka-persistence-query-view)
-[![Codacy Badge](https://api.codacy.com/project/badge/Grade/5d8922799fdc44d48764e8f647ba28dc)](https://www.codacy.com/app/me_62/akka-persistence-query-view?utm_source=github.com&utm_medium=referral&utm_content=ovotech/akka-persistence-query-view&utm_campaign=badger)
-[![Download](https://api.bintray.com/packages/ovotech/maven/akka-persistence-query-view/images/download.svg)](https://bintray.com/ovotech/maven/akka-persistence-query-view/_latestVersion)
+[![Build Status](https://travis-ci.org/firstbirdtech/akka-persistence-query-view.svg?branch=master)](https://travis-ci.org/firstbirdtech/akka-persistence-query-view)
 
 The `QueryView` is a replacement of the deprecated `PersistentView` in Akka Persistence module.
 
@@ -23,8 +21,7 @@ When the view is in `WaitingForSnapshot` or `Recovering` it will not reply to an
 Add a dependency to your `build.sbt`:
 
 ```
-resolvers += Resolver.bintrayRepo("ovotech", "maven")
-libraryDependencies += "com.ovoenergy" %% "akka-persistence-query-view" % "<version>"
+libraryDependencies += "com.firstbird" %% "akka-persistence-query-view" % "0.1.15-M1"
 ```
 
 ## How to implement
@@ -132,13 +129,3 @@ For some scenarios it makes sense to retrigger `forceUpdate()` within `onForceUp
 
 ## Future developments
  * Add the `recovery-timeout-strategy` option to control what to do when the view does ot recover within a certain amount of time.
-
-## About this README
-
-The code samples in this README file are checked using [tut](https://github.com/tpolecat/tut).
-
-This means that the `README.md` file is generated from `src/main/tut/README.md`. If you want to make any changes to the README, you should:
-
-1. Edit `src/main/tut/README.md`
-2. Run `sbt tut` to regenerate `./README.md`
-3. Commit both files to git

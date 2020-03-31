@@ -82,11 +82,11 @@ trait EventStreamOffsetTyped {
 
 abstract class QueryView
     extends Actor
-        with Snapshotter
-        with EventStreamOffsetTyped
-        with RequiresMessageQueue[DequeBasedMessageQueueSemantics]
-        with StashFactory
-        with ActorLogging {
+    with Snapshotter
+    with EventStreamOffsetTyped
+    with RequiresMessageQueue[DequeBasedMessageQueueSemantics]
+    with StashFactory
+    with ActorLogging {
 
   import QueryView._
   import context._
@@ -95,18 +95,18 @@ abstract class QueryView
 
   def firstOffset: OT
 
-  private[this] var _lastOffset: OT = firstOffset
+  private[this] var _lastOffset: OT                               = firstOffset
   private[this] var _sequenceNrByPersistenceId: Map[String, Long] = Map.empty
-  private[this] var lastSnapshotSequenceNr: Long = 0L
-  private[this] var _noOfEventsSinceLastSnapshot: Long = 0L
-  private[this] var currentState: State = State.WaitingForSnapshot
-  private[this] var loadSnapshotTimer: Option[Cancellable] = None
-  private[this] var savingSnapshot: Boolean = false
-  private[this] var forcedUpdateInProgress: Boolean = false
+  private[this] var lastSnapshotSequenceNr: Long                  = 0L
+  private[this] var _noOfEventsSinceLastSnapshot: Long            = 0L
+  private[this] var currentState: State                           = State.WaitingForSnapshot
+  private[this] var loadSnapshotTimer: Option[Cancellable]        = None
+  private[this] var savingSnapshot: Boolean                       = false
+  private[this] var forcedUpdateInProgress: Boolean               = false
 
-  private val persistence = Persistence(context.system)
+  private val persistence                                   = Persistence(context.system)
   override private[persistence] val snapshotStore: ActorRef = persistence.snapshotStoreFor(snapshotPluginId)
-  private implicit val materializer = ActorMaterializer()(context)
+  private implicit val materializer                         = ActorMaterializer()(context)
 
   /**
     * This stash will contain the messages received during the recovery phase.
@@ -144,7 +144,7 @@ abstract class QueryView
   /**
     * It is the source od EventEnvelope used to recover the view status. It MUST be finite stream.
     *
-    * It is declared as AnyRef to be able to return [[EventEnvelope]].
+    * It is declared as AnyRef to be able to return [[akka.persistence.query.EventEnvelope]].
     */
   def recoveringStream(sequenceNrByPersistenceId: Map[String, Long], lastOffset: OT): Source[AnyRef, _]
 
@@ -152,7 +152,7 @@ abstract class QueryView
     * It is the source od EventEnvelope used to receive live events, it MUST be a infinite stream (eg: It should never
     * complete)
     *
-    * It is declared as AnyRef to be able to return [[EventEnvelope]].
+    * It is declared as AnyRef to be able to return [[akka.persistence.query.EventEnvelope]].
     */
   def liveStream(sequenceNrByPersistenceId: Map[String, Long], lastOffset: OT): Source[AnyRef, _]
 
@@ -163,7 +163,7 @@ abstract class QueryView
   def preLive(): Unit = {}
 
   /**
-    * @see [[ForceUpdate]]
+    * @see [[akka.persistence.QueryView.ForceUpdate]]
     */
   def forceUpdate(): Unit = startForceUpdate()
 
@@ -247,7 +247,7 @@ abstract class QueryView
   override protected[akka] def aroundPreRestart(reason: Throwable, message: Option[Any]): Unit = {
     cancelSnapshotTimer()
     materializer.shutdown()
-    super.aroundPreRestart(reason,message)
+    super.aroundPreRestart(reason, message)
   }
 
   override protected[akka] def aroundPostStop(): Unit = {
@@ -295,20 +295,20 @@ abstract class QueryView
         forcedUpdateInProgress = false
         onForceUpdateCompleted()
 
-      case ForceUpdateFailed(f) ⇒
+      case ForceUpdateFailed(f) =>
         log.error(f, "forceupdate failed")
         forcedUpdateInProgress = false
         onForceUpdateCompleted()
 
-      case msg@SaveSnapshotSuccess(metadata) ⇒
+      case msg @ SaveSnapshotSuccess(metadata) =>
         snapshotSaved(metadata)
         super.aroundReceive(behaviour, msg)
 
-      case msg@SaveSnapshotFailure(metadata, error) ⇒
-        snapshotSavingFailed(metadata, error)
+      case msg @ SaveSnapshotFailure(_, error) =>
+        snapshotSavingFailed(error)
         super.aroundReceive(behaviour, msg)
 
-      case _ ⇒
+      case _ =>
         super.aroundReceive(behaviour, msg)
     }
 
@@ -317,25 +317,25 @@ abstract class QueryView
       case StartRecovery =>
         sender() ! EventReplayed
 
-      case EventEnvelope(offset: OT, persistenceId, sequenceNr, event) ⇒
+      case EventEnvelope(offset: OT, persistenceId, sequenceNr, event) =>
         processEvent(behaviour, offset, persistenceId, sequenceNr, event)
         sender() ! EventReplayed
 
-      case QueryView.RecoveryCompleted ⇒
+      case QueryView.RecoveryCompleted =>
         log.info("Recovery completed")
         startLive()
 
-      case RecoveryFailed(ex) ⇒
+      case RecoveryFailed(ex) =>
         // TODO if it is a Timeout decide if switch to live or crash
         log.error(ex, "Error recovering")
         throw ex
 
-      case msg@SaveSnapshotSuccess(metadata) ⇒
+      case msg @ SaveSnapshotSuccess(metadata) =>
         snapshotSaved(metadata)
         super.aroundReceive(behaviour, msg)
 
-      case msg@SaveSnapshotFailure(metadata, error) ⇒
-        snapshotSavingFailed(metadata, error)
+      case msg @ SaveSnapshotFailure(_, error) =>
+        snapshotSavingFailed(error)
         super.aroundReceive(behaviour, msg)
 
       case LiveStreamFailed(ex) =>
@@ -366,7 +366,7 @@ abstract class QueryView
 
   private def waitingForSnapshot(behaviour: Receive, msg: Any) =
     msg match {
-      case LoadSnapshotResult(Some(SelectedSnapshot(metadata, status: QueryViewSnapshot[_])), _) ⇒
+      case LoadSnapshotResult(Some(SelectedSnapshot(metadata, status: QueryViewSnapshot[_])), _) =>
         val offer = SnapshotOffer(metadata, status.data)
         if (behaviour.isDefinedAt(offer)) {
           super.aroundReceive(behaviour, offer)
@@ -403,13 +403,14 @@ abstract class QueryView
 
     val stream = recoveryTimeout match {
       case t: FiniteDuration => recoveringStream(_sequenceNrByPersistenceId, lastOffset).completionTimeout(t)
-      case _ => recoveringStream(_sequenceNrByPersistenceId, lastOffset)
+      case _                 => recoveringStream(_sequenceNrByPersistenceId, lastOffset)
     }
 
     val recoverySink =
       Sink.actorRefWithAck(self, StartRecovery, EventReplayed, QueryView.RecoveryCompleted, e => RecoveryFailed(e))
 
     stream.to(recoverySink).run()
+    ()
   }
 
   private def startLive(): Unit = {
@@ -429,6 +430,7 @@ abstract class QueryView
       )
 
     liveStream(_sequenceNrByPersistenceId, lastOffset).to(liveSink).run()
+    ()
   }
 
   private def startForceUpdate(): Unit =
@@ -440,6 +442,7 @@ abstract class QueryView
       val forceUpdateSink =
         Sink.actorRefWithAck(self, StartForceUpdate, EventReplayed, ForceUpdateCompleted, e => ForceUpdateFailed(e))
       recoveringStream(_sequenceNrByPersistenceId, lastOffset).to(forceUpdateSink).run()
+      ()
     }
 
   override def saveSnapshot(snapshot: Any): Unit = if (!savingSnapshot) {
@@ -452,10 +455,12 @@ abstract class QueryView
     savingSnapshot = false
     lastSnapshotSequenceNr = metadata.sequenceNr
     _noOfEventsSinceLastSnapshot = 0L
-    log.debug("Snapshot saved successfully snapshotterId={} lastSnapshotSequenceNr={}", snapshotterId, lastSnapshotSequenceNr)
+    log.debug("Snapshot saved successfully snapshotterId={} lastSnapshotSequenceNr={}",
+              snapshotterId,
+              lastSnapshotSequenceNr)
   }
 
-  private def snapshotSavingFailed(metadata: SnapshotMetadata, error: Throwable): Unit = {
+  private def snapshotSavingFailed(error: Throwable): Unit = {
     savingSnapshot = false
     log.error(error, "Error saving snapshot snapshotterId={}", snapshotterId)
   }

@@ -25,7 +25,7 @@ import akka.persistence.query.Offset
 import akka.protobuf.ByteString
 import akka.serialization.{BaseSerializer, ByteBufferSerializer, SerializationExtension, SerializerWithStringManifest}
 
-import scala.collection.JavaConverters._
+import scala.jdk.CollectionConverters._
 
 class QueryViewSnapshotSerializer(val system: ExtendedActorSystem) extends BaseSerializer with ByteBufferSerializer {
 
@@ -45,7 +45,7 @@ class QueryViewSnapshotSerializer(val system: ExtendedActorSystem) extends BaseS
 
   private def toBinary(o: AnyRef, out: OutputStream): Unit = o match {
     case qvs: QueryViewSnapshot[_] => serializeQueryViewSnapshot(qvs, out)
-    case _ => throw new IllegalArgumentException(s"Can't serialize object of type ${o.getClass}")
+    case _                         => throw new IllegalArgumentException(s"Can't serialize object of type ${o.getClass}")
   }
 
   override def fromBinary(bytes: Array[Byte], manifest: Option[Class[_]]): AnyRef =
@@ -64,10 +64,10 @@ class QueryViewSnapshotSerializer(val system: ExtendedActorSystem) extends BaseS
       case (persistenceId, sequenceNr) =>
         builder.addSequenceNrs(
           QueryViewFormats.QueryViewSnapshot.SequenceNrEntry
-              .newBuilder()
-              .setPersistenceId(persistenceId)
-              .setSequenceNr(sequenceNr)
-              .build()
+            .newBuilder()
+            .setPersistenceId(persistenceId)
+            .setSequenceNr(sequenceNr)
+            .build()
         )
     }
 
@@ -86,14 +86,14 @@ class QueryViewSnapshotSerializer(val system: ExtendedActorSystem) extends BaseS
       sequenceNrsBuilder = sequenceNrsBuilder += entry.getPersistenceId -> entry.getSequenceNr
     }
 
-    val data = deserializePayload(parsed.getData)
+    val data      = deserializePayload(parsed.getData)
     val maxOffset = deserializePayload(parsed.getMaxOffset).asInstanceOf[Offset]
 
     QueryViewSnapshot(data, maxOffset, sequenceNrsBuilder.result())
   }
 
   private def serializePayload(payload: AnyRef): Payload = {
-    val builder = Payload.newBuilder()
+    val builder    = Payload.newBuilder()
     val serializer = serialization.serializerFor(payload.getClass)
     builder.setSerializerId(serializer.identifier)
     serializer match {
@@ -110,9 +110,9 @@ class QueryViewSnapshotSerializer(val system: ExtendedActorSystem) extends BaseS
 
   private def deserializePayload(payload: Payload): AnyRef = {
 
-    val data = payload.getEnclosedMessage.toByteArray
+    val data         = payload.getEnclosedMessage.toByteArray
     val serializerId = payload.getSerializerId
-    val manifest = payload.getMessageManifest
+    val manifest     = payload.getMessageManifest
 
     serialization.deserialize(data, serializerId, manifest).get
   }

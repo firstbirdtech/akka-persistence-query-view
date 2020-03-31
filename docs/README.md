@@ -1,9 +1,9 @@
+This is a fork of [danischroeter/akka-persistence-query-view](https://github.com/danischroeter/akka-persistence-query-view) which uses akka version 2.5.x instead of 2.4.x.
+
 Persistence query view
 ======================
 
-[![CircleCI Badge](https://circleci.com/gh/ovotech/akka-persistence-query-view.svg?style=shield)](https://circleci.com/gh/ovotech/akka-persistence-query-view)
-[![Codacy Badge](https://api.codacy.com/project/badge/Grade/5d8922799fdc44d48764e8f647ba28dc)](https://www.codacy.com/app/me_62/akka-persistence-query-view?utm_source=github.com&utm_medium=referral&utm_content=ovotech/akka-persistence-query-view&utm_campaign=badger)
-[![Download](https://api.bintray.com/packages/ovotech/maven/akka-persistence-query-view/images/download.svg)](https://bintray.com/ovotech/maven/akka-persistence-query-view/_latestVersion)
+[![Build Status](https://travis-ci.org/firstbirdtech/akka-persistence-query-view.svg?branch=master)](https://travis-ci.org/firstbirdtech/akka-persistence-query-view)
 
 The `QueryView` is a replacement of the deprecated `PersistentView` in Akka Persistence module.
 
@@ -21,13 +21,12 @@ When the view is in `WaitingForSnapshot` or `Recovering` it will not reply to an
 Add a dependency to your `build.sbt`:
 
 ```
-resolvers += Resolver.bintrayRepo("ovotech", "maven")
-libraryDependencies += "com.ovoenergy" %% "akka-persistence-query-view" % "<version>"
+libraryDependencies += "com.firstbird" %% "akka-persistence-query-view" % "@VERSION@"
 ```
 
 ## How to implement
 The first step is to define a `Querysupport` trait for your `ReadJournal` plugin. The LevelDb one is included:
-```tut:silent
+```scala
 import akka.contrib.persistence.query.QuerySupport
 import akka.persistence.QueryView
 import akka.persistence.query.{Offset, PersistenceQuery}
@@ -45,7 +44,7 @@ trait LevelDbQuerySupport extends QuerySupport { this: QueryView =>
 It is up to the implementor defining the queries used during the `Recovering` and `Live` states. Generally they will be the same query, with the difference that the recovery one is a finite stream while the live one is infinite. 
 Your `Queryview` implemention has to mix in one `QuerySupport` trait as well:
 
-```tut:silent
+```scala
 import akka.stream.scaladsl.Source
 
 case class Person(name: String, age: Int)
@@ -80,7 +79,7 @@ The `WaitingForSnapshot` and `Recovering` states are protected by a timeout, if 
 
 The `QueryView` has an out-of-the-box support for snapshot. It is the same as the deprecated `PersistentView`, in the previous exaple to save a snapshot of the current people:
 
-```tut:silent
+```scala
 import akka.stream.scaladsl.Source
 
 case class Person(name: String, age: Int)
@@ -119,15 +118,14 @@ class PersonsQueryView extends QueryView with LevelDbQuerySupport {
 
 Under the hood it will store also the last consumed offset and the last sequence number for each persistence id already consumed.
 
+The QueryView checks that all received events follow a strict sequence per persistentId. Be aware that most journal plugins do not guarantee the correct order for `eventsByTag` (see journal documentation). 
+If that is ok one can overwrite `override def allowOutOfOrderEvents = true` to omit the checking. (In the future we might implement some deferred processing of out of order received events)
+
+### Forced Update
+Most journals use some sort of polling under the hood to support a live stream for `eventsByTag/eventsByPersistentId` PersistentQueries. (The default cassandra journal uses 3 seconds)
+In scenarios when a more up to date state is needed one can issue a forced update which will immediately read from the recoveringStream. (Use `forceUpdate()` or send a ForceUpdate).
+The QueryView ensures forcedUpdate is not performed concurrently so forceUpdate is ignored while it has not completed. After forceUpdate is completed `onForceUpdateCompleted()` is called.
+For some scenarios it makes sense to retrigger `forceUpdate()` within `onForceUpdateCompleted()` until some condition is met.
+
 ## Future developments
  * Add the `recovery-timeout-strategy` option to control what to do when the view does ot recover within a certain amount of time.
-
-## About this README
-
-The code samples in this README file are checked using [tut](https://github.com/tpolecat/tut).
-
-This means that the `README.md` file is generated from `src/main/tut/README.md`. If you want to make any changes to the README, you should:
-
-1. Edit `src/main/tut/README.md`
-2. Run `sbt tut` to regenerate `./README.md`
-3. Commit both files to git

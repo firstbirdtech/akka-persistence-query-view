@@ -12,7 +12,7 @@ trait AkkaFixture extends BeforeAndAfterEach { self: Suite with ConfigFixture =>
     Option(_system).getOrElse(throw new IllegalStateException("ActorSystem not yet started"))
   def extendedActorSystem: ExtendedActorSystem = system match {
     case eas: ExtendedActorSystem => eas
-    case _ => throw new IllegalStateException("ActorSystem not an instance of ExtendedActorSystem")
+    case _                        => throw new IllegalStateException("ActorSystem not an instance of ExtendedActorSystem")
   }
 
   override protected def beforeEach(): Unit = {
