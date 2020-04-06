@@ -1,9 +1,10 @@
 This is a fork of [danischroeter/akka-persistence-query-view](https://github.com/danischroeter/akka-persistence-query-view) which uses akka version 2.5.x instead of 2.4.x.
 
-Persistence query view
-======================
+# Persistence query view
 
 [![Build Status](https://travis-ci.org/firstbirdtech/akka-persistence-query-view.svg?branch=master)](https://travis-ci.org/firstbirdtech/akka-persistence-query-view)
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/66787c8342914d8bb3d0ea922dc37908)](https://www.codacy.com/gh/firstbirdtech/akka-persistence-query-view?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=firstbirdtech/akka-persistence-query-view&amp;utm_campaign=Badge_Grade)
+[![Codacy Badge](https://api.codacy.com/project/badge/Coverage/66787c8342914d8bb3d0ea922dc37908)](https://www.codacy.com/gh/firstbirdtech/akka-persistence-query-view?utm_source=github.com&utm_medium=referral&utm_content=firstbirdtech/akka-persistence-query-view&utm_campaign=Badge_Coverage)
 
 The `QueryView` is a replacement of the deprecated `PersistentView` in Akka Persistence module.
 
@@ -21,7 +22,7 @@ When the view is in `WaitingForSnapshot` or `Recovering` it will not reply to an
 Add a dependency to your `build.sbt`:
 
 ```
-libraryDependencies += "com.firstbird" %% "akka-persistence-query-view" % "0.1.15-M1"
+libraryDependencies += "com.firstbird" %% "akka-persistence-query-view" % "x.x.x"
 ```
 
 ## How to implement
@@ -128,4 +129,4 @@ The QueryView ensures forcedUpdate is not performed concurrently so forceUpdate 
 For some scenarios it makes sense to retrigger `forceUpdate()` within `onForceUpdateCompleted()` until some condition is met.
 
 ## Future developments
- * Add the `recovery-timeout-strategy` option to control what to do when the view does ot recover within a certain amount of time.
+  - Add the `recovery-timeout-strategy` option to control what to do when the view does ot recover within a certain amount of time.
