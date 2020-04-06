@@ -130,4 +130,4 @@ The QueryView ensures forcedUpdate is not performed concurrently so forceUpdate 
 For some scenarios it makes sense to retrigger `forceUpdate()` within `onForceUpdateCompleted()` until some condition is met.
 
 ## Future developments
-- Add the `recovery-timeout-strategy` option to control what to do when the view does ot recover within a certain amount of time.
+  -   Add the `recovery-timeout-strategy` option to control what to do when the view does ot recover within a certain amount of time.
