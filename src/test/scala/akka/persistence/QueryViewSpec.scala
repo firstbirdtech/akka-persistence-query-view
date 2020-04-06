@@ -220,8 +220,11 @@ class QueryViewSpec extends UnitSpec with ConfigFixture with AkkaFixture with Ak
 
   trait QueryViewContext {
 
+    // scalastyle:off var.field
     private var _underTest: ActorRef = createUnderTest()
-    def underTest: ActorRef          = _underTest
+    // scalastyle:on var.field
+
+    def underTest: ActorRef = _underTest
 
     def restartUnderTest(): Unit = {
       val probe = TestProbe()
@@ -346,9 +349,10 @@ object TestQueryView {
 abstract class TestQueryView extends QueryView with LevelDbQuerySupport {
   import TestQueryView._
 
+  // scalastyle:off var.field
   private var messages: Vector[String] = Vector.empty
-
-  private var waitForSnapshot = Option.empty[ActorRef]
+  private var waitForSnapshot          = Option.empty[ActorRef]
+  // scalastyle:on var.field
 
   /**
     * It is the persistenceId linked to this view. It should be unique.

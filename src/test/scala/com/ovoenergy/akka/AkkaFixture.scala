@@ -6,7 +6,9 @@ import org.scalatest.{BeforeAndAfterEach, Suite}
 
 trait AkkaFixture extends BeforeAndAfterEach { self: Suite with ConfigFixture =>
 
+  // scalastyle:off var.field
   private var _system: ActorSystem = _
+  // scalastyle:on var.field
 
   implicit def system: ActorSystem =
     Option(_system).getOrElse(throw new IllegalStateException("ActorSystem not yet started"))
