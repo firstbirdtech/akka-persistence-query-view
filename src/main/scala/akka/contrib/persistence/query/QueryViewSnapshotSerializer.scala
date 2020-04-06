@@ -81,9 +81,9 @@ class QueryViewSnapshotSerializer(val system: ExtendedActorSystem) extends BaseS
   private def deserializeQueryViewSnapshot(in: InputStream): QueryViewSnapshot[AnyRef] = {
     val parsed = QueryViewFormats.QueryViewSnapshot.parseFrom(in)
 
-    var sequenceNrsBuilder = Map.newBuilder[String, Long]
+    val sequenceNrsBuilder = Map.newBuilder[String, Long]
     parsed.getSequenceNrsList.asScala.foreach { entry =>
-      sequenceNrsBuilder = sequenceNrsBuilder += entry.getPersistenceId -> entry.getSequenceNr
+      sequenceNrsBuilder += entry.getPersistenceId -> entry.getSequenceNr
     }
 
     val data      = deserializePayload(parsed.getData)
