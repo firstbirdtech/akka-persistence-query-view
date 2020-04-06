@@ -5,6 +5,7 @@ This is a fork of [danischroeter/akka-persistence-query-view](https://github.com
 [![Build Status](https://travis-ci.org/firstbirdtech/akka-persistence-query-view.svg?branch=master)](https://travis-ci.org/firstbirdtech/akka-persistence-query-view)
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/66787c8342914d8bb3d0ea922dc37908)](https://www.codacy.com/gh/firstbirdtech/akka-persistence-query-view?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=firstbirdtech/akka-persistence-query-view&amp;utm_campaign=Badge_Grade)
 [![Codacy Badge](https://api.codacy.com/project/badge/Coverage/66787c8342914d8bb3d0ea922dc37908)](https://www.codacy.com/gh/firstbirdtech/akka-persistence-query-view?utm_source=github.com&utm_medium=referral&utm_content=firstbirdtech/akka-persistence-query-view&utm_campaign=Badge_Coverage)
+[![Maven Central](https://img.shields.io/maven-central/v/com.firstbird/akka-persistence-query-view_2.13.svg?label=Maven%20Central)](https://search.maven.org/search?q=g:%22com.firstbird%22%20AND%20a:%22akka-persistence-query-view_2.13%22)
 
 The `QueryView` is a replacement of the deprecated `PersistentView` in Akka Persistence module.
 
