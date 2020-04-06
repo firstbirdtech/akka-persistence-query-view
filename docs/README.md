@@ -10,10 +10,11 @@ This is a fork of [danischroeter/akka-persistence-query-view](https://github.com
 The `QueryView` is a replacement of the deprecated `PersistentView` in Akka Persistence module.
 
 ## Anatomy of a Persistence QueryView
-The Persistence query view has three possible state: `WaitingForSnapshot`, `Recovering` and `Live`. 
 
-It always start in `WaitingForSnapshot` state where it is waiting to receive a previously saved snapshot. When the snapshot has been loaded or failed to load, the view switch to the `Recovering` state. 
-During the `Recovering` state it will receive all the past events from the journal. When all the existing event from the journal have been consumed, the view will switch to the `Live` state which will keep until the actor stop. 
+The Persistence query view has three possible state: `WaitingForSnapshot`, `Recovering` and `Live`.
+
+It always start in `WaitingForSnapshot` state where it is waiting to receive a previously saved snapshot. When the snapshot has been loaded or failed to load, the view switch to the `Recovering` state.
+During the `Recovering` state it will receive all the past events from the journal. When all the existing event from the journal have been consumed, the view will switch to the `Live` state which will keep until the actor stop.
 During the `Live` events the view will consume live events from the journal and external messages.
 
 When the view is in `WaitingForSnapshot` or `Recovering` it will not reply to any messages, but will stash them waiting to switch to the `Live` state where these message will be processed.
@@ -27,7 +28,9 @@ libraryDependencies += "com.firstbird" %% "akka-persistence-query-view" % "x.x.x
 ```
 
 ## How to implement
+
 The first step is to define a `Querysupport` trait for your `ReadJournal` plugin. The LevelDb one is included:
+
 ```scala
 import akka.contrib.persistence.query.QuerySupport
 import akka.persistence.QueryView
@@ -43,7 +46,7 @@ trait LevelDbQuerySupport extends QuerySupport { this: QueryView =>
 }
 ```
 
-It is up to the implementor defining the queries used during the `Recovering` and `Live` states. Generally they will be the same query, with the difference that the recovery one is a finite stream while the live one is infinite. 
+It is up to the implementor defining the queries used during the `Recovering` and `Live` states. Generally they will be the same query, with the difference that the recovery one is a finite stream while the live one is infinite.
 Your `Queryview` implemention has to mix in one `QuerySupport` trait as well:
 
 ```scala
@@ -120,14 +123,16 @@ class PersonsQueryView extends QueryView with LevelDbQuerySupport {
 
 Under the hood it will store also the last consumed offset and the last sequence number for each persistence id already consumed.
 
-The QueryView checks that all received events follow a strict sequence per persistentId. Be aware that most journal plugins do not guarantee the correct order for `eventsByTag` (see journal documentation). 
+The QueryView checks that all received events follow a strict sequence per persistentId. Be aware that most journal plugins do not guarantee the correct order for `eventsByTag` (see journal documentation).
 If that is ok one can overwrite `override def allowOutOfOrderEvents = true` to omit the checking. (In the future we might implement some deferred processing of out of order received events)
 
 ### Forced Update
+
 Most journals use some sort of polling under the hood to support a live stream for `eventsByTag/eventsByPersistentId` PersistentQueries. (The default cassandra journal uses 3 seconds)
 In scenarios when a more up to date state is needed one can issue a forced update which will immediately read from the recoveringStream. (Use `forceUpdate()` or send a ForceUpdate).
 The QueryView ensures forcedUpdate is not performed concurrently so forceUpdate is ignored while it has not completed. After forceUpdate is completed `onForceUpdateCompleted()` is called.
 For some scenarios it makes sense to retrigger `forceUpdate()` within `onForceUpdateCompleted()` until some condition is met.
 
 ## Future developments
-  -   Add the `recovery-timeout-strategy` option to control what to do when the view does ot recover within a certain amount of time.
+
+- Add the `recovery-timeout-strategy` option to control what to do when the view does ot recover within a certain amount of time.
