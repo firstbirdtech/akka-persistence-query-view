@@ -11,7 +11,10 @@ jdk:
   - openjdk11
 
 script:
-  - sbt clean scalafmtCheckAll scalafmtSbtCheck test
+  - sbt clean scalafmtCheckAll scalafmtSbtCheck coverage test coverageReport coverageAggregate
+
+after_success:
+  - bash <(curl -Ls https://coverage.codacy.com/get.sh)
 
 before_cache:
   - find $HOME/.ivy2 -name "ivydata-*.properties" -print -delete
@@ -22,3 +25,8 @@ cache:
     - $HOME/.ivy2/cache
     - $HOME/.coursier/cache
     - $HOME/.sbt
+
+env:
+  global:
+    # encrypt with: tavis encrpyt CODACY_PROJECT_TOKEN=...
+    secure: E1ybuetaLre9rXsPZA91+neNzl9UCvIjCMlpugytGgraVqzyvDEIpuSLaZqNHcrTBNsBSiYOzxIrDGrrbFc1g3hEjlqyoys//AOWM09muCh+VQaq/XsC2yVctbuEtqfyLD/e7n8LSOWNp3YhAYJ1q3XFIgJjHR2wc14rQ/KZUrsnrC3jF4f1Gj5g5yB7MLsi8eqiLenSZ457Kwry/NBmxvyvzPTEVv6BMQBEqC1ehMkcmM0wTSIRP+KAF4XqPt7+n3Te1Ac6Mv31WVlB1SdJ+A5FFJCpmb4XgwVmmqvuLjq7zn/MpYEPLMmLkF0/UwG5BhB5tbpl1hYXf8CnB5QNFRZ/pnXCh7WG4ujS19C1pekJ2t/P5Xu5JniJ8LxRXLIQ0tXH72/8NQN5sxuC5oSpJoAU5+GwtgeTZI3olnEznOswWc6dGalSbOwmNuxO1qG62tubHk8UyTE6dR07Xq8j0uGOdzPUZ2KKfbX5ao5kzMMexZl6n8mdxl1dYz+PErvtLbfMkWnqCdyCBjm3ItvqlNRtdn2teGbXivLdE3KDqAtL9I/Rc651hYSWJsc7lzMvY7tkw1cez245IwG3OtsZ8KwgEuzyG5GN7yKnQ0h/lwwRbXpOP657I4BU9xIdbtm5ezNo+h17cXcuyhwL8LF252/B2+A2WmCHGBiqWCz7u74=

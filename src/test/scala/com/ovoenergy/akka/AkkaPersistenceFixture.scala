@@ -7,10 +7,12 @@ import akka.pattern._
 import akka.persistence.{DeleteMessagesSuccess, PersistentActor}
 import com.ovoenergy.ConfigFixture
 import com.ovoenergy.akka.AkkaPersistenceFixture.JournalWriter.DeleteFromJournal
+import com.ovoenergy.akka.AkkaPersistenceFixture._
 import com.typesafe.config.{Config, ConfigFactory}
-import org.scalatest.concurrent.{Eventually, ScalaFutures}
 import org.scalatest._
+import org.scalatest.concurrent.{Eventually, ScalaFutures}
 
+import scala.concurrent.duration._
 import scala.reflect.ClassTag
 
 object AkkaPersistenceFixture {
@@ -24,8 +26,10 @@ object AkkaPersistenceFixture {
 
   class JournalWriter(val persistenceId: String) extends PersistentActor {
 
-    // It is very naive, does not support multiple concurrent delections
+    // scalastyle:off var.field
+    // It is very naive, does not support multiple concurrent deletions
     private var waitForDeletion = Option.empty[ActorRef]
+    // scalastyle:on var.field
 
     override def receiveRecover: Receive =
       Actor.emptyBehavior
@@ -49,10 +53,6 @@ object AkkaPersistenceFixture {
 
 trait AkkaPersistenceFixture extends ConfigFixture with ScalaFutures with BeforeAndAfterEach with Eventually {
   self: Suite with AkkaFixture with Notifying =>
-
-  import AkkaPersistenceFixture._
-
-  import scala.concurrent.duration._
 
   override protected def initConfig(): Config = {
 

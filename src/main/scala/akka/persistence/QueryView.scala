@@ -95,6 +95,7 @@ abstract class QueryView
 
   def firstOffset: OT
 
+  // scalastyle:off var.field
   private[this] var _lastOffset: OT                               = firstOffset
   private[this] var _sequenceNrByPersistenceId: Map[String, Long] = Map.empty
   private[this] var lastSnapshotSequenceNr: Long                  = 0L
@@ -103,10 +104,11 @@ abstract class QueryView
   private[this] var loadSnapshotTimer: Option[Cancellable]        = None
   private[this] var savingSnapshot: Boolean                       = false
   private[this] var forcedUpdateInProgress: Boolean               = false
+  // scalastyle:on var.field
 
   private val persistence                                   = Persistence(context.system)
   override private[persistence] val snapshotStore: ActorRef = persistence.snapshotStoreFor(snapshotPluginId)
-  private implicit val materializer                         = ActorMaterializer()(context)
+  private implicit val materializer: ActorMaterializer      = ActorMaterializer()(context)
 
   /**
     * This stash will contain the messages received during the recovery phase.
