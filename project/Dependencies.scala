@@ -39,7 +39,7 @@ object Dependencies {
   }
 
   object scala {
-    val collectionCompat = "org.scala-lang.modules" %% "scala-collection-compat" % "2.1.4"
+    val collectionCompat = "org.scala-lang.modules" %% "scala-collection-compat" % "2.1.6"
   }
 
   val core: Seq[ModuleID] = Seq(
