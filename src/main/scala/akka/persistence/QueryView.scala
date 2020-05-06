@@ -447,19 +447,21 @@ abstract class QueryView
       ()
     }
 
-  override def saveSnapshot(snapshot: Any): Unit = if (!savingSnapshot) {
-    // Decorate the snapshot
-    savingSnapshot = true
-    super.saveSnapshot(QueryViewSnapshot(snapshot, _lastOffset, _sequenceNrByPersistenceId))
-  }
+  override def saveSnapshot(snapshot: Any): Unit =
+    if (!savingSnapshot) {
+      // Decorate the snapshot
+      savingSnapshot = true
+      super.saveSnapshot(QueryViewSnapshot(snapshot, _lastOffset, _sequenceNrByPersistenceId))
+    }
 
   private def snapshotSaved(metadata: SnapshotMetadata): Unit = {
     savingSnapshot = false
     lastSnapshotSequenceNr = metadata.sequenceNr
     _noOfEventsSinceLastSnapshot = 0L
-    log.debug("Snapshot saved successfully snapshotterId={} lastSnapshotSequenceNr={}",
-              snapshotterId,
-              lastSnapshotSequenceNr)
+    log.debug(
+      "Snapshot saved successfully snapshotterId={} lastSnapshotSequenceNr={}",
+      snapshotterId,
+      lastSnapshotSequenceNr)
   }
 
   private def snapshotSavingFailed(error: Throwable): Unit = {

@@ -84,13 +84,14 @@ trait AkkaPersistenceFixture extends ConfigFixture with ScalaFutures with Before
       written
     }
 
-  def deleteFromJournal(persistenceId: String, toSequenceNr: Long): Unit = withJournalWriter(persistenceId) { writer =>
-    writer
-      .ask(DeleteFromJournal(toSequenceNr))(10.seconds)
-      .mapTo[DeleteMessagesSuccess]
-      .futureValue(timeout(scaled(5.seconds)))
-    note(s"Events deleted from $persistenceId up to $toSequenceNr")
-  }
+  def deleteFromJournal(persistenceId: String, toSequenceNr: Long): Unit =
+    withJournalWriter(persistenceId) { writer =>
+      writer
+        .ask(DeleteFromJournal(toSequenceNr))(10.seconds)
+        .mapTo[DeleteMessagesSuccess]
+        .futureValue(timeout(scaled(5.seconds)))
+      note(s"Events deleted from $persistenceId up to $toSequenceNr")
+    }
 
   override protected def beforeEach(): Unit = {
     super.beforeEach()
