@@ -27,15 +27,13 @@ object Dependencies {
     val config = "com.typesafe" % "config" % "1.4.0"
   }
 
-  val scalaTest  = "org.scalatest"  %% "scalatest"  % "3.0.8"
-  val scalaCheck = "org.scalacheck" %% "scalacheck" % "1.14.3"
+  object scalatest {
+    val scalatestMain = "org.scalatest"     %% "scalatest"       % "3.1.1"
+    val scalatestPlus = "org.scalatestplus" %% "scalacheck-1-14" % "3.1.1.1"
+  }
 
   object levelDb {
     val levelDb = "org.iq80.leveldb" % "leveldb" % "0.12"
-  }
-
-  object scalaMock {
-    val scalaTestSupport = "org.scalamock" %% "scalamock" % "4.4.0"
   }
 
   object scala {
@@ -52,12 +50,11 @@ object Dependencies {
     slf4j.api,
     typesafe.config,
     // -- Testing --
-    scalaTest                  % Test,
-    scalaCheck                 % Test,
-    akka.slf4j                 % Test,
-    akka.streamTestKit         % Test,
-    levelDb.levelDb            % Test,
-    scalaMock.scalaTestSupport % Test,
+    scalatest.scalatestMain % Test,
+    scalatest.scalatestPlus % Test,
+    akka.slf4j              % Test,
+    akka.streamTestKit      % Test,
+    levelDb.levelDb         % Test,
     // -- Backwards Compatibility --
     scala.collectionCompat
   )
