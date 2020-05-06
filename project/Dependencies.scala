@@ -27,7 +27,7 @@ object Dependencies {
     val config = "com.typesafe" % "config" % "1.4.0"
   }
 
-  val scalaTest  = "org.scalatest"  %% "scalatest"  % "3.0.8"
+  val scalaTest  = "org.scalatest"  %% "scalatest"  % "3.1.1"
   val scalaCheck = "org.scalacheck" %% "scalacheck" % "1.14.3"
 
   object levelDb {
