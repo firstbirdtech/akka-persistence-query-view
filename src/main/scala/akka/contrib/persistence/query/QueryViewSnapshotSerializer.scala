@@ -43,10 +43,11 @@ class QueryViewSnapshotSerializer(val system: ExtendedActorSystem) extends BaseS
   override def toBinary(o: AnyRef, buf: ByteBuffer): Unit =
     toBinary(o, new ByteBufferOutputStream(buf))
 
-  private def toBinary(o: AnyRef, out: OutputStream): Unit = o match {
-    case qvs: QueryViewSnapshot[_] => serializeQueryViewSnapshot(qvs, out)
-    case _                         => throw new IllegalArgumentException(s"Can't serialize object of type ${o.getClass}")
-  }
+  private def toBinary(o: AnyRef, out: OutputStream): Unit =
+    o match {
+      case qvs: QueryViewSnapshot[_] => serializeQueryViewSnapshot(qvs, out)
+      case _                         => throw new IllegalArgumentException(s"Can't serialize object of type ${o.getClass}")
+    }
 
   override def fromBinary(bytes: Array[Byte], manifest: Option[Class[_]]): AnyRef =
     fromBinary(new ByteArrayInputStream(bytes))

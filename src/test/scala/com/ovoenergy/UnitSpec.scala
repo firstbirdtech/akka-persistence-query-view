@@ -1,11 +1,12 @@
 package com.ovoenergy
 
 import org.scalatest.concurrent.{ScalaFutures, ScaledTimeSpans}
-import org.scalatest.{Matchers, WordSpec}
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
+import org.scalatest.matchers.should.Matchers
+import org.scalatest.wordspec.AnyWordSpec
 
 abstract class UnitSpec
-    extends WordSpec
+    extends AnyWordSpec
     with Matchers
     with ScalaCheckPropertyChecks
     with ScalaFutures

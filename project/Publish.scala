@@ -5,11 +5,12 @@ import sbt.plugins._
 object NoPublish extends AutoPlugin {
   override def requires: Plugins = JvmPlugin
 
-  override def projectSettings: Seq[Setting[_]] = Seq(
-    publishArtifact := false,
-    publish := {},
-    publishLocal := {}
-  )
+  override def projectSettings: Seq[Setting[_]] =
+    Seq(
+      publishArtifact := false,
+      publish := {},
+      publishLocal := {}
+    )
 }
 
 object Publish extends AutoPlugin {
@@ -19,9 +20,10 @@ object Publish extends AutoPlugin {
   override def trigger: PluginTrigger = allRequirements
   override def requires: Plugins      = BintrayPlugin
 
-  override def projectSettings: Seq[Setting[_]] = Seq(
-    bintrayOrganization := Some("firstbird"),
-    bintrayPackage := "akka-persistence-query-view",
-    bintrayPackageLabels := Seq("akka", "akka-persistence", "event-sourcing", "cqrs")
-  )
+  override def projectSettings: Seq[Setting[_]] =
+    Seq(
+      bintrayOrganization := Some("firstbird"),
+      bintrayPackage := "akka-persistence-query-view",
+      bintrayPackageLabels := Seq("akka", "akka-persistence", "event-sourcing", "cqrs")
+    )
 }
