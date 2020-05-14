@@ -16,7 +16,7 @@ object Dependencies {
     "com.typesafe"       % "config"                 % "1.4.0",
     // -- Testing --
     "org.scalatest"     %% "scalatest"           % "3.1.2"     % Test,
-    "org.scalatestplus" %% "scalacheck-1-14"     % "3.1.1.1"   % Test,
+    "org.scalatestplus" %% "scalacheck-1-14"     % "3.1.2.0"   % Test,
     "com.typesafe.akka" %% "akka-slf4j"          % akkaVersion % Test,
     "com.typesafe.akka" %% "akka-stream-testkit" % akkaVersion % Test,
     "org.iq80.leveldb"   % "leveldb"             % "0.12"      % Test,
