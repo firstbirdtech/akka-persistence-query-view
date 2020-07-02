@@ -61,10 +61,12 @@ trait AkkaPersistenceFixture extends ConfigFixture with ScalaFutures with Before
 
     note(s"Journal dir: $journalDir Snapshot dir: $snapshotDir")
 
-    ConfigFactory.parseString(s"""
+    ConfigFactory
+      .parseString(s"""
          |akka.persistence.journal.leveldb.dir = "${journalDir.toAbsolutePath.toString}"
          |akka.persistence.snapshot-store.local.dir = "${snapshotDir.toAbsolutePath.toString}"
-      """.stripMargin).withFallback(super.initConfig())
+      """.stripMargin)
+      .withFallback(super.initConfig())
   }
 
   def withJournalWriter[T](pId: String)(f: ActorRef => T): T = {
