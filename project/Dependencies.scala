@@ -15,7 +15,7 @@ object Dependencies {
     "org.slf4j"          % "slf4j-api"              % "1.7.30",
     "com.typesafe"       % "config"                 % "1.4.0",
     // -- Testing --
-    "org.scalatest"     %% "scalatest"           % "3.1.2"     % Test,
+    "org.scalatest"     %% "scalatest"           % "3.2.0"     % Test,
     "org.scalatestplus" %% "scalacheck-1-14"     % "3.2.0.0"   % Test,
     "com.typesafe.akka" %% "akka-slf4j"          % akkaVersion % Test,
     "com.typesafe.akka" %% "akka-stream-testkit" % akkaVersion % Test,
