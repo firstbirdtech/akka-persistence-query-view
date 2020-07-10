@@ -3,7 +3,7 @@ import sbt.librarymanagement.ModuleID
 
 object Dependencies {
 
-  private val akkaVersion = "2.5.31"
+  private val akkaVersion = "2.6.7"
 
   val core: Seq[ModuleID] = Seq(
     "com.typesafe.akka" %% "akka-actor"             % akkaVersion,
