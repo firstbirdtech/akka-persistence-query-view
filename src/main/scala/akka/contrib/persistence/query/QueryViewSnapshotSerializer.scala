@@ -61,15 +61,14 @@ class QueryViewSnapshotSerializer(val system: ExtendedActorSystem) extends BaseS
   private def serializeQueryViewSnapshot(snapshot: QueryViewSnapshot[_], out: OutputStream): Unit = {
 
     val builder = QueryViewFormats.QueryViewSnapshot.newBuilder()
-    snapshot.sequenceNrs.foreach {
-      case (persistenceId, sequenceNr) =>
-        builder.addSequenceNrs(
-          QueryViewFormats.QueryViewSnapshot.SequenceNrEntry
-            .newBuilder()
-            .setPersistenceId(persistenceId)
-            .setSequenceNr(sequenceNr)
-            .build()
-        )
+    snapshot.sequenceNrs.foreach { case (persistenceId, sequenceNr) =>
+      builder.addSequenceNrs(
+        QueryViewFormats.QueryViewSnapshot.SequenceNrEntry
+          .newBuilder()
+          .setPersistenceId(persistenceId)
+          .setSequenceNr(sequenceNr)
+          .build()
+      )
     }
 
     builder.setMaxOffset(serializePayload(snapshot.maxOffset))
