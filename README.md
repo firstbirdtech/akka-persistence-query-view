@@ -2,10 +2,11 @@ This is a fork of [danischroeter/akka-persistence-query-view](https://github.com
 
 # Persistence query view
 
-[![Build Status](https://travis-ci.org/firstbirdtech/akka-persistence-query-view.svg?branch=master)](https://travis-ci.org/firstbirdtech/akka-persistence-query-view)
-[![Codacy Badge](https://api.codacy.com/project/badge/Grade/66787c8342914d8bb3d0ea922dc37908)](https://www.codacy.com/gh/firstbirdtech/akka-persistence-query-view?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=firstbirdtech/akka-persistence-query-view&amp;utm_campaign=Badge_Grade)
-[![Codacy Badge](https://api.codacy.com/project/badge/Coverage/66787c8342914d8bb3d0ea922dc37908)](https://www.codacy.com/gh/firstbirdtech/akka-persistence-query-view?utm_source=github.com&utm_medium=referral&utm_content=firstbirdtech/akka-persistence-query-view&utm_campaign=Badge_Coverage)
 [![Maven Central](https://img.shields.io/maven-central/v/com.firstbird/akka-persistence-query-view_2.13.svg?label=Maven%20Central)](https://search.maven.org/search?q=g:%22com.firstbird%22%20AND%20a:%22akka-persistence-query-view_2.13%22)
+[![Github Actions CI Workflow](https://github.com/firstbirdtech/akka-persistence-query-view/workflows/CI/badge.svg)](https://github.com/firstbirdtech/akka-persistence-query-view/workflows/CI/badge.svg)
+[![codecov](https://codecov.io/gh/firstbirdtech/akka-persistence-query-view/branch/master/graph/badge.svg?token=3WIUBL914B)](https://codecov.io/gh/firstbirdtech/akka-persistence-query-view)
+[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
+[![Scala Steward badge](https://img.shields.io/badge/Scala_Steward-helping-blue.svg?style=flat&logo=data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA4AAAAQCAMAAAARSr4IAAAAVFBMVEUAAACHjojlOy5NWlrKzcYRKjGFjIbp293YycuLa3pYY2LSqql4f3pCUFTgSjNodYRmcXUsPD/NTTbjRS+2jomhgnzNc223cGvZS0HaSD0XLjbaSjElhIr+AAAAAXRSTlMAQObYZgAAAHlJREFUCNdNyosOwyAIhWHAQS1Vt7a77/3fcxxdmv0xwmckutAR1nkm4ggbyEcg/wWmlGLDAA3oL50xi6fk5ffZ3E2E3QfZDCcCN2YtbEWZt+Drc6u6rlqv7Uk0LdKqqr5rk2UCRXOk0vmQKGfc94nOJyQjouF9H/wCc9gECEYfONoAAAAASUVORK5CYII=)](https://scala-steward.org)
 
 The `QueryView` is a replacement of the deprecated `PersistentView` in Akka Persistence module.
 

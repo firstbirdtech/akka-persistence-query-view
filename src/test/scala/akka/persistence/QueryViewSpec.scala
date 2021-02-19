@@ -354,8 +354,9 @@ abstract class TestQueryView extends QueryView with LevelDbQuerySupport {
   private var waitForSnapshot          = Option.empty[ActorRef]
   // scalastyle:on var.field
 
-  /** It is the persistenceId linked to this view. It should be unique.
-    */
+  /**
+   * It is the persistenceId linked to this view. It should be unique.
+   */
   override def snapshotterId: String = "test"
 
   override def receive: Receive = {

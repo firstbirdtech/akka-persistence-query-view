@@ -16,15 +16,14 @@
 
 package akka.contrib.persistence.query
 
-import java.io.{ByteArrayInputStream, ByteArrayOutputStream, InputStream, OutputStream}
-import java.nio.ByteBuffer
-
 import akka.actor.ExtendedActorSystem
 import akka.contrib.persistence.query.QueryViewFormats.Payload
 import akka.persistence.query.Offset
 import akka.protobuf.ByteString
 import akka.serialization.{BaseSerializer, ByteBufferSerializer, SerializationExtension, SerializerWithStringManifest}
 
+import java.io.{ByteArrayInputStream, ByteArrayOutputStream, InputStream, OutputStream}
+import java.nio.ByteBuffer
 import scala.jdk.CollectionConverters._
 
 class QueryViewSnapshotSerializer(val system: ExtendedActorSystem) extends BaseSerializer with ByteBufferSerializer {

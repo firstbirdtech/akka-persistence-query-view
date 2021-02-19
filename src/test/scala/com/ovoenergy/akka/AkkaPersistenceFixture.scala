@@ -1,7 +1,5 @@
 package com.ovoenergy.akka
 
-import java.nio.file.Files
-
 import akka.actor._
 import akka.pattern._
 import akka.persistence.{DeleteMessagesSuccess, PersistentActor}
@@ -12,6 +10,7 @@ import com.typesafe.config.{Config, ConfigFactory}
 import org.scalatest._
 import org.scalatest.concurrent.{Eventually, ScalaFutures}
 
+import java.nio.file.Files
 import scala.concurrent.duration._
 import scala.reflect.ClassTag
 

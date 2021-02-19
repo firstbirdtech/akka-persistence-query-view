@@ -46,10 +46,11 @@ object QueryView {
 
   private case class LiveStreamFailed(cause: Throwable)
 
-  /** Additionally to being updated by the live stream the QueryView instantly issues a query using the recovery stream to perform a fast forced update
-    * (useful in corner cases when the live stream has a high delay/polling interval)
-    * While updating a subsequent ForceUpdate is ignored.
-    */
+  /**
+   * Additionally to being updated by the live stream the QueryView instantly issues a query using the recovery stream to perform a fast forced update
+   * (useful in corner cases when the live stream has a high delay/polling interval)
+   * While updating a subsequent ForceUpdate is ignored.
+   */
   case object ForceUpdate
 
   private case object StartForceUpdate
@@ -73,8 +74,9 @@ object QueryView {
 
 trait EventStreamOffsetTyped {
 
-  /** Type of offset used for position in the event stream
-    */
+  /**
+   * Type of offset used for position in the event stream
+   */
   type OT = Offset
 }
 
@@ -108,93 +110,110 @@ abstract class QueryView
   override private[persistence] val snapshotStore: ActorRef = persistence.snapshotStoreFor(snapshotPluginId)
   private implicit val materializer: ActorMaterializer      = ActorMaterializer()(context)
 
-  /** This stash will contain the messages received during the recovery phase.
-    */
+  /**
+   * This stash will contain the messages received during the recovery phase.
+   */
   private val recoveringStash = createStash()
 
-  /** It is the persistenceId linked to this view. It should be unique.
-    */
+  /**
+   * It is the persistenceId linked to this view. It should be unique.
+   */
   override def snapshotterId: String
 
-  /** Configuration id of the snapshot plugin servicing this persistent actor or view.
-    * When empty, looks in `akka.persistence.snapshot-store.plugin` to find configuration entry path.
-    * When configured, uses `snapshotPluginId` as absolute path to the snapshot store configuration entry.
-    * Configuration entry must contain few required fields, such as `class`. See akka-persistence jar
-    * `src/main/resources/reference.conf`.
-    */
+  /**
+   * Configuration id of the snapshot plugin servicing this persistent actor or view.
+   * When empty, looks in `akka.persistence.snapshot-store.plugin` to find configuration entry path.
+   * When configured, uses `snapshotPluginId` as absolute path to the snapshot store configuration entry.
+   * Configuration entry must contain few required fields, such as `class`. See akka-persistence jar
+   * `src/main/resources/reference.conf`.
+   */
   def snapshotPluginId: String = ""
 
-  /** The amount of time this actor must wait until giving up waiting for the recovery process. A undefined duration
-    * causes the actor to wait indefinitely. If the recovery fails because of a timeout, this actor will crash.
-    *
-    * TODO Tune by a flag to indicate we want the actor to switch live if the recovery timeout.
-    */
+  /**
+   * The amount of time this actor must wait until giving up waiting for the recovery process. A undefined duration
+   * causes the actor to wait indefinitely. If the recovery fails because of a timeout, this actor will crash.
+   *
+   * TODO Tune by a flag to indicate we want the actor to switch live if the recovery timeout.
+   */
   def recoveryTimeout: Duration = DefaultRecoveryTimeout
 
-  /** The amount of time this actor must wait until giving up waiting for a snapshot loading. A undefined duration
-    * causes the actor to wait indefinitely. The timeout does not cause this actor to crash, it is a recoverable error.
-    */
+  /**
+   * The amount of time this actor must wait until giving up waiting for a snapshot loading. A undefined duration
+   * causes the actor to wait indefinitely. The timeout does not cause this actor to crash, it is a recoverable error.
+   */
   def loadSnapshotTimeout: Duration = DefaultLoadSnapshotTimeout
 
-  /** It is the source od EventEnvelope used to recover the view status. It MUST be finite stream.
-    *
-    * It is declared as AnyRef to be able to return [[akka.persistence.query.EventEnvelope]].
-    */
+  /**
+   * It is the source od EventEnvelope used to recover the view status. It MUST be finite stream.
+   *
+   * It is declared as AnyRef to be able to return [[akka.persistence.query.EventEnvelope]].
+   */
   def recoveringStream(sequenceNrByPersistenceId: Map[String, Long], lastOffset: OT): Source[AnyRef, _]
 
-  /** It is the source od EventEnvelope used to receive live events, it MUST be a infinite stream (eg: It should never
-    * complete)
-    *
-    * It is declared as AnyRef to be able to return [[akka.persistence.query.EventEnvelope]].
-    */
+  /**
+   * It is the source od EventEnvelope used to receive live events, it MUST be a infinite stream (eg: It should never
+   * complete)
+   *
+   * It is declared as AnyRef to be able to return [[akka.persistence.query.EventEnvelope]].
+   */
   def liveStream(sequenceNrByPersistenceId: Map[String, Long], lastOffset: OT): Source[AnyRef, _]
 
-  /** It is an hook called before the actor switch to live mode. It is synchronous (it can change the actor status).
-    * It can be useful to fetch additional data from other actor/services before starting receiving messages.
-    */
+  /**
+   * It is an hook called before the actor switch to live mode. It is synchronous (it can change the actor status).
+   * It can be useful to fetch additional data from other actor/services before starting receiving messages.
+   */
   def preLive(): Unit = {}
 
-  /** @see [[akka.persistence.QueryView.ForceUpdate]]
-    */
+  /**
+   * @see [[akka.persistence.QueryView.ForceUpdate]]
+   */
   def forceUpdate(): Unit = startForceUpdate()
 
-  /** Is called when the stream of a forceUpdate has completed
-    */
+  /**
+   * Is called when the stream of a forceUpdate has completed
+   */
   def onForceUpdateCompleted() = {}
 
   // Status accessors
 
-  /** Return if this actor is waiting for receiving the snapshot from the snapshot-store.
-    */
+  /**
+   * Return if this actor is waiting for receiving the snapshot from the snapshot-store.
+   */
   final def isWaitingForSnapshot: Boolean = currentState == State.WaitingForSnapshot
 
-  /** Return if this actor is in recovery phase. Useful to the implementor to apply different behavior when a message
-    * came from the journal or from another actor.
-    */
+  /**
+   * Return if this actor is in recovery phase. Useful to the implementor to apply different behavior when a message
+   * came from the journal or from another actor.
+   */
   final def isRecovering: Boolean = currentState == State.Recovering
 
-  /** Return if this actor is in live phase. Useful to the implementor to apply different behavior when a message
-    * came from the journal or from another actor.
-    */
+  /**
+   * Return if this actor is in live phase. Useful to the implementor to apply different behavior when a message
+   * came from the journal or from another actor.
+   */
   final def isLive: Boolean = currentState == State.Live
 
-  /** Return the last replayed message offset from the journal.
-    */
+  /**
+   * Return the last replayed message offset from the journal.
+   */
   final def lastOffset: OT = Option(_lastOffset).getOrElse(firstOffset)
 
-  /** The current sequenceNr of given persistenceId
-    *
-    * @param persistenceId
-    * @return
-    */
+  /**
+   * The current sequenceNr of given persistenceId
+   *
+   * @param persistenceId
+   * @return
+   */
   final def lastSequenceNrFor(persistenceId: String): Long = _sequenceNrByPersistenceId.getOrElse(persistenceId, 0)
 
-  /** Return the number of processed events since last snapshot has been taken.
-    */
+  /**
+   * Return the number of processed events since last snapshot has been taken.
+   */
   final def noOfEventSinceLastSnapshot(): Long = _noOfEventsSinceLastSnapshot
 
-  /** Return the next sequence nr to apply to the next snapshot.
-    */
+  /**
+   * Return the next sequence nr to apply to the next snapshot.
+   */
   override final def snapshotSequenceNr: Long = lastSnapshotSequenceNr + 1
 
   // Behavior
