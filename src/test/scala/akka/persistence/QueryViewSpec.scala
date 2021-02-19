@@ -80,7 +80,7 @@ class QueryViewSpec extends UnitSpec with ConfigFixture with AkkaFixture with Ak
 
           val recoveryMessages = Seq("test-1-1", "test-1-2", "test-1-3")
           eventually {
-            val receivedMessages = underTest.ask(GetMessage).mapTo[Vector[String]].futureValue
+            val receivedMessages = underTest.ask(GetMessage).mapTo[Vector[String]].futureValue()
             receivedMessages should contain theSameElementsInOrderAs recoveryMessages
           }
 
@@ -257,7 +257,7 @@ class QueryViewSpec extends UnitSpec with ConfigFixture with AkkaFixture with Ak
     def assertGetMessages(messages: Seq[String], update: Boolean = false): Assertion = {
       eventually {
         if (update) forceUpdate()
-        val receivedMessages = underTest.ask(GetMessage).mapTo[Vector[String]].futureValue
+        val receivedMessages = underTest.ask(GetMessage).mapTo[Vector[String]].futureValue()
         receivedMessages should contain theSameElementsInOrderAs messages
       }
     }
@@ -354,8 +354,9 @@ abstract class TestQueryView extends QueryView with LevelDbQuerySupport {
   private var waitForSnapshot          = Option.empty[ActorRef]
   // scalastyle:on var.field
 
-  /** It is the persistenceId linked to this view. It should be unique.
-    */
+  /**
+   * It is the persistenceId linked to this view. It should be unique.
+   */
   override def snapshotterId: String = "test"
 
   override def receive: Receive = {

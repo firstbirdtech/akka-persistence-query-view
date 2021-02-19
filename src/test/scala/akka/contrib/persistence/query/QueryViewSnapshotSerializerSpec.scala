@@ -1,13 +1,12 @@
 package akka.contrib.persistence.query
 
-import java.nio.ByteBuffer
-
 import akka.persistence.query.Sequence
 import akka.serialization.SerializationExtension
 import com.ovoenergy.UnitSpec
 import com.ovoenergy.akka.AkkaFixture
 import org.scalacheck.{Arbitrary, Gen}
 
+import java.nio.ByteBuffer
 import scala.util.{Failure, Try}
 
 class QueryViewSnapshotSerializerSpec extends UnitSpec with AkkaFixture {
