@@ -12,7 +12,7 @@ object Dependencies {
     "com.typesafe.akka" %% "akka-persistence-query" % akkaVersion,
     "com.typesafe.akka" %% "akka-stream"            % akkaVersion,
     "ch.qos.logback"     % "logback-classic"        % "1.1.8",
-    "org.slf4j"          % "slf4j-api"              % "2.0.12",
+    "org.slf4j"          % "slf4j-api"              % "2.0.13",
     "com.typesafe"       % "config"                 % "1.4.3",
     // -- Testing --
     "org.scalatest"     %% "scalatest"           % "3.2.4"     % Test,
