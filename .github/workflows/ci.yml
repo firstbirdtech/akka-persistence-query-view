@@ -23,12 +23,13 @@ jobs:
         with:
           fetch-depth: 0
      
+      - uses: coursier/cache-action@v6
+
       - name: Setup Scala
         uses: actions/setup-java@v4
         with:
           java-version: '${{ matrix.java }}'
           distribution: 'temurin'
-          cache: 'sbt'
       
       - uses: sbt/setup-sbt@v1
 
@@ -46,12 +47,13 @@ jobs:
         with:
           fetch-depth: 0
 
+      - uses: coursier/cache-action@v6
+
       - name: Setup Scala
         uses: actions/setup-java@v4
         with:
           java-version: '${{ matrix.java }}'
           distribution: 'temurin'
-          cache: 'sbt'
       
       - uses: sbt/setup-sbt@v1
 
