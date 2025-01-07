@@ -4,7 +4,7 @@ on:
   pull_request:
     branches: ['*']
   push:
-    branches: ['*']
+    branches: ['master']
     tags: ['v*']
 
 
@@ -19,32 +19,22 @@ jobs:
     runs-on: ${{ matrix.os }}
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
         with:
           fetch-depth: 0
-      
-      - name: Setup Scala
-        uses: olafurpg/setup-scala@v10
-        with:
-          java-version: "adopt@1.${{ matrix.java }}"
+     
+      - uses: coursier/cache-action@v6
 
-      - uses: actions/cache@v2
+      - name: Setup Scala
+        uses: actions/setup-java@v4
         with:
-          path: |
-            ~/.sbt
-            ~/.ivy2/cache
-            ~/.coursier/cache/v1
-            ~/.cache/coursier/v1          
-          key: |
-            ${{ runner.os }}-sbt-${{ hashFiles('project/build.properties') }}-${{ hashFiles('**/*.sbt') }}
-          
+          java-version: '${{ matrix.java }}'
+          distribution: 'temurin'
+      
+      - uses: sbt/setup-sbt@v1
+
       - name: Build project
         run: sbt clean codeVerify coverage +test coverageReport coverageAggregate
-
-      - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@v1
-        with:
-          fail_ci_if_error: true
 
   publish:
     name: Publish
@@ -53,24 +43,19 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
         with:
           fetch-depth: 0
-      
-      - name: Setup Scala
-        uses: olafurpg/setup-scala@v10
-        with:
-          java-version: "adopt@1.11"
 
-      - uses: actions/cache@v2
+      - uses: coursier/cache-action@v6
+
+      - name: Setup Scala
+        uses: actions/setup-java@v4
         with:
-          path: |
-            ~/.sbt
-            ~/.ivy2/cache
-            ~/.coursier/cache/v1
-            ~/.cache/coursier/v1          
-          key: |
-            ${{ runner.os }}-sbt-${{ hashFiles('project/build.properties') }}-${{ hashFiles('**/*.sbt') }}
+          java-version: '${{ matrix.java }}'
+          distribution: 'temurin'
+      
+      - uses: sbt/setup-sbt@v1
 
       - name: Publish artifacts
         env:
