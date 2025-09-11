@@ -13,7 +13,7 @@ object Dependencies {
     "com.typesafe.akka" %% "akka-stream"            % akkaVersion,
     "ch.qos.logback"     % "logback-classic"        % "1.1.8",
     "org.slf4j"          % "slf4j-api"              % "2.0.12",
-    "com.typesafe"       % "config"                 % "1.4.3",
+    "com.typesafe"       % "config"                 % "1.4.5",
     // -- Testing --
     "org.scalatest"     %% "scalatest"           % "3.2.4"     % Test,
     "org.scalatestplus" %% "scalacheck-1-14"     % "3.2.2.0"   % Test,
